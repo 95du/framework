@@ -4,7 +4,7 @@
  * Github: https://github.com/dompling
  */
 
-class DmYY {
+class dmYY {
   constructor(arg) {
     this.arg = arg
     try {
@@ -537,7 +537,7 @@ class DmYY {
   setWidgetConfig = async () => {
     const table = new UITable()
     table.showSeparators = true
-    await this.renderDmYYTables(table)
+    await this.renderdmYYTables(table)
     await table.present()
   }
 
@@ -1461,4 +1461,4 @@ const Runing = async (Widget, default_args = '', isDebug = true, extra) => {
 }
 
 // await new DmYY().setWidgetConfig();
-module.exports = { DmYY, Runing }
+module.exports = { dmYY, Runing }
