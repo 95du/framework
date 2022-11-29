@@ -58,11 +58,23 @@
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
             "title": "负一屏底栏",
-            "thumb": "https://image.fosunholiday.com/cl/image/comment/6386235145fc725d766ac101_upload.jpeg",
+            "thumb": "https://gitcode.net/4qiao/shortcuts/raw/master/icon/bottom.png",
             "version": "1.0.0",
             "description": "iOS16负一屏底栏",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/bottomBar.js",
             "name": "负一屏底栏"
+        },
+        {
+            "depend": {
+                "name": "DmYY",
+                "scriptURL": ""
+            },
+            "title": "透明背景",
+            "thumb": "https://gitcode.net/4qiao/shortcuts/raw/master/icon/background.png",
+            "version": "1.0.0",
+            "description": "透明背景",
+            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/background.js",
+            "name": "透明背景"
         }
     ]
 }
