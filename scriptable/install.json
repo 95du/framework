@@ -1,0 +1,26 @@
+{
+    "author": "95度茅台",
+    "scriptable": true,
+    "icon": "https://gitcode.net/4qiao/shortcuts/raw/master/icon/4qiao.png",
+    "repo": "https://gitcode.net/4qiao/scriptable",
+    "apps": [
+        {
+            "version": "1.0.0",
+            "description": "交管12123",
+            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/violation.js",
+            "thumb": "https://gitcode.net/4qiao/shortcuts/raw/master/icon/12123.png",
+            "name": "12123Widgets",
+            "title": "交管12123",
+            "html": [
+                "<h4 align=\"center\">测试组件</h4>",
+                "<li>特别感谢大佬：<a>@Jackie Xiang</a></li>"
+            ],
+            "depend": [
+                {
+                    "name": "DmYY",
+                    "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
+                }
+            ]
+        }
+    ]
+}
