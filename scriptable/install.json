@@ -25,7 +25,7 @@
             "thumb": "https://gitcode.net/4qiao/shortcuts/raw/master/icon/oil.png",
             "version": "1.0.0",
             "description": "全国油价",
-            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/violation.js",
+            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/oils.js",
             "name": "全国油价"
         },
         {
@@ -37,7 +37,7 @@
             "thumb": "https://gitcode.net/4qiao/shortcuts/raw/master/icon/telecom.png",
             "version": "1.0.0",
             "description": "中国电信",
-            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/violation.js",
+            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/telecom.js",
             "name": "中国电信"
         },
         {
@@ -49,7 +49,7 @@
             "thumb": "https://gitcode.net/4qiao/shortcuts/raw/master/icon/electric.png",
             "version": "1.0.0",
             "description": "南网在线",
-            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/violation.js",
+            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/electric.js",
             "name": "南网在线"
         }
     ]
