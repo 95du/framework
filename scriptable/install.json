@@ -24,7 +24,7 @@
             "title": "全国油价",
             "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/oil.png",
             "version": "1.0.0",
-            "description": "全国油价",
+            "description": "查看全国油价预警",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/oils.js",
             "name": "全国油价"
         },
@@ -67,14 +67,26 @@
         {
             "depend": {
                 "name": "DmYY",
-                "scriptURL": ""
+                "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
             "title": "透明背景",
             "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/bg.png",
             "version": "1.0.0",
-            "description": "透明背景",
+            "description": "制作透明背景",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/background.js",
             "name": "透明背景"
+        },
+        {
+            "depend": {
+                "name": "DmYY",
+                "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
+            },
+            "title": "随机组件",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/random.png",
+            "version": "1.0.0",
+            "description": "随机切换多个小组件",
+            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/randomWidget.js",
+            "name": "随机组件"
         }
     ]
 }
