@@ -81,12 +81,12 @@
                 "name": "DmYY",
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
-            "title": "随机组件",
+            "title": "随机小组件",
             "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/random.png",
             "version": "1.0.0",
             "description": "随机切换多个小组件",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/randomWidget.js",
-            "name": "随机组件"
+            "name": "随机小组件"
         }
     ]
 }
