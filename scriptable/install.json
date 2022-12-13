@@ -87,6 +87,30 @@
             "description": "随机切换多个小组件",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/randomScript.js",
             "name": "随机组件"
+        },
+        {
+            "depend": {
+                "name": "DmYY",
+                "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
+            },
+            "title": "房屋估值",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/house.png",
+            "version": "1.0.0",
+            "description": "幸福里全国房屋估值",
+            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/housePrice.js",
+            "name": "房屋估值"
+        },
+        {
+            "depend": {
+                "name": "DmYY",
+                "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
+            },
+            "title": "清空回收站",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/cleanFiles.png",
+            "version": "1.0.0",
+            "description": "一键清空Scriptable回收站",
+            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/cleanTrash.js",
+            "name": "清空回收站"
         }
     ]
 }
