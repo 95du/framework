@@ -22,7 +22,7 @@
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
             "title": "全国油价",
-            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/Oil.png",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/oil.png",
             "version": "1.0.0",
             "description": "查看全国油价预警",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/oils.js",
