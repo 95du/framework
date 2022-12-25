@@ -58,7 +58,7 @@
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
             "title": "负一屏底栏",
-            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/bottom.png",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/bottomBars.png",
             "version": "1.0.0",
             "description": "iOS16负一屏底栏",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/bottomBar.js",
