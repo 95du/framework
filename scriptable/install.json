@@ -70,7 +70,7 @@
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
             "title": "透明背景",
-            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/bgImage.png",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/transparentBackground.png",
             "version": "1.0.1",
             "description": "代码来源于网络，提供给需要的用户制作透明背景",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/background.js",
