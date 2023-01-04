@@ -161,7 +161,7 @@ async function main() {
       },
       {
         url: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/NicegramLogo.png',
-        type: 'input',
+        type: 'web',
         title: 'Telegram',
         val: '>',
         onClick: async () => {
