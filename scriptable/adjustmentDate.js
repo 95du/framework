@@ -1,8 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: brown; icon-glyph: clock;
-const webView = new WebView()
-const style = `
   <meta charset="utf-8" >
     <title>全国油价调整日期</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
@@ -21,8 +19,8 @@ const style = `
     margin: 0px auto;
     width: 90%;
    }
-    </style>`
-const webHtml = style + `
+    </style>
+    
 <body bgcolor=white>
  <h3>
   <center>
@@ -200,6 +198,3 @@ padding-right: 5px;
  </div>
  </div>
 </body>
-`
-await webView.loadHTML(webHtml)
-await webView.present()
