@@ -339,7 +339,7 @@ async function main() {
       },
       {
         icon: {
-          name: 'lightswitch.on',
+          name: 'rectangle.portrait.topthird.inset.filled',
           color: '#9a63e7'
         },
         type: 'preview',
