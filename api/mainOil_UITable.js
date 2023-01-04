@@ -647,15 +647,13 @@ async function main() {
       options = ['取消', '确认']
     );
     if (index === 0) return;
-    const reqUpdate = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbk9pbF9VSVRhYmxlLmpz'));
+    const modulePath = F_MGR.joinPath(path, 'oil.js');
+    const reqUpdate = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/oil_UITable.js');
     const codeString = await reqUpdate.loadString();
     if (codeString.indexOf('95度茅台') == -1) {
       notify('更新失败⚠️', '请检查网络或稍后再试');
     } else {
-      F_MGR.writeString(
-        module.filename,
-        codeString
-      );
+      F_MGR.writeString(modulePath, codeString);
       notify('小组件更新成功', '');
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
