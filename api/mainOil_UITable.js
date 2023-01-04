@@ -219,14 +219,15 @@ async function main() {
       },
       {
         icon: {
-          name: 'arrow.clockwise',
+          name: 'fuelpump.fill',
           color: '#43CD80'
         },
-        type: 'input',
-        title: '刷新时间',
-        desc: '尝试改变刷新组件时间，具体时间由系统判断，单位：分钟',
-        val: setting.minute,
-        objKey: 'minute'
+        type: 'web',
+        title: '调整日期',
+        val: '>',
+        onClick: async () => {
+          Safari.openInApp('https://gitcode.net/4qiao/framework/raw/master/img/picture/oilAdjustmentDate.jpeg', false);
+        }
       },
       {
         icon: {
