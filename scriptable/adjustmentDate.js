@@ -1,9 +1,6 @@
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: brown; icon-glyph: clock;
-  <meta charset="utf-8" >
-    <title>全国油价调整日期</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta charset="utf-8" >
+  <title>全国油价调整日期</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <style type="text/css">
    .box{
     width=100%;
