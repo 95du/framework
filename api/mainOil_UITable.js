@@ -647,7 +647,7 @@ async function main() {
       options = ['取消', '确认']
     );
     if (index === 0) return;
-    const reqUpdate = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdGFibGUvVUlUYWJsZS5qcw=='));
+    const reqUpdate = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbk9pbF9VSVRhYmxlLmpz'));
     const codeString = await reqUpdate.loadString();
     if (codeString.indexOf('95度茅台') == -1) {
       notify('更新失败⚠️', '请检查网络或稍后再试');
