@@ -370,7 +370,7 @@ async function main() {
         },
         type: 'options',
         title: '更新代码',
-        desc: '更新后当前脚本代码将被覆盖\n请先做好备份，此操作不可恢复'
+        desc: '更新后当前脚本代码将被覆盖\n请先做好备份，此操作不可恢复，但不会清除用户已设置的数据'
       },
       {
         interval: 25.9 * Device.screenScale()
