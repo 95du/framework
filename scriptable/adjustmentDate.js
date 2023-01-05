@@ -1,14 +1,14 @@
 <meta charset="utf-8" >
   <title>全国油价调整日期</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <style type="text/css">
+  <style type="text/css">
    .box{
     width=100%;
     border-radius: 10px;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-    margin-top: 12px;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    margin-bottom: 13px;
+    margin-top: 13px;
    }
    .words{
     text-align:justify;
@@ -16,7 +16,7 @@
     margin: 0px auto;
     width: 90%;
    }
-    </style>
+  </style>
     
 <body bgcolor=white>
  <h3>
