@@ -49,7 +49,7 @@
             "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/oilPrice2.png",
             "version": "1.0.0",
             "description": "UITable框架",
-            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/background.js",
+            "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/moduleOilPrice.js",
             "name": "全国油价_2"
         },
         {
