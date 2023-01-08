@@ -22,7 +22,7 @@
                 "scriptURL": ""
             },
             "title": "交管12123_2",
-            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/12123.png",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/new12123.png",
             "version": "1.0.0",
             "description": "支付宝小程序交管12123",
             "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/module12123.js",
