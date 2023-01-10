@@ -332,8 +332,10 @@ async function main() {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
               title: '颜色代码',
               onClick: async () => {
-                Safari.openInApp(
-                  'https://c.runoob.com/front-end/6210', false);
+                const webView = new WebView();
+                const webHtml = await new Request('https://gitcode.net/4qiao/framework/raw/master/scriptable/colorFinder.js').loadString();
+                await webView.loadHTML(webHtml);
+                await webView.present()
               }
             },
             {
