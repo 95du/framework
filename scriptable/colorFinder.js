@@ -8,7 +8,7 @@
 
 <style>
 .runoob-page-content {
-    margin: 0 20px;
+    margin: 0 30px;
 }
 </style>
 <div class="runoob-page-content">
