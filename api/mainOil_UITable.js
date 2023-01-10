@@ -155,7 +155,7 @@ async function main() {
                 color: '#43CD80'
               },
               type: 'OS',
-              title: iOS ? iOS.match(/(iOS\s\d+\.\d*?\.?\d*?\s(beta\s?\d*?|RC\s?\d?))/)[1] : '正式版已发布',
+              title: iOS ? iOS.match(/(iOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : '正式版已发布',
               val: iOS ? iOS.match(/\((.*?)\)/)[1] : '>',
               ios: iOS
             },
@@ -186,7 +186,7 @@ async function main() {
                 color: '#F9A825'
               },
               type: 'OS',
-              title: iPadOS ? iPadOS.match(/(iPadOS\s\d+\.\d*?\.?\d*?\s(beta\s?\d*?|RC\s?\d?))/)[1] : '正式版已发布',
+              title: iPadOS ? iPadOS.match(/(iPadOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : '正式版已发布',
               val: iPadOS ? iPadOS.match(/\((.*?)\)/)[1] : '>',
             },
             {
