@@ -1,8 +1,11 @@
-<meta charset="utf-8" >
-  <title>取色器</title>
-<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" href="https://static.runoob.com/assets/js/shadowlord/dist/css/app.css?1.00" media="all"/>
+  <link rel="stylesheet" href="https://static.runoob.com/assets/js/shadowlord/dist/css/app.css?1.00" media="all"/>
+     
+  <link rel="stylesheet" href="https://c.runoob.com/wp-content/themes/toolrunoob2/bootstrap.min.css">
+</head>
 
 <!-- search-->
 <header class="flex items-center">
