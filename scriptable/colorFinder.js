@@ -1,8 +1,3 @@
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: brown; icon-glyph: clock;
-const webView = new WebView()
-const webHtml = `
 <meta charset="utf-8" >
   <title>取色器</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
@@ -57,6 +52,3 @@ const webHtml = `
     <main></main>
     <script src="https://static.runoob.com/assets/js/shadowlord/dist/js/index.js"></script>    
 <!-- end -->
-`
-await webView.loadHTML(webHtml)
-await webView.present()
