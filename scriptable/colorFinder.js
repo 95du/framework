@@ -2,24 +2,28 @@
   <meta charset="utf-8" >
   <title>取色器</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0, user-scalable=no"/>
-
-  <link rel="stylesheet" href="https://static.runoob.com/assets/js/shadowlord/dist/css/app.css?1.00" media="all"/>
-     
   <link rel="stylesheet" href="https://c.runoob.com/wp-content/themes/toolrunoob2/bootstrap.min.css">
+  <link rel="stylesheet" href="https://static.runoob.com/assets/js/shadowlord/dist/css/app.css?1.00" media="all"/>
 </head>
+
+<style>
+.runoob-page-content {
+    margin: 0 20px;
+}
+</style>
+<div class="runoob-page-content">
 
 <!-- search-->
 <header class="flex items-center">
       <div class="header__logo mr05"></div>
       <button class="mdc-icon-button" data-btn-info type="button" aria-label="project info" style="display:none;">
-        
       </button>
       <div class="header__input-wrapper flex flex-auto">
         <div class="flex items-center">
           <button class="mdc-button" data-btn-color-picker type="button" aria-label="toggle color picker dialog">
             <span class="mdc-button__ripple"></span>
-            <svg class="mdc-button__icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6.92,19L5,17.08L13.06,9L15,10.94M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L13.84,6.41L11.91,4.5L10.5,5.91L11.92,7.33L3,16.25V21H7.75L16.67,12.08L18.09,13.5L19.5,12.09L17.58,10.17L20.7,7.05C21.1,6.65 21.1,6 20.71,5.63Z" />
+            <svg class="mdc-button__icon" width="20" height="20" viewBox="0 0 1024 1024" aria-hidden="true">
+              <path d="M941.226667 346.737778c129.365333-155.420444 85.902222-195.470222 5.12-276.878222-62.748444-63.374222-114.005333-118.727111-272.839111 6.883555l267.719111 269.994667zM594.090667 146.375111c-13.653333 12.913778-27.875556 26.794667-42.780445 41.870222l-419.555555 423.082667c-59.164444 55.921778-157.411556 370.232889-123.448889 404.48 33.905778 34.190222 342.471111-57.856 399.644444-123.107556l420.977778-424.504888c14.961778-15.018667 28.842667-29.297778 41.756444-42.894223l-276.593777-278.926222z" fill="#3F8BFF" />
             </svg>
             <span class="mdc-button__label header__preview-color"></span>
           </button>
@@ -50,7 +54,7 @@
         </button>
       </div>
     </header>
-
+    
     <main></main>
     <script src="https://static.runoob.com/assets/js/shadowlord/dist/js/index.js"></script>    
 <!-- end -->
