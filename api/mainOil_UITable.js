@@ -579,7 +579,7 @@ async function main() {
                 }
                 notify('添加成功', `当前数据库中已储存 ${count} 种颜色`);
               } else {
-                filedVal.match(/(^\d+\.?\d*?$)/)[1] ? setting[val] = filedVal : setting[val]
+                filedVal.match(/(^\d+(?=\.?\d+$|$))/)[1] ? setting[val] = filedVal : setting[val]
               }
             }
           } else if (type === 'but') {
