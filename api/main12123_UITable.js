@@ -601,7 +601,7 @@ async function main() {
             if (response !== -1) {
               const filedVal = set.textFieldValue();
               if (val === 'gradient') {
-                matchVal = filedVal.match(/(\#?[\w\d]+)/)[1];
+                matchVal = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
               }
               if (val === 'picture') {
                 matchVal = filedVal.match(/(http.+png)/)[1];
