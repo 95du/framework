@@ -567,7 +567,9 @@ async function main() {
             const response = await set.present();
             if (response !== -1) {
               const filedVal = set.textFieldValue();
-              const color = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
+              if (val === 'gradient') {
+                color = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
+              }
               if (tips && color) {
                 arr = setting[val];
                 arr.push(color);
