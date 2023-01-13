@@ -542,7 +542,6 @@ async function main() {
           }
         }
         : async () => {
-          let n = new Notification();
           if (type === 'input') {
             let set = new Alert();
             set.title = title;
@@ -572,6 +571,7 @@ async function main() {
               }
             }
           } else if (type === 'but') {
+            let n = new Notification();
             n.sound = 'popup'
             n.schedule();
             setting[val] = setting[val] === 'true' ? "false" : "true"
@@ -579,8 +579,7 @@ async function main() {
             const clear = await generateAlert(title, desc, options = ['取消', '确认']);
             if (clear === 1) {
               F_MGR.remove(bgImage);
-              n.sound = 'event'
-              n.schedule();
+              notify('删除成功', '桌面组件稍后将自动刷新');
             }
           } else if (type === 'background') {
             const importedModule = importModule(await backgroundModule());
@@ -756,7 +755,7 @@ async function main() {
     n = Object.assign(n, opts);
     n.title = title
     n.body = body
-    n.sound = 'alert'
+    n.sound = 'accept'
     if (url) n.openURL = url
     return await n.schedule()
   }
