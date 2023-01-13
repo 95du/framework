@@ -870,6 +870,7 @@ async function main() {
         downloadCell.dismissOnTap = true;
         downloadCell.onTap = async () => {
           const script = await new Request(item.scriptURL).loadString();
+          const F_MGR = FileManager.iCloud();
           F_MGR.writeString(F_MGR.documentsDirectory() + `/${item.name}.js`, script)
           if (script) {
             notify('', `小组件:${item.title}下载/更新成功`);
