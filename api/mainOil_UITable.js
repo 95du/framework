@@ -543,18 +543,16 @@ async function main() {
         }
         : async () => {
           if (type === 'input') {
-            let set = new Alert();
-            set.title = title;
-            set.message = tips ? desc + setting[val] : desc
-            set.addTextField(
-              tips ? tips : setting[val],
-              tips ? '' : setting[val]
-            );
-            set.addCancelAction("取消");
-            set.addAction("确认");
-            const response = await set.present();
-            if (response !== -1) {
-              const filedVal = set.textFieldValue();
+            await generateInputAlert ({
+              title: title,
+              message: tips ? desc + setting[val] : desc,
+              options: [{ 
+                hint: !tips ? setting[val] : tips,
+                value: !tips ? setting[val] : null
+              }]
+            }, 
+            async (inputArr) => {
+              const filedVal = inputArr[0].value;
               if (val === 'gradient') {
                 color = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
               }
@@ -567,9 +565,9 @@ async function main() {
                 }
                 notify('添加成功', `当前数据库中已储存 ${count} 种颜色`);
               } else {
-                filedVal.match(/(^\d+(?=\.?\d+$|$))/)[1] ? setting[val] = filedVal : setting[val]
+                filedVal.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? setting[val] = filedVal : setting[val]
               }
-            }
+            });
           } else if (type === 'but') {
             let n = new Notification();
             n.sound = 'popup'
