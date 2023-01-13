@@ -241,7 +241,7 @@ async function main() {
         title: '省份地区',
         desc: '输入你所在的省份名称',
         val: '>',
-        objKey: 'province'
+        inp: 'province'
       },
       {
         icon: {
@@ -464,11 +464,18 @@ async function main() {
             notify('订阅成功', item.ios + '\n将收到iOS最新开发者版或正式版通知');
           }
         } else if (type == 'input') {
-          await inputInfo(
-            item['title'],
-            item['desc'],
-            item['objKey']
-          );
+          await generateInputAlert ({
+            title: item.desc,
+            options: [{ 
+              hint: setting[item.inp],
+              value: setting[item.inp]
+            }]
+          }, 
+          async (inputArr) => {
+            setting[item.inp] = inputArr[0].value;
+            await saveSettings();
+            notify('设置成功', '桌面组件稍后将自动刷新');
+          });
         } else if (type == 'preview') {
           let importedModule = importModule(modulePath);
           await importedModule.main();
@@ -476,24 +483,6 @@ async function main() {
       }
     }
     table.reload();
-  }
-  
-  // Refresh Time
-  async function inputInfo(title, desc, objKey) {  
-    await generateInputAlert (
-      {
-        title: desc,
-        options: [{ 
-          hint: setting[objKey],
-          value: setting[objKey]
-        }]
-      }, 
-      async (inputArr) => {
-        setting[objKey] = inputArr[0].value;
-        await saveSettings();
-        notify('设置成功', '桌面组件稍后将自动刷新');
-      }
-    );
   }
   
   
@@ -513,8 +502,6 @@ async function main() {
       
       assist.forEach ((item) => {
         const { title, url, val, desc, type, tips } = item;
-        const isBoolValue = (setting[val] !== "true" && setting[val] !== "false") ? false : true
-        let n = new Notification();
         const row = new UITableRow();
         row.height = 45;
         const rowIcon = row.addImageAtURL(url);
@@ -523,6 +510,7 @@ async function main() {
         rowTitle.widthWeight = 400;
         rowTitle.titleFont = Font.systemFont(16);
         
+        const isBoolValue = (setting[val] !== "true" && setting[val] !== "false") ? false : true
         if (isBoolValue) {
           const trueFalse = setting[val] === "true";
           if (trueFalse) {
@@ -554,6 +542,7 @@ async function main() {
           }
         }
         : async () => {
+          let n = new Notification();
           if (type === 'input') {
             let set = new Alert();
             set.title = title;
