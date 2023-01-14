@@ -288,7 +288,7 @@ async function main() {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',
               type: 'input',
               title: '刷新时间',
-              desc: '尝试改变刷新组件时间，具体时间由系统判断，单位: 分钟',
+              desc: '尝试改变刷新组件时间\n具体时间由系统判断，单位: 分钟',
               val: 'minute',
             },
             {
