@@ -333,7 +333,7 @@ async function main() {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/clearBg.png',
               type: 'clear',
               title: '清除背景',
-              desc: '删除正在使用的背景图'
+              desc: '删除背景图以及清空渐变背景代码'
             },
             {
               interval: 26
@@ -622,6 +622,7 @@ async function main() {
           } else if (type == 'clear') {
             const clear = await generateAlert(title, desc, ['取消', '确认']);
             if (clear === 1) {
+              setting.gradient.splice(0);
               F_MGR.remove(bgImage);
               notify('删除成功', '桌面组件稍后将自动刷新');
             }
