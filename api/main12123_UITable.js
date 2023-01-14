@@ -320,6 +320,16 @@ async function main() {
               title: '透明背景'
             },
             {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/bgImage.png',
+              type: 'bgImage',
+              title: '图片背景',
+              onClick: async () => {
+                const img = await Photos.fromLibrary();
+                await F_MGR.writeImage(bgImage, img);
+                notify('设置成功', '桌面组件稍后将自动刷新');
+              }
+            },
+            {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/clearBg.png',
               type: 'clear',
               title: '清除背景',
@@ -354,7 +364,7 @@ async function main() {
               val: 'appleOS'
             },
             {
-              interval: 74.9 * Device.screenScale()
+              interval: 59.8 * Device.screenScale()
             }
           ];
           const table = new UITable();
