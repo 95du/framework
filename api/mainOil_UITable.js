@@ -291,6 +291,13 @@ async function main() {
               title: '透明背景'
             },
             {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking2.png',
+              type: 'input',
+              title: '遮罩透明',
+              desc: '给图片加一层半透明遮罩\n完全透明设置为 0',
+              val: 'masking'
+            },
+            {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/bgImage.png',
               type: 'bgImage',
               title: '图片背景',
@@ -333,7 +340,7 @@ async function main() {
               val: 'appleOS'
             },
             {
-              interval: 59.8 * Device.screenScale()
+              interval: 44.8 * Device.screenScale()
             }
           ];
           const table = new UITable();
@@ -586,7 +593,7 @@ async function main() {
           } else if (type == 'clear') {
             const clear = await generateAlert(title, desc, options = ['取消', '确认']);
             if (clear === 1) {
-              setting.gradient.splice(0);
+              setting.gradient = [];
               F_MGR.remove(bgImage);
               notify('删除成功', '桌面组件稍后将自动刷新');
             }
