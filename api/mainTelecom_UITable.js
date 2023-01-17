@@ -395,7 +395,7 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年01月04日\n使用UITable样式框架',
+        desc: '2023年01月18日\n使用UITable样式框架',
         val: '1.0.0',
         ver: 'Version 1.0.0'
       },
