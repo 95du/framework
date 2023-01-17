@@ -583,7 +583,7 @@ async function main() {
           if (type === 'input') {
             await generateInputAlert ({
               title: title,
-              message: tips ? desc + setting[val] : desc,
+              message: desc,
               options: [{ 
                 hint: !tips ? setting[val] : tips,
                 value: !tips ? setting[val] : null
