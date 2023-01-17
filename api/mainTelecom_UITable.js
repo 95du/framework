@@ -66,7 +66,6 @@ async function main() {
         return modulePath;
       }
     }
-    notify('hh', '')
   }
   
   async function userloginWeb() {  
