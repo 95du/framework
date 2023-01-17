@@ -71,7 +71,7 @@ async function main() {
   async function userloginWeb() {  
     const login = await generateAlert(  
       title = '中国电信余量',
-      message = `登录天翼账号中心，登录成功后实现无 Cookie 状态使用小组件`,
+      message = `登录天翼账号中心，登录成功 Cookie 将储存到 iCloud`,
       options = ['取消', '登录']
     );
     if (login === 1) {
