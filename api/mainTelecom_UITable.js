@@ -240,15 +240,15 @@ async function main() {
       },
       {
         icon: {
-          name: 'shippingbox.fill',
+          name: 'network',
           color: '#F57C00'
         },
-        title: 'Boxjs.com',
+        title: '天翼中心',
         val: '>',
         onClick: async () => {
           const webView = new WebView();
-          await webView.loadURL('http://boxjs.com');
-          await webView.present(true);
+          await webView.loadURL('https://e.189.cn/store/wap/partner/stylehead/189Bill.do');
+          await webView.present()
         }
       },
       {
