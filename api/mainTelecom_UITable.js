@@ -30,7 +30,6 @@ async function main() {
   } else {
     data = F_MGR.readString(cacheFile);
     setting = JSON.parse(data);
-    verifyToken = setting.verifyToken
   }
   
   // Background Color
