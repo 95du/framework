@@ -282,8 +282,8 @@ async function main() {
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/carPicture.png',
               type: 'input',
-              title: '车辆图片',
-              desc: '可添加多张图片，小组件随机切换',
+              title: 'Logo图片',
+              desc: '显示在小组件左上角',
               val: 'picture',
               tips: '输入图片URL'
             },
