@@ -663,7 +663,6 @@ async function main() {
       notify('更新失败⚠️', '请检查网络或稍后再试');
     } else {
       F_MGR.writeString(modulePath, codeString);
-      notify('小组件更新成功', '');
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
   }
