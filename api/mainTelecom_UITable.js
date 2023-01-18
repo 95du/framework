@@ -23,8 +23,7 @@ async function main() {
       masking: '0.3',
       gradient: [],
       update: 'true',
-      appleOS: "true",
-      init: false
+      appleOS: "true"
     }
     await saveSettings();
   } else {
