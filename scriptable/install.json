@@ -19,7 +19,7 @@
         {
             "depend": {
                 "name": "DmYY",
-                "scriptURL": ""
+                "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
             "title": "交管12123_2",
             "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/new12123.png",
@@ -63,6 +63,18 @@
             "description": "中国电信余量",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/telecom.js",
             "name": "中国电信"
+        },
+        {
+            "depend": {
+                "name": "DmYY",
+                "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
+            },
+            "title": "中国电信_2",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/telecom_2.png",
+            "version": "1.0.0",
+            "description": "中国电信余量",
+            "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/moduleTelecom.js",
+            "name": "中国电信_2"
         },
         {
             "depend": {
