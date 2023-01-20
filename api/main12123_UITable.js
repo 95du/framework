@@ -379,7 +379,7 @@ async function main() {
               val: 'appleOS'
             },
             {
-              interval: 44.8 * Device.screenScale()
+              interval: 29.8 * Device.screenScale()
             }
           ];
           const table = new UITable();
