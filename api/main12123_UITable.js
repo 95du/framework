@@ -471,7 +471,7 @@ async function main() {
       
       if (item.val) {
         let valText = row.addText(
-          `${item.val}`.toUpperCase()
+          item.val.toUpperCase()
         );
         const fontSize = !item.val ? 26 : 16;
         valText.widthWeight = 500;
@@ -586,7 +586,7 @@ async function main() {
           const valText = row.addText(tips || !setting[val] ? '>' : setting[val]);
           valText.widthWeight = 500;
           valText.rightAligned();
-          valText.titleColor = type !== 'input' ? new Color('#b2b2b2', 0.8) : Color.blue()
+          valText.titleColor = !desc ? new Color('#b2b2b2', 0.8) : Color.blue()
           valText.titleFont = Font.mediumSystemFont(16);
         }
         
