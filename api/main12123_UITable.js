@@ -305,7 +305,7 @@ async function main() {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/photoSize.png',
               type: 'size',
               title: '车图尺寸',
-              desc: 'SUV 车型设置高度小于100'
+              desc: 'SUV车型图片设置高度小于100'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
