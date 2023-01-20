@@ -25,6 +25,8 @@ async function main() {
       verifyToken: '0',
       update: 'true',
       appleOS: "true",
+      width: 225,
+      height: 100
     }
     await saveSettings();
   } else {
@@ -300,6 +302,12 @@ async function main() {
               tips: '输入图片URL'
             },
             {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/photoSize.png',
+              type: 'size',
+              title: '车图尺寸',
+              desc: 'SUV 车型设置高度小于100'
+            },
+            {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
               type: 'input',
               title: '渐变背景',
@@ -407,9 +415,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年01月04日\n使用UITable样式框架',
-        val: '1.0.0',
-        ver: 'Version 1.0.0'
+        desc: '2023年01月20日\n增加修改车辆图片尺寸',
+        val: '1.0.2',
+        ver: 'Version 1.0.2'
       },
       {
         icon: {
@@ -636,6 +644,24 @@ async function main() {
           } else if (type === 'background') {
             const importedModule = importModule(await backgroundModule());
             await importedModule.main()
+          } else if (type === 'size') {
+            await generateInputAlert ({
+              title: title,
+              message: desc,
+              options: [{ 
+                hint: '宽度',
+                value: String(setting['width'])
+              },
+              { 
+                hint: '高度',
+                value: String(setting['height'])
+              }]
+            }, 
+            async (inputArr) => {
+              setting.width = Number(inputArr[0].value);
+              setting.height = Number(inputArr[1].value);
+              notify('设置成功', '桌面组件稍后将自动刷新');
+            });
           }
           // Refresh Save
           await refreshAllRows();
