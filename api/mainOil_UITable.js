@@ -155,7 +155,7 @@ async function main() {
                 color: '#43CD80'
               },
               type: 'OS',
-              title: iOS ? iOS.match(/(iOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : '正式版已发布',
+              title: iOS.indexOf('RC' || 'beta') !== -1 ? iOS.match(/(iOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : iOS,
               val: iOS ? iOS.match(/\((.*?)\)/)[1] : '>',
               ios: iOS
             },
@@ -166,7 +166,7 @@ async function main() {
               },
               type: 'OS',
               title: html.match(/<title>(iOS\s\d+\.\d\.?\d?)\s\(/)[1],
-              val: '>',
+              val: '>'
             },
             {
               icon: {
@@ -175,7 +175,7 @@ async function main() {
               },
               type: 'OS',
               title: html.match(/<title>(iOS\s15\.\d\.?\d?)\s\(/)[1],
-              val: '>',
+              val: '>'
             },
             {
               interval: 26
@@ -186,8 +186,8 @@ async function main() {
                 color: '#F9A825'
               },
               type: 'OS',
-              title: iPadOS ? iPadOS.match(/(iPadOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : '正式版已发布',
-              val: iPadOS ? iPadOS.match(/\((.*?)\)/)[1] : '>',
+              title: iPadOS.indexOf('RC' || 'beta') !== -1 ? iOS.match(/(iOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : iPadOS,
+              val: iPadOS ? iPadOS.match(/\((.*?)\)/)[1] : '>'
             },
             {
               icon: {
@@ -196,7 +196,7 @@ async function main() {
               },
               type: 'OS',
               title: html.match(/<title>(iPadOS\s\d+\.\d\.?\d?)\s\(/)[1],
-              val: '>',
+              val: '>'
             },
             {
               icon: {
@@ -205,7 +205,7 @@ async function main() {
               },
               type: 'OS',
               title: html.match(/<title>(iPadOS\s15\.\d\.?\d?)\s\(/)[1],
-              val: '>',
+              val: '>'
             },
             {
               interval: 130.5 * Device.screenScale()
@@ -268,7 +268,7 @@ async function main() {
               type: 'input',
               title: '刷新时间',
               desc: '尝试改变刷新组件时间\n具体时间由系统判断，单位: 分钟',
-              val: 'minute',
+              val: 'minute'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
