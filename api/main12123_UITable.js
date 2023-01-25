@@ -650,11 +650,11 @@ async function main() {
               message: desc,
               options: [{ 
                 hint: '宽度',
-                value: String(setting['width'])
+                value: setting['width'].toString()
               },
               { 
                 hint: '高度',
-                value: String(setting['height'])
+                value: setting['height'].toString()
               }]
             }, 
             async (inputArr) => {
