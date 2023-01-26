@@ -78,7 +78,7 @@ async function main() {
       await webview.loadURL('http://u3v.cn/5uwtIP');
       await webview.present();
       cookie = await webview.evaluateJavaScript('document.cookie');
-      setting.cookie = cookie
+      setting.cookie = cookie.match(/(CZSSON=[a-zA-Z\d]+)/)[1];
       await saveSettings();
     }
   }
