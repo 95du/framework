@@ -451,7 +451,7 @@ async function main() {
   async function preferences(table, arr, outfit) {
     if (outfit === 'Apple OS') {
       let header = new UITableRow();
-      header.height = 80;
+      header.height = 70;
       let heading = header.addText(outfit);
       heading.titleFont = Font.mediumSystemFont(30);
       table.addRow(header);
@@ -560,7 +560,7 @@ async function main() {
     function loadAllRows() {
       const title = new UITableRow()
       title.isHeader = true;
-      title.height = 80;
+      title.height = 70;
       const titleText = title.addText(outfit);
       titleText.titleFont = Font.mediumSystemFont(30);
       table.addRow(title);
