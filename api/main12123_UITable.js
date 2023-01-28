@@ -308,6 +308,13 @@ async function main() {
               desc: 'SUV车型图片设置高度小于100'
             },
             {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/layout.png',
+              type: 'input',
+              title: '布局调整',
+              desc: '如布局显示不完整，修改小于230',
+              val: 'layout'
+            },
+            {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
               type: 'input',
               title: '渐变背景',
