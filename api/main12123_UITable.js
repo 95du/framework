@@ -244,7 +244,7 @@ async function main() {
               val: '>'
             },
             {
-              interval: 130.5 * Device.screenScale()
+              interval: 133.8 * Device.screenScale()
             }
           ];
           const table = new UITable();
@@ -386,7 +386,7 @@ async function main() {
               val: 'appleOS'
             },
             {
-              interval: 29.8 * Device.screenScale()
+              interval: 18.2 * Device.screenScale()
             }
           ];
           const table = new UITable();
