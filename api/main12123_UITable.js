@@ -20,13 +20,15 @@ async function main() {
       minute: '10',
       picture: [],
       transparency: '0.5',
+      masking: '0.3',
       gradient: [],
       myPlate: '琼A·66888',
-      verifyToken: '0',
+      verifyToken: null,
       update: 'true',
       appleOS: "true",
       width: 225,
-      height: 100
+      height: 100,
+      layout: '230'
     }
     await saveSettings();
   } else {
@@ -40,7 +42,7 @@ async function main() {
     new Color('#F5F5F5'), new Color('')
   );
   const topBgColor = Color.dynamic(
-    new Color('#EEEEEE'), new Color('')
+    new Color('#EFEFEF'), new Color('')
   );
   
   // refresh time
@@ -59,7 +61,7 @@ async function main() {
     if (setting.update === 'false') {
       return modulePath;
     } else {
-      const req = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdGFibGUvMTIxMjNfVUlUYWJsZS5qcw=='));
+      const req = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/12123_UITable.js');
       const moduleJs = await req.load().catch(() => {
         return null;
       });
@@ -72,28 +74,34 @@ async function main() {
   
   async function getVerifyToken() {  
     try {
-      boxjs_data = await new Request('http://boxjs.com/query/data/token_12123').loadJSON();
+      const boxjs_data = await new Request('http://boxjs.com/query/data/token_12123').loadJSON();
       verifyToken = boxjs_data.val
-      console.log(verifyToken);
+      const boxjs_referer = await new Request('http://boxjs.com/query/data/referer_12123').loadJSON();
+      referer = boxjs_referer.val
     } catch(e) {
       if (config.runsInApp) {
         Safari.open('quantumult-x://');
         notify('获取boxJs数据失败 ⚠️', '需打开Quantumult-X获取verifyToken');
       }
     }
+    if (verifyToken && !referer) {
+      Safari.open('alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex');
+      notify('boxjs_referer ⚠️', '点击车牌号或查询即可更新/获取');
+    }
     if (!verifyToken) {
       const login = await generateAlert(  
         title = '交管 12123',
-        message = `\n自动获取支付宝交管12123小程序Token需要Quantumult-X / Surge 辅助运行，具体方法请查看小组件代码开头注释。\n\n小组件作者: 95度茅台\n获取Token作者: @FoKit`,
+        message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，具体方法请查看小组件代码开头注释\n\n⚠️获取Referer方法: 当跳转到支付宝12123时点击【 查机动车违法 】再点击【 查询 】，用于获取检验有效期的日期和累积记分‼\n\r\n小组件作者: 95度茅台\n获取Token作者: @FoKit`,
         options = ['取消', '获取']
       );
       if (login === 1) {
         Safari.open('alipays://platformapi/startapp?appId=2019050964403523');
       }
-    } else if (verifyToken === '0') {
-      setting.verifyToken = boxjs_data.val
+    } else if (setting.verifyToken === null || referer) {
+      setting.verifyToken = verifyToken
+      setting.referer = referer
       await saveSettings();
-      notify('交管12123', `boxjs_token 获取成功: ${boxjs_data.val}`);
+      notify('交管12123', `boxjs_token 获取成功: ${verifyToken}`);
     } else {
       Safari.open('alipays://platformapi/startapp?appId=2019050964403523');
     }
@@ -116,8 +124,8 @@ async function main() {
     // Header effectImage Row
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
-    const topImg = ['aHR0cDovL210dy5zby81dm9Jc0Y=', 'aHR0cDovL210dy5zby82NzAzbHQ=', 
-  'aHR0cDovL210dy5zby82NlZvajg=', 'aHR0cDovL210dy5zby82ZXdnczY=']
+    const topImg = ['aHR0cDovL210dy5zby82dEE1QlE=', 'aHR0cDovL210dy5zby82NzAzbHQ=', 
+    'aHR0cDovL210dy5zby82NlZvajg=', 'aHR0cDovL210dy5zby82ZXdnczY=']
     const items = topImg[Math.floor(Math.random()*topImg.length)];
     const effectImage = effectRow.addImageAtURL(atob(items));
     effectImage.widthWeight = 0.4;
@@ -264,6 +272,15 @@ async function main() {
       },
       {
         icon: {
+          name: 'person.text.rectangle.fill',
+          color: '#DAA520'
+        },
+        type: 'token',
+        title: '累积记分',
+        val: '>'
+      },
+      {
+        icon: {
           name: 'car.fill',
           color: '#F57C00'
         },
@@ -305,7 +322,7 @@ async function main() {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/photoSize.png',
               type: 'size',
               title: '车图尺寸',
-              desc: 'SUV车型图片设置高度小于100'
+              desc: 'SUV车辆图片设置高度小于100'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/layout.png',
@@ -319,8 +336,8 @@ async function main() {
               type: 'input',
               title: '渐变背景',
               desc: '深色由上往下渐变淡\n可添加多种颜色，组件随机切换\n',
-              tips: '输入Hex颜色代码',
-              val: 'gradient'
+              val: 'gradient',
+              tips: '输入Hex颜色代码'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking.png',
@@ -422,9 +439,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年01月28日\n1，修复违章数据无法显示问题  2，支持多车辆、多次违章( 小组件随机显示内容 )  3，随机显示违章照片，点击地址跑转，刷新后可见',
-        val: '1.0.3',
-        ver: 'Version 1.0.3'
+        desc: '2023年01月30日\n版本更新，如关闭自动更新的手动更新代码，以及自行更新Quantumult-X 重写或其他辅助工具\n\n1，修复车辆违章后数据无法显示问题\n2，支持多车辆、多次违章( 随机显示 )\n3，随机显示违章照片，点击地址跑转\n4，增加显示检验有效期止日期  \n5，增加驾驶证累积记分',
+        val: '1.1.0',
+        ver: 'Version 1.1.0'
       },
       {
         icon: {
@@ -436,7 +453,7 @@ async function main() {
         desc: '更新后当前脚本代码将被覆盖\n请先做好备份，此操作不可恢复，但不会清除用户已设置的数据'
       },
       {
-        interval: 25.9 * Device.screenScale()
+        interval: 11.2 * Device.screenScale()
       },
     ];
     await preferences(table, updateVersion, '预览|版本|更新');
@@ -593,7 +610,7 @@ async function main() {
           const valText = row.addText(tips || !setting[val] ? '>' : setting[val]);
           valText.widthWeight = 500;
           valText.rightAligned();
-          valText.titleColor = !desc ? new Color('#b2b2b2', 0.8) : Color.blue()
+          valText.titleColor = !desc ? new Color('#b2b2b2', 0.8) : Color.blue();
           valText.titleFont = Font.mediumSystemFont(16);
         }
         
