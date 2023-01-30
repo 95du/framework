@@ -101,8 +101,7 @@ async function main() {
       setting.verifyToken = verifyToken
       setting.referer = referer
       await saveSettings();
-      notify('交管12123', `boxjs_token 获取成功: ${verifyToken}`);
-    } else {
+      notify('交管12123', `boxjs_token 获取成功: ${verifyToken}`);  
       Safari.open('alipays://platformapi/startapp?appId=2019050964403523');
     }
   }
