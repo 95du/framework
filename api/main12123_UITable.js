@@ -856,7 +856,7 @@ async function main() {
     n = Object.assign(n, opts);
     n.title = title
     n.body = body
-    n.sound = 'accept'
+    n.sound = 'piano_success'
     if (url) n.openURL = url
     return await n.schedule()
   }
