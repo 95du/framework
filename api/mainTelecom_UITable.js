@@ -24,7 +24,7 @@ async function main() {
       gradient: [],
       update: 'true',
       appleOS: "true",
-      init: false
+      init: 'false'
     }
     await saveSettings();
   } else {
