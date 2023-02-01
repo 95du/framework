@@ -281,10 +281,8 @@ async function main() {
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/string.png',
               type: 'input',
-              title: '余额颜色',
-              desc: '显示在小组件右上角，可添加多种颜色，组件随机切换\n',
-              val: 'words',
-              tips: '输入Hex颜色代码'
+              title: '暂留空位',
+              desc: '😂'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
