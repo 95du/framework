@@ -18,7 +18,7 @@ async function main() {
   if (!F_MGR.fileExists(cacheFile)) {
     setting = {
       minute: '10',
-      picture: [],
+      words: [],
       transparency: '0.5',
       masking: '0.3',
       gradient: [],
@@ -279,12 +279,12 @@ async function main() {
               val: 'minute'
             },
             {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/carPicture.png',
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/string.png',
               type: 'input',
-              title: 'Logo图片',
-              desc: '显示在小组件左上角',
-              val: 'picture',
-              tips: '输入图片URL'
+              title: '余额颜色',
+              desc: '显示在小组件右上角，可添加多种颜色，组件随机切换\n',
+              val: 'words',
+              tips: '输入Hex颜色代码'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
@@ -590,11 +590,8 @@ async function main() {
             }, 
             async (inputArr) => {
               const filedVal = inputArr[0].value;
-              if (val === 'gradient') {
+              if (val === 'gradient' || val === 'words') {
                 matchVal = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
-              }
-              if (val === 'picture') {
-                matchVal = filedVal.match(/(http.+png)/)[1];
               }
               if (tips && matchVal) {
                 arr = setting[val];
