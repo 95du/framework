@@ -316,7 +316,7 @@ async function main() {
               title: '车辆图片',
               desc: '可添加多张图片，小组件随机切换',
               val: 'picture',
-              tips: '输入图片URL'
+              tips: '输入png图片URL'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/photoSize.png',
