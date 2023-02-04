@@ -117,12 +117,12 @@
                 "name": "DmYY",
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
-            "title": "房屋估值1",
+            "title": "房屋估值",
             "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/house.png",
             "version": "1.0.0",
             "description": "幸福里全国房屋估值",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/housePrice.js",
-            "name": "房屋估值1"
+            "name": "房屋估值"
         },
         {
             "depend": {
