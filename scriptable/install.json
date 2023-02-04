@@ -135,6 +135,18 @@
             "description": "一键清空Scriptable回收站",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/cleanTrash.js",
             "name": "清空回收站"
+        },
+        {
+            "depend": {
+                "name": "DmYY",
+                "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
+            },
+            "title": "测试",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/cleanFiles.png",
+            "version": "1.0.0",
+            "description": "测试",
+            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/cleanTrash.js",
+            "name": "测试"
         }
     ]
 }
