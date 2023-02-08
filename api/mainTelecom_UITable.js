@@ -598,7 +598,10 @@ async function main() {
               const filedVal = inputArr[0].value;
               if (val === 'gradient' || val === 'balanceColor') {
                 matchVal = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
+              } else {
+                filedVal.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? setting[val] = filedVal : setting[val]
               }
+              // matchVal
               if (tips && matchVal) {
                 arr = setting[val];
                 arr.push(matchVal);
@@ -609,8 +612,6 @@ async function main() {
                 notify('添加成功', `当前数据库中已储存 ${count} 个数值`);
               } else if (matchVal) {
                 matchVal ? setting[val] = filedVal : setting[val]
-              } else {
-                filedVal.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? setting[val] = filedVal : setting[val]
               }
             });
           } else if (type === 'but') {
