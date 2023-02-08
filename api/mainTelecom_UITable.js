@@ -396,6 +396,7 @@ async function main() {
           color: '#F9A825'
         },
         type: 'ver',
+        title: '当前版本',
         desc: '2023年02月08日\n\n1，修复闪退等已知错误问题\n2，已登录过的用户、重置所有后点击天翼中心即可自动获取/更新Cookie',
         val: '1.0.2',
         ver: 'Version 1.0.2'
