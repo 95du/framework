@@ -21,6 +21,7 @@ async function main() {
       words: [],
       transparency: '0.5',
       masking: '0.3',
+      balanceColor: '#FF0000',
       gradient: [],
       update: 'true',
       appleOS: "true",
@@ -246,7 +247,10 @@ async function main() {
         onClick: async () => {
           const webView = new WebView();
           await webView.loadURL('https://e.189.cn/store/wap/partner/stylehead/189Bill.do');
-          await webView.present()
+          await webView.present();
+          const cookie = await webView.evaluateJavaScript('document.cookie');
+          setting.cookie = cookie.match(/(CZSSON=[a-zA-Z\d]+)/)[1];
+          await saveSettings();
         }
       },
       {
@@ -281,8 +285,9 @@ async function main() {
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/string.png',
               type: 'input',
-              title: '暂留空位',
-              desc: '😂'
+              title: '余额颜色',
+              desc: '输入Hex颜色代码',
+              val: 'balanceColor'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
@@ -391,10 +396,9 @@ async function main() {
           color: '#F9A825'
         },
         type: 'ver',
-        title: '当前版本',
-        desc: '2023年02月01日\n修复闪退等已知错误问题',
-        val: '1.0.1',
-        ver: 'Version 1.0.1'
+        desc: '2023年02月08日\n\n1，修复闪退等已知错误问题\n2，已登录过的用户、重置所有后点击天翼中心即可自动获取/更新Cookie',
+        val: '1.0.2',
+        ver: 'Version 1.0.2'
       },
       {
         icon: {
@@ -588,7 +592,7 @@ async function main() {
             }, 
             async (inputArr) => {
               const filedVal = inputArr[0].value;
-              if (val === 'gradient' || val === 'words') {
+              if (val === 'gradient' || val === 'balanceColor') {
                 matchVal = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
               }
               if (tips && matchVal) {
@@ -599,6 +603,8 @@ async function main() {
                   count++
                 }
                 notify('添加成功', `当前数据库中已储存 ${count} 个数值`);
+              } else if (matchVal) {
+                matchVal ? setting[val] = filedVal : setting[val]
               } else {
                 filedVal.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? setting[val] = filedVal : setting[val]
               }
