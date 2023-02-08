@@ -1,7 +1,12 @@
-<meta charset="utf-8" >
-  <title>全国油价调整日期</title>
-<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <style type="text/css">
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
+// icon-color: brown; icon-glyph: clock;
+const webView = new WebView()
+const style = `
+  <meta charset="utf-8" >
+    <title>全国油价调整日期</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <style type="text/css">
    .box{
     width=100%;
     border-radius: 10px;
@@ -16,13 +21,13 @@
     margin: 0px auto;
     width: 90%;
    }
-  </style>
-    
+    </style>`
+const webHtml = style + `
 <body bgcolor=white>
  <h3>
   <center>
    <font color=black>
-    2023 年 25 次油价调整时间
+    2023 年 25 次油价调整
    </font>
   </center>
  </h3>
@@ -43,7 +48,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#FFA0A3;">
+   style="background-color:#7DD1F0;">
   <div class="words">
    <span style="color: #101418;">
     <b> 2月油价调整时间 </b>
@@ -56,7 +61,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#FFE669;">
+   style="background-color:#FFA0A3;">
   <div class="words">
    <span style="color: #101418;">
     <b> 3月油价调整时间 </b>
@@ -69,7 +74,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#7DE6C2;">
+   style="background-color:#FFA0A3;">
   <div class="words">
    <span style="color: #101418;">
     <b> 4月油价调整时间 </b>
@@ -82,7 +87,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#E0B0FF;">
+   style="background-color:#FFE669;">
   <div class="words">
    <span style="color: #101418;">
     <b> 5月油价调整时间 </b>
@@ -95,7 +100,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#FBCEB1;">
+   style="background-color:#FFE669;">
   <div class="words">
    <span style="color: #101418;">
     <b> 6月油价调整时间 </b>
@@ -108,7 +113,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#FFE669;">
+   style="background-color:#7DE6C2;">
   <div class="words">
    <span style="color: #101418;">
     <b> 7月油价调整时间 </b>
@@ -134,7 +139,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#7DD1F0;">
+   style="background-color:#E0B0FF;">
   <div class="words">
    <span style="color: #101418;">
     <b> 9月油价调整时间 </b>
@@ -147,7 +152,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#FFA0A3;">
+   style="background-color:#E0B0FF;">
   <div class="words">
    <span style="color: #101418;">
     <b> 10月油价调整时间 </b>
@@ -160,7 +165,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#FAC898;">
+   style="background-color:#FBCEB1;">
   <div class="words">
    <span style="color: #101418;">
     <b> 11月油价调整时间 </b>
@@ -173,7 +178,7 @@
  </div>
 
  <div class="box"
-   style="background-color:#E0B0FF;">
+   style="background-color:#FBCEB1;">
   <div class="words">
    <span style="color: #101418;">
     <b> 12月油价调整时间 </b>
@@ -195,3 +200,6 @@ padding-right: 5px;
  </div>
  </div>
 </body>
+`
+await webView.loadHTML(webHtml)
+await webView.present()
