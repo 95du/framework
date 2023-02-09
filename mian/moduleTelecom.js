@@ -5,15 +5,23 @@
  * 小组件作者: 95度茅台
  * 感谢 @LSP @DmYY
  * 脚本名称: 中国电信余量
- * UITable Version 1.0.0
- * 2023-01-18 11:30
+ * UITable Version 1.0.2
+ * 2023-02-08 11:30
  * Telegram 交流群 https://t.me/+ViT7uEUrIUV0B_iy
 */
 
 const scriptName = '95duTelecom';
 const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpblRlbGVjb21fVUlUYWJsZS5qcw==');
-const fm = FileManager.iCloud();
-const moduleDir = fm.joinPath(fm.libraryDirectory(), scriptName);
+const fm = FileManager.local();
+const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
+if (!fm.fileExists(runPath)) {
+  fm.createDirectory(runPath);
+}
+
+const moduleDir = fm.joinPath(fm.documentsDirectory(), `${scriptName}/Running`);
+if (!fm.fileExists(moduleDir)) {
+  fm.createDirectory(moduleDir);
+}
 
 const modulePath = await downloadModule(scriptName, scriptUrl);
 if (modulePath != null) {
@@ -25,8 +33,6 @@ if (modulePath != null) {
 
 
 async function downloadModule(scriptName, scriptUrl) {
-  if (fm.fileExists(moduleDir) && !fm.isDirectory(moduleDir)) fm.remove(moduleDir);
-  if (!fm.fileExists(moduleDir)) fm.createDirectory(moduleDir);
   const hours = new Date().getHours()
   const moduleFilename = hours.toString() + '.js';
   const modulePath = fm.joinPath(moduleDir, moduleFilename);
