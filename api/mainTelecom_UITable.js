@@ -871,7 +871,7 @@ async function main() {
       const leftText = topRow.addButton('效果图');
       leftText.onTap = async () => {
         const webView = new WebView();
-        await webView.loadURL(atob('aHR0cHM6Ly9zd2VpeGluZmlsZS5oaXNlbnNlLmNvbS9tZWRpYS9NMDAvNzEvRjMvQ2g0RnlXT1NuM3FBVG9pUUFDT2ZoaVpaUzFJNzY4LnBuZw=='));
+        await webView.loadURL('https://gitcode.net/4qiao/framework/raw/master/img/picture/Example.png');
         await webView.present(false);
       };
   
