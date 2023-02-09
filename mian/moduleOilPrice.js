@@ -12,8 +12,16 @@
 
 const scriptName = '95duOilPrice';
 const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbk9pbF9VSVRhYmxlLmpz');
-const fm = FileManager.iCloud();
-const moduleDir = fm.joinPath(fm.libraryDirectory(), scriptName);
+const fm = FileManager.local();
+const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
+if (!fm.fileExists(runPath)) {
+  fm.createDirectory(runPath);
+}
+
+const moduleDir = fm.joinPath(fm.documentsDirectory(), `${scriptName}/Running`);
+if (!fm.fileExists(moduleDir)) {
+  fm.createDirectory(moduleDir);
+}
 
 const modulePath = await downloadModule(scriptName, scriptUrl);
 if (modulePath != null) {
@@ -25,8 +33,6 @@ if (modulePath != null) {
 
 
 async function downloadModule(scriptName, scriptUrl) {
-  if (fm.fileExists(moduleDir) && !fm.isDirectory(moduleDir)) fm.remove(moduleDir);
-  if (!fm.fileExists(moduleDir)) fm.createDirectory(moduleDir);
   const hours = new Date().getHours()
   const moduleFilename = hours.toString() + '.js';
   const modulePath = fm.joinPath(moduleDir, moduleFilename);
