@@ -281,7 +281,7 @@ async function main() {
               val: 'minute'
             },
             {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/string.png',
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/textColor.png',
               type: 'input',
               title: '余额颜色',
               desc: '输入Hex颜色代码',
