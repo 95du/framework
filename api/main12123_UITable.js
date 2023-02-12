@@ -301,7 +301,7 @@ async function main() {
         },
         type: 'input',
         title: '车牌号码',
-        desc: '车牌显示在小组件左上角',
+        desc: '用于违章时获取数据',
         val: '>',
         inp: 'myPlate'
       },
