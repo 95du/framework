@@ -186,6 +186,24 @@ async function main() {
           const html = await new Request(atob('aHR0cHM6Ly9kZXZlbG9wZXIuYXBwbGUuY29tL25ld3MvcmVsZWFzZXMvcnNzL3JlbGVhc2VzLnJzcw==')).loadString();
           const iOS = html.match(/<title>(iOS.*?)<\/title>/)[1];
           const iPadOS = html.match(/<title>(iPadOS.*?)<\/title>/)[1];
+          const arr = html.split('<item>');
+          
+          let newArr =[];
+          for (const item of arr) {
+            const iOS = item.match(/<title>(.*?)<\/title>/)[1];
+            if (iOS.indexOf('iOS 16') > -1) {
+              newArr.push(iOS)
+            }
+          }
+          
+          let newArriPad = [];  
+          for (const item of arr) {
+            const iPadOS = item.match(/<title>(.*?)<\/title>/)[1];
+            if (iPadOS.indexOf('iPadOS 16') > -1) {
+              newArriPad.push(iPadOS)
+            }
+          }
+          
           const actions = [
             {
               interval: 26
@@ -196,8 +214,8 @@ async function main() {
                 color: '#43CD80'
               },
               type: 'OS',
-              title: (iOS.indexOf('beta') > -1 || iOS.indexOf('RC') > -1) ? iOS.match(/(iOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : iOS,
-              val: iOS ? iOS.match(/\((.*?)\)/)[1] : '>',
+              title: (iOS.indexOf('beta') > -1 || iOS.indexOf('RC') > -1) ? iOS.match(/(iOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : iOS.match(/(iOS\s\d+\.\d*?\.?\d*?)\s\(/)[1],
+              val: iOS.match(/\((.*?)\)/)[1],
               ios: iOS
             },
             {
@@ -206,7 +224,7 @@ async function main() {
                 color: '#F57C00'
               },
               type: 'OS',
-              title: html.match(/<title>(iOS\s\d+\.\d\.?\d?)\s\(/)[1],
+              title: newArr[1],
               val: '>'
             },
             {
@@ -215,7 +233,7 @@ async function main() {
                 color: '#00BCD4'
               },
               type: 'OS',
-              title: html.match(/<title>(iOS\s15\.\d\.?\d?)\s\(/)[1],
+              title: html.match(/<title>(iOS\s15.*?)<\/title>/)[1],
               val: '>'
             },
             {
@@ -227,8 +245,8 @@ async function main() {
                 color: '#F9A825'
               },
               type: 'OS',
-              title: (iPadOS.indexOf('beta') > -1 || iPadOS.indexOf('RC') > -1) ? iOadOS.match(/(iOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : iPadOS,
-              val: iPadOS ? iPadOS.match(/\((.*?)\)/)[1] : '>'
+              title: (iPadOS.indexOf('beta') > -1 || iPadOS.indexOf('RC') > -1) ? iPadOS.match(/(iOS\s\d+\.\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : iPadOS.match(/(iPadOS\s\d+\.\d*?\.?\d*?)\s\(/)[1],
+              val: iPadOS.match(/\((.*?)\)/)[1]
             },
             {
               icon: {
@@ -236,7 +254,7 @@ async function main() {
                 color: '#AB47BC'
               },
               type: 'OS',
-              title: html.match(/<title>(iPadOS\s\d+\.\d\.?\d?)\s\(/)[1],
+              title: newArriPad[1],
               val: '>'
             },
             {
@@ -245,7 +263,7 @@ async function main() {
                 color: '#42A5F5'
               },
               type: 'OS',
-              title: html.match(/<title>(iPadOS\s15\.\d\.?\d?)\s\(/)[1],
+              title: html.match(/<title>(iPadOS\s15.*?)<\/title>/)[1],
               val: '>'
             },
             {
