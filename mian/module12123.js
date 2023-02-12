@@ -59,8 +59,10 @@ if (modulePath != null) {
 
 
 async function downloadModule(scriptName, scriptUrl) {
-  const hours = new Date().getHours()
-  const moduleFilename = hours.toString() + '.js';
+  const date = new Date();
+  const df = new DateFormatter();
+  df.dateFormat = 'yyyyMMddHH';
+  const moduleFilename = df.string(date).toString() + '.js';
   const modulePath = fm.joinPath(moduleDir, moduleFilename);
   if (fm.fileExists(modulePath)) {
     return modulePath;
