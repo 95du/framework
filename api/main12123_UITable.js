@@ -18,7 +18,7 @@ async function main() {
   if (!F_MGR.fileExists(cacheFile)) {
     const phone = Device.screenSize().height  
     if (phone < 926) {
-      size = {
+      layout = {
         leftGap1: 22,
         leftGap2: 5,
         rightGap1: 14,
@@ -28,7 +28,7 @@ async function main() {
         bottomSize: 212
       }
     } else {
-      size = {
+      layout = {
         leftGap1: 26,
         leftGap2: 9,
         rightGap1: 18,
@@ -39,7 +39,7 @@ async function main() {
       }
     };
     setting = {
-      ...size,
+      ...layout,
       minute: '10',
       picture: [],
       transparency: '0.5',
