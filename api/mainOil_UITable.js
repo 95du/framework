@@ -90,7 +90,7 @@ async function main() {
     // Top Row
     const topRow = new UITableRow();
     topRow.height = 70;
-    const leftText = topRow.addButton('更多组件');
+    const leftText = topRow.addButton('组件商店');
     leftText.widthWeight = 0.3;
     leftText.onTap = async () => {
       await Run();
@@ -954,7 +954,7 @@ async function main() {
       });
       const script = await new Request('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js').loadString();
       const fm = FileManager.iCloud();
-      fm.writeString(fm.documentsDirectory() + '/95 ° Scripts.js', script);
+      fm.writeString(fm.documentsDirectory() + '/95° 小组件商店.js', script);
     } catch (e) {
       console.log("缓存读取错误" + e);
     }
