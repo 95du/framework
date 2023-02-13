@@ -602,10 +602,9 @@ async function main() {
             await generateInputAlert ({
               title: title,
               message: (val === 'gradient') ? desc + setting[val] : desc,
-              options: [{ 
-                hint: !tips ? setting[val] : tips,
-                value: !tips ? setting[val] : null
-              }]
+              options: [
+                { hint: !tips ? setting[val] : tips, value: !tips ? setting[val] : null }
+              ]
             }, 
             async (inputArr) => {
               const filedVal = inputArr[0].value;
