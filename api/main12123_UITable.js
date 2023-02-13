@@ -359,7 +359,7 @@ async function main() {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/photoSize.png',
               type: 'input',
               title: '图下字符',
-              desc: '保持只显示一行字符',
+              desc: '保持小组件上只显示一行字符',
               val: 'botStr',
               str: '输入字符'
             },
