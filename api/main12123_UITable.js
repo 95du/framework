@@ -210,7 +210,7 @@ async function main() {
           const iPadOS = html.match(/<title>(iPadOS.*?)<\/title>/)[1];
           const arr = html.split('<item>');
           
-          let newArr =[];
+          let newArr = [];
           for (const item of arr) {
             const iOS = item.match(/<title>(.*?)<\/title>/)[1];
             if (iOS.indexOf('iOS 16') > -1) {
