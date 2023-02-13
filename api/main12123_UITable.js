@@ -719,7 +719,7 @@ async function main() {
                 {hint: '左二间隔', value: String(setting['leftGap2'])},
                 {hint: '右一间隔', value: String(setting['rightGap1'])},
                 {hint: '右二间隔', value: String(setting['rightGap2'])},
-                {hint: '右下尺寸', value: String(setting['bottomSize'])}
+                {hint: '图下尺寸', value: String(setting['bottomSize'])}
               ]
             }, 
             async (inputArr) => {
