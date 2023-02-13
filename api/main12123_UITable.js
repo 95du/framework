@@ -4,6 +4,7 @@
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
+  // Frame Path
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du12123");
   if (!F_MGR.fileExists(path)) {
     F_MGR.createDirectory(path);
@@ -11,28 +12,49 @@ async function main() {
   // Background image path
   const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
   const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
+  // json Path
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
   if (!F_MGR.fileExists(cacheFile)) {
+    const phone = Device.screenSize().height  
+    if (phone < 926) {
+      size = {
+        leftGap1: 22,
+        leftGap2: 5,
+        rightGap1: 14,
+        rightGap2: 9,
+        carWidth: 208,
+        carHeight: 100,
+        bottomSize: 212
+      }
+    } else {
+      size = {
+        leftGap1: 26,
+        leftGap2: 9,
+        rightGap1: 18,
+        rightGap2: 13,
+        carWidth: 225,
+        carHeight: 100,
+        bottomSize: 230
+      }
+    };
     setting = {
+      ...size,
       minute: '10',
       picture: [],
       transparency: '0.5',
       masking: '0.3',
       gradient: [],
-      myPlate: '琼A·66888',
+      myPlate: '琼A·849A8',
+      botStr: `${phone < 926 ? '' : '请'}保持良好的驾驶习惯，务必遵守交通规则`,
       verifyToken: null,
       update: 'true',
-      appleOS: "true",
-      width: 225,
-      height: 100,
-      layout: '230'
+      appleOS: "true"
     }
     await saveSettings();
   } else {
     data = F_MGR.readString(cacheFile);
     setting = JSON.parse(data);
-    verifyToken = setting.verifyToken
   }
   
   // Background Color
@@ -89,7 +111,7 @@ async function main() {
     if (!verifyToken) {
       const login = await generateAlert(  
         title = '交管 12123',
-        message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，具体方法请查看小组件代码开头注释\n\n⚠️获取Referer方法: 当跳转到支付宝12123时点击【 查机动车违法 】再点击【 查询 】，用于获取检验有效期的日期和累积记分‼\n\r\n小组件作者: 95度茅台\n获取Token作者: @FoKit`,
+        message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，具体方法请查看小组件代码开头注释\n\n⚠️获取Referer方法: 当跳转到支付宝12123时点击【 查机动车违法 】再点击【 查询 】，用于获取检验有效期的日期和累积记分\n\r\n小组件作者: 95度茅台\n获取Token作者: @FoKit`,
         options = ['取消', '获取']
       );
       if (login === 1) {
@@ -100,7 +122,7 @@ async function main() {
       setting.referer = referer
       await saveSettings();
       notify('交管12123_Referer', '点击查机动车违法再点击查询即可更新/获取');
-    console.log(`boxjs_token 获取成功: ${verifyToken}`);
+      console.log(`boxjs_token 获取成功: ${verifyToken}`);
       Safari.open('alipays://platformapi/startapp?appId=2019050964403523');
     }
   }
@@ -335,16 +357,17 @@ async function main() {
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/photoSize.png',
-              type: 'size',
-              title: '车图尺寸',
-              desc: 'SUV车辆图片设置高度小于100'
+              type: 'input',
+              title: '图下字符',
+              desc: '设置在19个字符以内',
+              val: 'botStr',
+              str: '输入字符'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/layout.png',
-              type: 'input',
+              type: 'size',
               title: '布局调整',
-              desc: '如布局显示不完整，修改小于230',
-              val: 'layout'
+              desc: 'Pro尺寸以下机型微调\n⚠️3 至 6 项建议同时修改( 比如某一项减 1，这四项同时减 1 )',
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
@@ -598,7 +621,7 @@ async function main() {
       table.addRow(title);
       
       assist.forEach ((item) => {
-        const { title, url, val, desc, type, tips } = item;
+        const { title, url, val, desc, type, tips, str} = item;
         const row = new UITableRow();
         row.height = 45;
         const rowIcon = row.addImageAtURL(url);
@@ -622,7 +645,7 @@ async function main() {
           row.height = item.interval;
           row.backgroundColor = bgColor;
         } else {
-          const valText = row.addText(tips || !setting[val] ? '>' : setting[val]);
+          const valText = row.addText(tips || !setting[val] || str ? '>' : setting[val]);
           valText.widthWeight = 500;
           valText.rightAligned();
           valText.titleColor = !desc ? new Color('#b2b2b2', 0.8) : Color.blue();
@@ -643,10 +666,9 @@ async function main() {
             await generateInputAlert ({
               title: title,
               message: tips ? desc + setting[val] : desc,
-              options: [{ 
-                hint: !tips ? setting[val] : tips,
-                value: !tips ? setting[val] : null
-              }]
+              options: [
+                { hint: !tips ? setting[val] : tips, value: !tips ? setting[val] : str ? setting[val] : null }
+              ]
             }, 
             async (inputArr) => {
               const filedVal = inputArr[0].value;
@@ -655,6 +677,9 @@ async function main() {
               }
               if (val === 'picture') {
                 matchVal = filedVal.match(/(http.+png)/)[1];
+              }
+              if (val === 'botStr') {
+                setting[val] = filedVal
               }
               if (tips && matchVal) {
                 arr = setting[val];
@@ -687,18 +712,24 @@ async function main() {
             await generateInputAlert ({
               title: title,
               message: desc,
-              options: [{ 
-                hint: '宽度',
-                value: setting['width'].toString()
-              },
-              { 
-                hint: '高度',
-                value: setting['height'].toString()
-              }]
+              options: [
+                {hint: '车图宽度', value: String(setting['carWidth'])},
+                {hint: '车图高度', value: String(setting['carHeight'])},
+                {hint: '左一间隔', value: String(setting['leftGap1'])},
+                {hint: '左二间隔', value: String(setting['leftGap2'])},
+                {hint: '右一间隔', value: String(setting['rightGap1'])},
+                {hint: '右二间隔', value: String(setting['rightGap2'])},
+                {hint: '右下尺寸', value: String(setting['bottomSize'])}
+              ]
             }, 
             async (inputArr) => {
-              setting.width = Number(inputArr[0].value);
-              setting.height = Number(inputArr[1].value);
+              setting.carWidth = Number(inputArr[0].value);
+              setting.carHeight = Number(inputArr[1].value);
+              setting.leftGap1 = Number(inputArr[2].value);
+              setting.leftGap2 = Number(inputArr[3].value);
+              setting.rightGap1 = Number(inputArr[4].value);
+              setting.rightGap2 = Number(inputArr[5].value);
+              setting.bottomSize = Number(inputArr[6].value);
               notify('设置成功', '桌面组件稍后将自动刷新');
             });
           }
@@ -738,7 +769,7 @@ async function main() {
       const html = await new Request(atob('aHR0cHM6Ly9kZXZlbG9wZXIuYXBwbGUuY29tL25ld3MvcmVsZWFzZXMvcnNzL3JlbGVhc2VzLnJzcw==')).loadString();
       const iOS = html.match(/<title>(iOS.*?)<\/title>/)[1];
       if (setting.iOS_push !== iOS) {
-        notify('AppleOS 更新通知 🔥', '新版本发布: ' + iOS)
+        notify('AppleOS 更新通知 🔥', '新版本发布: ' + iOS);
         setting.iOS_push = iOS
         await saveSettings();
       }
@@ -761,7 +792,7 @@ async function main() {
     const reqUpdate = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/12123_UITable.js');
     const codeString = await reqUpdate.loadString();
     if (codeString.indexOf('95度茅台') == -1) {
-      notify('更新失败⚠️', '请检查网络或稍后再试');
+      notify('更新失败 ⚠️', '请检查网络或稍后再试');
     } else {
       F_MGR.writeString(modulePath, codeString);
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
@@ -1047,4 +1078,4 @@ async function main() {
   // await Runing()
   await setWidgetConfig();
 }
-module.exports = { main }
+module.export = { main }
