@@ -1078,4 +1078,4 @@ async function main() {
   // await Runing()
   await setWidgetConfig();
 }
-module.export = { main }
+module.exports = { main }
