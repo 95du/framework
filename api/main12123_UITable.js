@@ -115,11 +115,8 @@ async function main() {
         message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，具体方法请查看小组件代码开头注释\n\n⚠️获取Referer方法: 当跳转到支付宝12123【 查机动车违法 】时，点击【 车牌号或查询 】，用于获取检验有效期的日期和累积记分\n\r\n小组件作者: 95度茅台\n获取Token作者: @FoKit`,
         options = ['取消', '获取']
       );
-      if (login === 1) {
+      if (login === 0) return
         Safari.open(alipay);
-      } else {
-        return
-      }
     } else if (setting.verifyToken === null || referer) {
       setting.verifyToken = verifyToken
       setting.referer = referer
