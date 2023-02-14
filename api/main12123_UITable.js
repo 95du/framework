@@ -127,7 +127,7 @@ async function main() {
       console.log(`boxjs_token 获取成功: ${verifyToken}`);
       Safari.open(alipay);
     }
-    notify('交管12123_Referer', '点击查机动车违法再点击查询即可更新/获取');
+    notify('交管12123_Referer', '点击车牌号或查询即可更新/获取');
   }
   
   
