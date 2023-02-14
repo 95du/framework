@@ -93,6 +93,7 @@ async function main() {
   }
   
   async function getVerifyToken() {  
+    const alipay = 'alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex'
     try {
       const boxjs_data = await new Request('http://boxjs.com/query/data/token_12123').loadJSON();
       verifyToken = boxjs_data.val
@@ -105,26 +106,28 @@ async function main() {
       }
     }
     if (verifyToken && !referer) {
-      Safari.open('alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex');
+      Safari.open(alipay);
       notify('boxjs_referer ⚠️', '点击车牌号或查询即可更新/获取');
     }
     if (!verifyToken) {
       const login = await generateAlert(  
         title = '交管 12123',
-        message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，具体方法请查看小组件代码开头注释\n\n⚠️获取Referer方法: 当跳转到支付宝12123时点击【 查机动车违法 】再点击【 查询 】，用于获取检验有效期的日期和累积记分\n\r\n小组件作者: 95度茅台\n获取Token作者: @FoKit`,
+        message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，具体方法请查看小组件代码开头注释\n\n⚠️获取Referer方法: 当跳转到支付宝12123【 查机动车违法 】时，点击【 车牌号或查询 】，用于获取检验有效期的日期和累积记分\n\r\n小组件作者: 95度茅台\n获取Token作者: @FoKit`,
         options = ['取消', '获取']
       );
       if (login === 1) {
-        Safari.open('alipays://platformapi/startapp?appId=2019050964403523');
+        Safari.open(alipay);
+      } else {
+        return
       }
     } else if (setting.verifyToken === null || referer) {
       setting.verifyToken = verifyToken
       setting.referer = referer
       await saveSettings();
-      notify('交管12123_Referer', '点击查机动车违法再点击查询即可更新/获取');
       console.log(`boxjs_token 获取成功: ${verifyToken}`);
-      Safari.open('alipays://platformapi/startapp?appId=2019050964403523');
+      Safari.open(alipay);
     }
+    notify('交管12123_Referer', '点击查机动车违法再点击查询即可更新/获取');
   }
   
   
