@@ -367,7 +367,7 @@ async function main() {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/layout.png',
               type: 'size',
               title: '布局调整',
-              desc: 'Pro尺寸以下机型微调\n⚠️3 至 6 项建议同时修改( 比如某一项减 1，这四项同时减 1 )',
+              desc: 'Pro尺寸以下机型微调\n⚠️1 至 4 项建议同时修改( 比如某一项减 1，这四项同时减 1 )',
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
@@ -713,22 +713,22 @@ async function main() {
               title: title,
               message: desc,
               options: [
-                {hint: '车图宽度', value: String(setting['carWidth'])},
-                {hint: '车图高度', value: String(setting['carHeight'])},
                 {hint: '左一间隔', value: String(setting['leftGap1'])},
                 {hint: '左二间隔', value: String(setting['leftGap2'])},
                 {hint: '右一间隔', value: String(setting['rightGap1'])},
                 {hint: '右二间隔', value: String(setting['rightGap2'])},
+                {hint: '车图宽度', value: String(setting['carWidth'])},
+                {hint: '车图高度', value: String(setting['carHeight'])},
                 {hint: '图下尺寸', value: String(setting['bottomSize'])}
               ]
             }, 
             async (inputArr) => {
-              setting.carWidth = Number(inputArr[0].value);
-              setting.carHeight = Number(inputArr[1].value);
-              setting.leftGap1 = Number(inputArr[2].value);
-              setting.leftGap2 = Number(inputArr[3].value);
-              setting.rightGap1 = Number(inputArr[4].value);
-              setting.rightGap2 = Number(inputArr[5].value);
+              setting.leftGap1 = Number(inputArr[0].value);
+              setting.leftGap2 = Number(inputArr[1].value);
+              setting.rightGap1 = Number(inputArr[2].value);
+              setting.rightGap2 = Number(inputArr[3].value);
+              setting.carWidth = Number(inputArr[4].value);
+              setting.carHeight = Number(inputArr[5].value);
               setting.bottomSize = Number(inputArr[6].value);
               notify('设置成功', '桌面组件稍后将自动刷新');
             });
