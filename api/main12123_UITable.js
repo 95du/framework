@@ -96,7 +96,9 @@ async function main() {
     const alipay = 'alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex'
     try {
       const boxjs_data = await new Request('http://boxjs.com/query/data/token_12123').loadJSON();
-      verifyToken = boxjs_data.val
+      const boxjs = boxjs_data.val.split(',');
+      verifyToken = boxjs[0];
+      sign = boxjs[1];
       const boxjs_referer = await new Request('http://boxjs.com/query/data/referer_12123').loadJSON();
       referer = boxjs_referer.val
     } catch(e) {
@@ -118,6 +120,7 @@ async function main() {
       if (login === 0) return
         Safari.open(alipay);
     } else if (setting.verifyToken === null || referer) {
+      setting.sign = sign
       setting.verifyToken = verifyToken
       setting.referer = referer
       await saveSettings();
