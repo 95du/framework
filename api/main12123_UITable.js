@@ -95,10 +95,10 @@ async function main() {
   async function getVerifyToken() {  
     const alipay = 'alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex'
     try {
-      const boxjs_data = await new Request('http://boxjs.com/query/data/token_12123').loadJSON();
-      const boxjs = boxjs_data.val.split(',');
-      verifyToken = boxjs[0];
-      sign = boxjs[1];
+      const boxjs_data = await new Request('http://boxjs.com/query/data/body_12123').loadJSON();
+      const boxjs = JSON.parse(boxjs_data.val);
+      verifyToken = boxjs.verifyToken;
+      sign = boxjs.sign;
       const boxjs_referer = await new Request('http://boxjs.com/query/data/referer_12123').loadJSON();
       referer = boxjs_referer.val
     } catch(e) {
@@ -480,9 +480,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年01月30日\n\n版本更新，如关闭自动更新的手动更新代码，以及自行更新Quantumult-X 重写或其他辅助工具\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n\n1，修复车辆违章后数据无法显示问题\n2，支持多车辆、多次违章( 随机显示 )\n3，随机显示违章照片，点击地址跳转\n4，增加显示检验有效期止日期  \n5，增加驾驶证累积记分',
-        val: '1.1.0',
-        ver: 'Version 1.1.0'
+        desc: '2023年02月14日\n\n本次更新需重新添加 Quantumult-X 重写或其他辅助工具，请在注释头中查看\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
+        val: '1.1.5',
+        ver: 'Version 1.1.5'
       },
       {
         icon: {
