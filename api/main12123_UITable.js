@@ -103,8 +103,7 @@ async function main() {
       referer = boxjs_referer.val
     } catch(e) {
       if (config.runsInApp) {
-        Safari.open('quantumult-x://');
-        notify('获取boxJs数据失败 ⚠️', '需打开Quantumult-X获取verifyToken');
+        notify('获取boxJs数据失败 ⚠️', '点弹窗打开 Quantumult-X 或其他辅助工具', 'quantumult-x://');
       }
     }
     if (verifyToken && !referer) {
