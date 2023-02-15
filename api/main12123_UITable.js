@@ -113,7 +113,7 @@ async function main() {
     if (!verifyToken) {
       const login = await generateAlert(  
         title = '交管 12123',
-        message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，具体方法请查看小组件代码开头注释\n\n⚠️获取Referer方法: 当跳转到支付宝12123【 查机动车违法 】时，点击【 车牌号或查询 】，用于获取检验有效期的日期和累积记分\n\r\n小组件作者: 95度茅台\n获取Token作者: @FoKit`,
+        message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，具体方法请查看小组件代码开头注释\n\n⚠️获取Referer方法: 当跳转到支付宝12123【 查机动车违法 】时，点击【 车牌号或查询 】，用于获取检验有效期的日期和累积记分`,
         options = ['取消', '获取']
       );
       if (login === 0) return
@@ -479,7 +479,7 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年02月15日\n\n手动刷新 Quantumult-X 重写或其他辅助工具、Boxjs、更新代码或重置，\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n3，适配Pro及以下机型\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
+        desc: '2023年02月15日\n\n1，此次更新需重新添加 Quantumult-X 重写或其他辅助工具\n2，订阅95度茅台或@Fokit的 Boxjs\n3，刷新 Boxjs、更新代码或重置\n4，详情请查看小组件代码开头注释\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n3，适配Pro及以下机型\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
         val: '1.1.5',
         ver: 'Version 1.1.5'
       },
