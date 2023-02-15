@@ -96,9 +96,9 @@ async function main() {
     const alipay = 'alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex'
     try {
       const boxjs_data = await new Request('http://boxjs.com/query/data/body_12123').loadJSON();
-      const boxjs = JSON.parse(boxjs_data.val);
-      verifyToken = boxjs.verifyToken;
-      sign = boxjs.sign;
+      const boxjs = boxjs_data.val.split(',');
+      verifyToken = boxjs[0];
+      sign = boxjs[1];
       const boxjs_referer = await new Request('http://boxjs.com/query/data/referer_12123').loadJSON();
       referer = boxjs_referer.val
     } catch(e) {
