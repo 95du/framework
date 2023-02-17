@@ -248,8 +248,8 @@ async function main() {
                 color: '#F57C00'
               },
               type: 'OS',
-              title: newArr[1],
-              val: '>'
+              title: newArr[1].match(/(iOS\s\d+\.\d*?\.?\d*?)\s\(/)[1],
+              val: newArr[1].match(/\((.*?)\)/)[1]
             },
             {
               icon: {
@@ -257,8 +257,8 @@ async function main() {
                 color: '#00BCD4'
               },
               type: 'OS',
-              title: html.match(/<title>(iOS\s15.*?)<\/title>/)[1],
-              val: '>'
+              title: html.match(/(iOS\s15\.\d*?\.?\d*?)\s\(/)[1],
+              val: html.match(/iOS\s15\.\d*?\.?\d*?\s\((.*?)\)/)[1]
             },
             {
               interval: 26
@@ -278,8 +278,8 @@ async function main() {
                 color: '#AB47BC'
               },
               type: 'OS',
-              title: newArriPad[1],
-              val: '>'
+              title: newArriPad[1].match(/(iPadOS\s\d+\.\d*?\.?\d*?)\s\(/)[1],
+              val: newArriPad[1].match(/\((.*?)\)/)[1]
             },
             {
               icon: {
@@ -287,8 +287,8 @@ async function main() {
                 color: '#42A5F5'
               },
               type: 'OS',
-              title: html.match(/<title>(iPadOS\s15.*?)<\/title>/)[1],
-              val: '>'
+              title: html.match(/(iPadOS\s15\.\d*?\.?\d*?)\s\(/)[1],
+              val: html.match(/iPadOS\s15\.\d*?\.?\d*?\s\((.*?)\)/)[1]
             },
             {
               interval: 133.8 * Device.screenScale()
