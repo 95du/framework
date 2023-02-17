@@ -173,7 +173,7 @@ async function main() {
     rightText.onTap = async () => {
       const delAlert = new Alert();
       delAlert.title = '清空所有数据';
-      delAlert.message = '该操作将把用户储存的所有数据清除，重置后需重新运行获取，否则组件可能无法正常运行或显示';
+      delAlert.message = '该操作将把用户储存的所有数据清除，重置后重新运行预览组件，即可自动获取数据【 确保辅助工具已打开 】';
       delAlert.addDestructiveAction('重置');
       delAlert.addCancelAction('取消');
       const action = await delAlert.presentAlert();
