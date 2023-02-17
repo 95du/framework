@@ -57,10 +57,7 @@ const modulePath = await downloadModule(scriptName, scriptUrl);
 if (modulePath != null) {
   const importedModule = importModule(modulePath);
   await importedModule.main();
-} else {
-  console.log('Failed to download new module and could not find any local version.');
 }
-
 
 async function downloadModule(scriptName, scriptUrl) {
   const date = new Date();
