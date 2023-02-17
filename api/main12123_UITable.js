@@ -537,7 +537,7 @@ async function main() {
         const fontSize = !item.val ? 26 : 16;
         valText.widthWeight = 500;
         valText.rightAligned();
-        valText.titleColor = item.val === '>' || item.type === 'alipay' ? new Color('#b2b2b2', 0.8) : Color.blue();
+        valText.titleColor = item.val === '>' || item.type === 'alipay' ? new Color('#8E8E93', 0.8) : Color.blue();
         valText.titleFont = Font.mediumSystemFont(fontSize);
       } else if (item.interval) {
         row.height = item.interval;
@@ -646,7 +646,7 @@ async function main() {
           const valText = row.addText(tips || !setting[val] || str ? '>' : setting[val]);
           valText.widthWeight = 500;
           valText.rightAligned();
-          valText.titleColor = type === 'input' || type === 'size' ? Color.blue() : new Color('#b2b2b2', 0.8);
+          valText.titleColor = type === 'input' || type === 'size' ? Color.blue() : new Color('#8E8E93', 0.8);
           valText.titleFont = Font.mediumSystemFont(16);
         }
         
