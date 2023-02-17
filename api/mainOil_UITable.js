@@ -8,7 +8,7 @@ async function main() {
   if (!F_MGR.fileExists(path)) {
     F_MGR.createDirectory(path);
   }
-  // Background image path
+  // filesPath
   const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
   const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
