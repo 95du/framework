@@ -71,9 +71,8 @@ async function main() {
     widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(setting.minute));
   }
   
-  let modulePath = await downloadModule();
-  if (modulePath != null && config.runsInWidget) {
-    await importModule(modulePath).main();
+  if (config.runsInWidget) {
+    await importModule(await downloadModule()).main();
   }
   
   async function downloadModule() {
@@ -597,8 +596,7 @@ async function main() {
             notify('设置成功', '桌面组件稍后将自动刷新');
           });
         } else if (type == 'preview') {
-          let importedModule = importModule(modulePath);
-          await importedModule.main();
+          await importModule(await downloadModule()).main();
         } else if (type == 'alipay') {
           await getVerifyToken();
         }
@@ -708,8 +706,7 @@ async function main() {
               notify('删除成功', '桌面组件稍后将自动刷新');
             }
           } else if (type === 'background') {
-            const importedModule = importModule(await backgroundModule());
-            await importedModule.main()
+            await importModule(await backgroundModule()).main();
           } else if (type === 'size') {
             await generateInputAlert ({
               title: title,
