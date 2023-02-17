@@ -424,7 +424,7 @@ async function main() {
         },
         type: 'options',
         title: '更新代码',
-        desc: '更新后当前脚本代码将被覆盖\n请先做好备份，此操作不可恢复，但不会清除用户已设置的数据'
+        desc: '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复'
       },
       {
         interval: 25.9 * Device.screenScale()
