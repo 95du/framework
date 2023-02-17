@@ -650,7 +650,7 @@ async function main() {
           const valText = row.addText(tips || !setting[val] || str ? '>' : setting[val]);
           valText.widthWeight = 500;
           valText.rightAligned();
-          valText.titleColor = !desc ? new Color('#b2b2b2', 0.8) : Color.blue();
+          valText.titleColor = type === 'input' || type === 'size' ? Color.blue() : new Color('#b2b2b2', 0.8);
           valText.titleFont = Font.mediumSystemFont(16);
         }
         
