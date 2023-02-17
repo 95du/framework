@@ -93,7 +93,7 @@ async function main() {
   }
   
   async function getVerifyToken() {  
-    const alipay = 'alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex'
+    const alipay = 'alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex';
     try {
       const boxjs_data = await new Request('http://boxjs.com/query/data/body_12123').loadJSON();
       const boxjs = boxjs_data.val.split(',');
