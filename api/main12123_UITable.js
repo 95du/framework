@@ -4,15 +4,13 @@
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
-  // Frame Path
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du12123");
   if (!F_MGR.fileExists(path)) {
     F_MGR.createDirectory(path);
   }
-  // Background image path
+  // filesPath
   const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
   const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
-  // json Path
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
   if (!F_MGR.fileExists(cacheFile)) {
