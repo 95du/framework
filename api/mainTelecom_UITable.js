@@ -5,7 +5,7 @@ async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duTelecom");
-  // Background image path
+  // filesPath
   const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
   const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
