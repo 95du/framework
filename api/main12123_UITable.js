@@ -305,18 +305,18 @@ async function main() {
           name: 'person.crop.circle',
           color: '#43CD80'
         },
-        type: 'token',
+        type: 'alipay',
         title: 'GetToken',
-        val: '>'
+        val: setting.verifyToken ? '已获取  >' : '未获取  >'
       },
       {
         icon: {
           name: 'person.text.rectangle.fill',
           color: '#DAA520'
         },
-        type: 'token',
+        type: 'alipay',
         title: '累积记分',
-        val: '>'
+        val: setting.referer ? '已获取  >' : '未获取  >'
       },
       {
         icon: {
@@ -540,7 +540,7 @@ async function main() {
         const fontSize = !item.val ? 26 : 16;
         valText.widthWeight = 500;
         valText.rightAligned();
-        valText.titleColor = item.val == '>' ? new Color('#b2b2b2', 0.8) : Color.blue()
+        valText.titleColor = item.val === '>' || item.type === 'alipay' ? new Color('#b2b2b2', 0.8) : Color.blue();
         valText.titleFont = Font.mediumSystemFont(fontSize);
       } else if (item.interval) {
         row.height = item.interval;
@@ -599,7 +599,7 @@ async function main() {
         } else if (type == 'preview') {
           let importedModule = importModule(modulePath);
           await importedModule.main();
-        } else if (type == 'token') {
+        } else if (type == 'alipay') {
           await getVerifyToken();
         }
       }
