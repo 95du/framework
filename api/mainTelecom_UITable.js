@@ -123,7 +123,7 @@ async function main() {
     rightText.onTap = async () => {
       const delAlert = new Alert();
       delAlert.title = '清空所有数据';
-      delAlert.message = '该操作将把用户储存的所有数据清除，重置后需重新运行获取，否则组件可能无法正常运行或显示';
+      delAlert.message = '该操作将把用户储存的所有数据清除，已登录过的用户重置后点击菜单中天翼中心，即可自动获取/更新 Cookie'
       delAlert.addDestructiveAction('重置');
       delAlert.addCancelAction('取消');
       const action = await delAlert.presentAlert();
@@ -276,7 +276,7 @@ async function main() {
         },
         type: 'sign',
         title: '用户登录',
-        val: '>'
+        val: setting['cookie'] ? '已登录  >' : '未登录  >'
       },
       {
         icon: {
@@ -474,7 +474,7 @@ async function main() {
         const fontSize = !item.val ? 26 : 16;
         valText.widthWeight = 500;
         valText.rightAligned();
-        valText.titleColor = item.val == '>' ? new Color('#b2b2b2', 0.8) : Color.blue()
+        valText.titleColor = item.val == '>' || item.type == 'sign' ? new Color('#b2b2b2', 0.8) : Color.blue()
         valText.titleFont = Font.mediumSystemFont(fontSize);
       } else if (item.interval) {
         row.height = item.interval;
