@@ -95,9 +95,12 @@ async function main() {
       message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，\n具体方法请查看小组件代码开头注释\n\n【 获取Referer方法 】 \n跳转到支付宝12123页面时，点击 [ 车牌号码/查询 ] 即可获取/更新，用于获取检验有效期日期和累积记分‼️`,
       options = ['取消', '获取']
     );
-    if (open === 1)
-    await Safari.open('alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex');
-    await importModule(await downloadModule()).main();
+    if (open === 1) {
+      await Safari.open('alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex');
+      if (setting.verifyToken === null || !setting.referer) {
+        await importModule(await downloadModule()).main();  
+      }
+    }
   }
   
   
