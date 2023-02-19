@@ -92,7 +92,7 @@ async function main() {
   async function getVerifyToken() {  
     const open = await generateAlert(
       title = '交管 12123',
-      message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，\n具体方法请查看小组件代码开头注释\n\n【 获取Referer方法 】 \n跳转到支付宝12123页面时，点击 [ 车牌号码/查询 ] 即可获取/更新，用于获取检验有效期日期和累积记分‼️`,
+      message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，\n具体方法请查看小组件代码开头注释\n\n【 获取Referer方法 】 \n跳转到支付宝12123页面时，点击 [ 车牌号码/查询 ] 即可获取/更新，用于获取检验有效期日期和累积记分‼️\n\nverifyToken/Sign 和 Referer 获取后返回点击预览组件即可使用。`,
       options = ['取消', '获取']
     );
     if (open === 1) {
