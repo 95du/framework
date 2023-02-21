@@ -49,7 +49,7 @@ async function main() {
   
   async function downloadModule() {
     const modulePath = F_MGR.joinPath(path, 'oil.js');
-    if (setting.update === 'false') {
+    if (setting.update === 'false' && F_MGR.fileExists(modulePath)) {
       return modulePath;
     } else {
       const req = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/oil_UITable.js');
