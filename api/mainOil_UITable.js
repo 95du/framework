@@ -14,9 +14,10 @@ async function main() {
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
   if (!F_MGR.fileExists(cacheFile)) {
+    const phoneSize = Device.screenSize().height;
     setting = {
       minute: '10',
-      interval: '0',
+      interval: phoneSize < 926 ? '3' : '0',
       transparency: '0.5',
       gradient: [],
       province: '海南',
@@ -275,7 +276,7 @@ async function main() {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/interval.png',
               type: 'input',
               title: '底部间隔',
-              desc: '适配机型小机型设置间隔为 2 、3',
+              desc: '适配机型小机型设置间隔为 3 、4',
               val: 'interval'
             },
             {
