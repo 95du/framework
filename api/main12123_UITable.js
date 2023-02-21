@@ -75,7 +75,7 @@ async function main() {
   
   async function downloadModule() {
     const modulePath = F_MGR.joinPath(path, '12123.js');
-    if (setting.update === 'false') {
+    if (setting.update === 'false' && F_MGR.fileExists(modulePath)) {
       return modulePath;
     } else {
       const req = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/12123_UITable.js');
