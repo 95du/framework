@@ -17,7 +17,7 @@ async function main() {
     const phone = Device.screenSize().height  
     if (phone < 926) {
       layout = {
-        leftGap1: 22,
+        leftGap1: 20,
         leftGap2: 5,
         rightGap1: 14,
         rightGap2: 9,
@@ -27,7 +27,7 @@ async function main() {
       }
     } else {
       layout = {
-        leftGap1: 26,
+        leftGap1: 24,
         leftGap2: 9,
         rightGap1: 18,
         rightGap2: 13,
