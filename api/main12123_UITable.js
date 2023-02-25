@@ -18,7 +18,7 @@ async function main() {
     if (phone < 926) {
       layout = {
         leftGap1: 20,
-        leftGap2: 5,
+        leftGap2: 3,
         rightGap1: 14,
         rightGap2: 9,
         carWidth: 208,
@@ -28,7 +28,7 @@ async function main() {
     } else {
       layout = {
         leftGap1: 24,
-        leftGap2: 9,
+        leftGap2: 7,
         rightGap1: 18,
         rightGap2: 13,
         carWidth: 225,
