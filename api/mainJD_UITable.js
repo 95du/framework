@@ -554,7 +554,6 @@ async function main() {
       doudouImage.widthWeight = 0.4;
       doudouImage.rightAligned();
       table.addRow(title);
-      table.addRow(title);
       
       assist.forEach ((item) => {
         const { title, url, val, desc, type, tips } = item;
