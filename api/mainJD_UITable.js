@@ -544,6 +544,16 @@ async function main() {
       title.height = 80;
       const titleText = title.addText(outfit);
       titleText.titleFont = Font.mediumSystemFont(30);
+      
+      const url = [ 
+        'http://mtw.so/5Z5GYv',
+        'http://mtw.so/5Rzube'
+      ];
+      const items = url[parseInt(Math.random() * url.length)];
+      const doudouImage = title.addImageAtURL(items);
+      doudouImage.widthWeight = 0.4;
+      doudouImage.rightAligned();
+      table.addRow(title);
       table.addRow(title);
       
       assist.forEach ((item) => {
