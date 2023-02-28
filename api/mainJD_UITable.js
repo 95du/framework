@@ -109,7 +109,7 @@ async function main() {
     // Header effectImage Row
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
-    const effectImage = effectRow.addImageAtURL(atob('aHR0cDovL210dy5zby81SzJIMVY='));
+    const effectImage = effectRow.addImageAtURL(atob('aHR0cDovL210dy5zby81Q3hHeFU='));
     effectImage.widthWeight = 0.4;
     effectImage.centerAligned();
     effectRow.backgroundColor = topBgColor
