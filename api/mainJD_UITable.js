@@ -602,7 +602,10 @@ async function main() {
               title: title,
               message: desc,
               options: [
-                { hint: setting[val], value: setting[val] }
+                {
+                  hint: setting[val],  
+                  value: setting[val]
+                }
               ]
             }, 
             async (inputArr) => {
@@ -610,7 +613,7 @@ async function main() {
               const matchVal = filedVal.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? setting[val] = filedVal : setting[val]
               matchVal ? setting[val] = filedVal : setting[val];
             });
-          } else if (type === 'but') {
+          } else if (type == 'but') {
             setting[val] = setting[val] === 'true' ? "false" : "true"
             let n = new Notification();
             n.sound = 'popup'
@@ -618,11 +621,10 @@ async function main() {
           } else if (type == 'clear') {
             const clear = await generateAlert(title, desc, ['取消', '确认']);
             if (clear === 1) {
-              setting.gradient = [];
               F_MGR.remove(bgImage);
               notify('删除成功', '桌面组件稍后将自动刷新');
             }
-          } else if (type === 'background') {
+          } else if (type == 'background') {
             await importModule(await backgroundModule()).main();
           }
           // Refresh Save
