@@ -374,7 +374,10 @@ async function main() {
         interval: 26
       },
       {
-        url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/preview.png',
+        icon: {
+          name: 'rectangle.portrait.topthird.inset.filled',
+          color: '#9a63e7'
+        },
         type: 'preview',
         title: '预览组件',
         val: '>'
