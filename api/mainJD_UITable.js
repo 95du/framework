@@ -601,12 +601,10 @@ async function main() {
             await generateInputAlert ({
               title: title,
               message: desc,
-              options: [
-                {
-                  hint: setting[val],  
-                  value: setting[val]
-                }
-              ]
+              options: [{
+                hint: setting[val],  
+                value: setting[val]
+              }]
             }, 
             async (inputArr) => {
               const filedVal = inputArr[0].value;
