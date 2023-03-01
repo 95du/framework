@@ -404,9 +404,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年02月27日\n京东的京，京东的东',
-        val: '1.0.0',
-        ver: 'Version 1.0.0'
+        desc: '2023年03月01日\n底部模块循环显示白条、豆苗、红包、农场等信息',
+        val: '1.0.1',
+        ver: 'Version 1.0.1'
       },
       {
         icon: {
