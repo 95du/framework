@@ -20,7 +20,6 @@ async function main() {
       dark: '0.6',
       masking: '0.1',
       radian: '30',
-      gradient: [],
       update: 'true',
       appleOS: "true",
       randomIndex: 0
@@ -79,10 +78,8 @@ async function main() {
       const value = `${item.name}=${item.value}`;
       if (item.name === 'pt_key')
         cookie.push(value);
-      if (item.name === 'pt_pin') {
-        setting.username = item.value;
+      if (item.name === 'pt_pin')
         cookie.push(value);
-      }
     });
           
     if (cookie.length != 0) {
