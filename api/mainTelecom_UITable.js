@@ -412,9 +412,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年02月08日\n\n1，修复闪退等已知错误问题',
-        val: '1.0.2',
-        ver: 'Version 1.0.2'
+        desc: '2023年03月01日\n修复每日用量错误问题 ( 每月1日自动清零 )，之前版本需重置所有',
+        val: '1.0.3',
+        ver: 'Version 1.0.3'
       },
       {
         icon: {
