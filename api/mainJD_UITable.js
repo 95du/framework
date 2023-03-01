@@ -547,7 +547,9 @@ async function main() {
       
       const url = [ 
         'http://mtw.so/5Z5GYv',
-        'http://mtw.so/5Rzube'
+        'http://mtw.so/5Rzube',
+        'http://mtw.so/6mtSAz',
+        'http://mtw.so/6tW1cQ'
       ];
       const items = url[parseInt(Math.random() * url.length)];
       const doudouImage = title.addImageAtURL(items);
