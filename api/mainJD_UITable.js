@@ -16,8 +16,8 @@ async function main() {
   if (!F_MGR.fileExists(cacheFile)) {
     setting = {
       minute: '10',
-      light: '0.6',
-      dark: '0.5',
+      light: '0.7',
+      dark: '0.6',
       masking: '0.1',
       radian: '30',
       gradient: [],
