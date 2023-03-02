@@ -105,8 +105,8 @@ async function main() {
   async function renderTables(table) {
     // Header effectImage Row
     const effectRow = new UITableRow();
-    effectRow.height = 70 * Device.screenScale();
-    const topImg = ['aHR0cDovL210dy5zby81Q0R4UVU=', 'aHR0cDovL210dy5zby82N29sTnQ=']
+    effectRow.height = 75 * Device.screenScale();
+    const topImg = ['aHR0cDovL210dy5zby82ZVVCVW8=', 'aHR0cDovL210dy5zby81SzlvOWw=']
     const items = topImg[Math.floor(Math.random() * topImg.length)];
     const effectImage = effectRow.addImageAtURL(atob(items));
     effectImage.widthWeight = 0.4;
@@ -417,7 +417,7 @@ async function main() {
         desc: '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新代码尝试自动修复'
       },
       {
-        interval: 40.6 * Device.screenScale()
+        interval: 35.6 * Device.screenScale()
       },
     ];
     await preferences(table, updateVersion, '预览|版本|更新');
