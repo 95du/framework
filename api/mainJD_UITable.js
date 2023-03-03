@@ -261,22 +261,25 @@ async function main() {
         }
       },
       {
-        url: 'http://mtw.so/5v7GlD',
+        icon: {
+          name: 'person.crop.circle',
+          color: '#FF9500'
+        },
+        title: '登录京东',
+        type: 'login',
+        val: setting['cookie'] ? '已登录  >' : '未登录  >'
+      },
+      {
+        icon: {
+          name: 'camera.macro',
+          color: '#43CD80'
+        },
         title: '种豆得豆',
         onClick: async () => {
           Safari.openInApp('https://plantearth.m.jd.com/plantBean/index?source=lingjingdoushouye', false);
         },
         type: 'login',
         val: '收营养  >'
-      },
-      {
-        icon: {
-          name: 'person.crop.circle',
-          color: '#43CD80'
-        },
-        title: '登录京东',
-        type: 'login',
-        val: setting['cookie'] ? '已登录  >' : '未登录  >'
       },
       {
         icon: {
