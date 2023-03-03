@@ -261,6 +261,15 @@ async function main() {
         }
       },
       {
+        url: 'http://mtw.so/5v7GlD',
+        title: '种豆得豆',
+        onClick: async () => {
+          Safari.openInApp('https://plantearth.m.jd.com/plantBean/index?source=lingjingdoushouye', false);
+        },
+        type: 'login',
+        val: '收营养  >'
+      },
+      {
         icon: {
           name: 'person.crop.circle',
           color: '#43CD80'
@@ -417,7 +426,7 @@ async function main() {
         desc: '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新代码尝试自动修复'
       },
       {
-        interval: 35.6 * Device.screenScale()
+        interval: 20.8 * Device.screenScale()
       },
     ];
     await preferences(table, updateVersion, '预览|版本|更新');
@@ -544,12 +553,11 @@ async function main() {
       const titleText = title.addText(outfit);
       titleText.titleFont = Font.mediumSystemFont(30);
       
-      const url = [ 
-        'http://mtw.so/5Z5GYv',
-        'http://mtw.so/5Rzube',
+      const url = [
         'http://mtw.so/6mtSAz',
         'http://mtw.so/6tW1cQ',
-        'http://mtw.so/5v6zgp'
+        'http://mtw.so/5v6zgp',
+        'http://mtw.so/66HNEM'
       ];
       const items = url[parseInt(Math.random() * url.length)];
       const doudouImage = title.addImageAtURL(items);
