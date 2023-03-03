@@ -272,7 +272,7 @@ async function main() {
       {
         icon: {
           name: 'camera.macro',
-          color: '#43CD80'
+          color: '#34C759'
         },
         title: '种豆得豆',
         onClick: async () => {
