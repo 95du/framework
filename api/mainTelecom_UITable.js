@@ -69,11 +69,18 @@ async function main() {
       options = ['取消', '登录']
     );
     if (login === 1) {
-      const webview = new WebView();
-      await webview.loadURL('http://u3v.cn/5uwtIP');
-      await webview.present();
-      cookie = await webview.evaluateJavaScript('document.cookie');
-      setting.cookie = cookie.match(/(CZSSON=[a-zA-Z\d]+)/)[1];
+      await webViewLogin('http://u3v.cn/5uwtIP');
+    }
+  }
+  
+  async function webViewLogin(url) {
+    const webview = new WebView();
+    await webview.loadURL(url);
+    await webview.present();
+    cookie = await webview.evaluateJavaScript('document.cookie');
+    setting.cookie = cookie.match(/(CZSSON=[a-zA-Z\d]+)/)[1];
+    if (cookie.indexOf('configurable') === -1) {
+      notify('Cookie获取/更新成功', setting.cookie);
       await saveSettings();
     }
   }
@@ -256,17 +263,7 @@ async function main() {
         },
         title: '天翼中心',
         val: '>',
-        onClick: async () => {
-          const webView = new WebView();
-          await webView.loadURL('https://e.189.cn/store/wap/partner/stylehead/189Bill.do');
-          await webView.present();
-          const cookie = await webView.evaluateJavaScript('document.cookie');
-          if (cookie) {
-            setting.cookie = cookie.match(/(CZSSON=[a-zA-Z\d]+)/)[1];
-            notify('Cookie获取/更新成功', setting.cookie);
-            await saveSettings();
-          }
-        }
+        type: 'login'
       },
       {
         icon: {
@@ -533,6 +530,8 @@ async function main() {
           await importModule(await downloadModule()).main();
         } else if (type == 'sign') {
           await userloginWeb();
+        } else if (type == 'login') {
+          await webViewLogin('https://e.189.cn/store/wap/partner/stylehead/189Bill.do');
         }
       }
     }
