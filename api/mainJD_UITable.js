@@ -82,8 +82,13 @@ async function main() {
         cookie.push(value);
     });
           
-    if (cookie.length != 0) {
+    const sign = new Request('https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld');
+    sign.method = 'POST'
+    sign.headers = { Referer: 'https://h5.m.jd.com/' }
+    const res = await sign.loadJSON();
+    if (res.code === '0') {
       setting.cookie = cookie.join(';');
+      setting.code = 0;
       notify('Cookie获取/更新成功', setting.cookie);
       await saveSettings();
     }
@@ -267,7 +272,7 @@ async function main() {
         },
         title: '登录京东',
         type: 'login',
-        val: setting['cookie'] ? '已登录  >' : '未登录  >'
+        val: setting['code'] === 0 ? '已登录  >' : setting['code'] === 3 ? '已过期  >' : '未登录  >'
       },
       {
         icon: {
