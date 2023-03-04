@@ -311,14 +311,14 @@ async function main() {
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
               type: 'input',
-              title: '白天透明',
-              desc: '两个Stack模块白天背景透明度\n完全透明设置为 0',
+              title: '浅色透明',
+              desc: '两个Stack模块浅色背景透明度\n完全透明设置为 0',
               val: 'light'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking.png',
               type: 'input',
-              title: '晚上透明',
+              title: '深色透明',
               desc: '两个Stack模块深色背景透明度\n完全透明设置为 0',
               val: 'dark'
             },
