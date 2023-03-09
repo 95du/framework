@@ -98,33 +98,6 @@ async function main() {
     }
   }
   
-  if (setting.appleOS === 'true') {  
-    try {
-      const boxjs_data = await new Request('http://boxjs.com/query/data/request_url').loadJSON();
-      sprout = await growthValue(`https://api.m.jd.com/client.action?functionId=plantBeanIndex&appid=signed_wh5&h5st=${boxjs_data.val}`);
-    } catch(e) {
-      sprout = {};
-      console.log('获取boxjs数据失败 ⚠️', '需打开 Quantumult-X 获取数据');
-    }
-  } else {
-    sprout = {};
-  }
-  
-  async function growthValue(url) {
-    const req = new Request(url)
-    req.method = 'POST'
-    req.headers = {
-      Referer: 'https://plantearth.m.jd.com/',
-      Cookie: setting.cookie
-    }
-    const res = await req.loadJSON();
-    if (res.code === '413') {
-      return res.code;
-    } else {
-      return res.data.roundList[1];
-    }
-  }
-  
   
   /**
    * 设置组件内容
