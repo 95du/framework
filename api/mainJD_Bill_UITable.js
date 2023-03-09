@@ -288,7 +288,7 @@ async function main() {
           Safari.openInApp('https://plantearth.m.jd.com/plantBean/index?source=lingjingdoushouye', false);
         },
         type: 'login',
-        val: sprout.growth ? `${sprout.growth}  >` : '收营养  >'
+        val: '收营养  >'
       },
       {
         icon: {
