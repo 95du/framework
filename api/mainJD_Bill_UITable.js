@@ -14,12 +14,14 @@ async function main() {
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
   if (!F_MGR.fileExists(cacheFile)) {
+    const phoneSize = Device.screenSize().height;
     setting = {
       minute: '10',
       masking: '0.1',
       transparency: '0.5',
       progressColor1: '#FF9500',
       progressColor2: '#34C759',
+      progressWidth: phoneSize < 926 ? 215 : 245,
       gradient: [],
       update: 'true',
       appleOS: "true",
@@ -336,6 +338,13 @@ async function main() {
               val: 'minute'
             },
             {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/progressWidth.png',
+              type: 'input',
+              title: '进度长度',
+              desc: '收支进度条长度',
+              val: 'progressWidth'
+            },
+            {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/progressColor1.png',
               type: 'input',
               title: '支出进度',
@@ -421,7 +430,7 @@ async function main() {
               val: 'appleOS'
             },
             {
-              interval: 44.8 * Device.screenScale()
+              interval: 14.8 * Device.screenScale()
             }
           ];
           const table = new UITable();
@@ -457,9 +466,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年03月05日\n自动签到、底部模块循环显示白条、过期京豆、红包、农场、守约分等信息',
-        val: '1.0.2',
-        ver: 'Version 1.0.2'
+        desc: '2023年03月09日\n自动签到、月收支账单统计',
+        val: '1.0.0',
+        ver: 'Version 1.0.0'
       },
       {
         icon: {
@@ -662,7 +671,7 @@ async function main() {
             }, 
             async (inputArr) => {
               const filedVal = inputArr[0].value;
-              if (val === 'gradient' || val === 'progressColor') {
+              if (val === 'gradient' || val === 'progressColor1' || val === 'progressColor2') {
                 matchVal = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
               } else {
                 filedVal.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? setting[val] = filedVal : setting[val]
