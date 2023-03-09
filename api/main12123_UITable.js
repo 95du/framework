@@ -20,7 +20,7 @@ async function main() {
         leftGap1: 20,
         leftGap2: 3,
         rightGap1: 14,
-        rightGap2: 9,
+        rightGap2: 8,
         carWidth: 208,
         carHeight: 100,
         bottomSize: 212
@@ -30,7 +30,7 @@ async function main() {
         leftGap1: 24,
         leftGap2: 7,
         rightGap1: 18,
-        rightGap2: 13,
+        rightGap2: 12,
         carWidth: 225,
         carHeight: 100,
         bottomSize: 230
