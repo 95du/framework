@@ -293,10 +293,7 @@ async function main() {
         val: '收营养  >'
       },
       {
-        icon: {
-          name: 'gearshape.fill',
-          color: '#FF3B2F'
-        },
+        url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/settings.png',
         type: 'jumpSet',
         title: '偏好设置',
         val: '>',
@@ -423,10 +420,7 @@ async function main() {
         interval: 26
       },
       {
-        icon: {
-          name: 'rectangle.portrait.topthird.inset.filled',
-          color: '#9a63e7'
-        },
+        url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/preview.png',
         type: 'preview',
         title: '预览组件',
         val: '>'
