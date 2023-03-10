@@ -7,6 +7,7 @@
  * 版本: Version 1.0.0
  * 2023-03-10 15:00
  * Telegram 交流群 https://t.me/+ViT7uEUrIUV0B_iy
+ * 🔥示例图渐变颜色 #FFE5B4 
  * LSP京东组件的背景图 https://gitcode.net/enoyee/scriptable/-/raw/master/img/jd/bg_orange.png
 */
 
