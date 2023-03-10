@@ -22,6 +22,7 @@ async function main() {
       progressColor1: '#FF9500',
       progressColor2: '#34C759',
       progressWidth: phoneSize < 926 ? '210' : '236',
+      progressHeight: phoneSize < 926 ? 8 : 10,
       gradient: [],
       update: 'true',
       appleOS: "true",
