@@ -749,8 +749,13 @@ async function main() {
     color = '#e8e8e8',
     cornerWidth = 39
   ) => {
-    const sfi = SFSymbol.named(icon);
-    sfi.applyFont(  
+    try {
+      sfi = SFSymbol.named(icon);
+    } catch(e) {
+      icon = 'gearshape.fill';
+      sfi = SFSymbol.named(icon);
+    }
+    sfi.applyFont(
       Font.mediumSystemFont(30)
     );
     const imgData = Data.fromPNG(sfi.image).toBase64String();
