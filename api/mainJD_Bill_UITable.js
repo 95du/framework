@@ -757,7 +757,8 @@ async function main() {
         color: '#34C759'
       }
       sfi = SFSymbol.named(icon);
-    sfi.applyFont(  
+    }
+    sfi.applyFont(
       Font.mediumSystemFont(30)
     );
     const imgData = Data.fromPNG(sfi.image).toBase64String();
