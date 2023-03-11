@@ -688,6 +688,7 @@ async function main() {
     color = '#e8e8e8',
     cornerWidth = 39
   ) => {
+    let sfi = SFSymbol.named('gearshape.fill');
     try {
       sfi = SFSymbol.named(icon);
       sfi.applyFont(
@@ -695,8 +696,6 @@ async function main() {
       );
     } catch (e) {
       console.log(`Symbol图标(${icon})异常：` + e);
-      sfi = SFSymbol.named('gearshape.fill');
-      color = '#34C579';
     }
     const imgData = Data.fromPNG(sfi.image).toBase64String();
     const html = `
