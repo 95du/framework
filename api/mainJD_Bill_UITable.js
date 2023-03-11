@@ -753,7 +753,7 @@ async function main() {
       sfi = SFSymbol.named(icon);
     } catch(e) {
       icon = {
-        name: 'gearshape.fill',
+        name: 'leaf.fill',
         color: '#42A5F5'
       }
       sfi = SFSymbol.named(icon);
