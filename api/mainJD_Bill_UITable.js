@@ -310,7 +310,7 @@ async function main() {
               val: 'minute'
             },
             {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/progressWidth.png',
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/interval.png',
               type: 'input',
               title: '进度长度',
               desc: '收支进度条长度',
