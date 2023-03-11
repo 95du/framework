@@ -284,10 +284,7 @@ async function main() {
         val: setting.verifyToken ? '已获取  >' : '未获取  >'
       },
       {
-        icon: {
-          name: 'person.text.rectangle.fill',
-          color: '#DAA520'
-        },
+        url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/personText.png',
         type: 'alipay',
         title: '累积记分',
         val: setting.referer ? '已获取  >' : '未获取  >'
