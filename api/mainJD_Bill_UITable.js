@@ -751,12 +751,9 @@ async function main() {
   ) => {
     try {
       sfi = SFSymbol.named(icon);
-    } catch(e) {
-      icon = {
-        name: 'leaf.fill',
-        color: '#42A5F5'
-      }
-      sfi = SFSymbol.named(icon);
+    } catch (e) {
+      sfi = SFSymbol.named('leaf.fill');
+      color = '#34C579';
     }
     sfi.applyFont(
       Font.mediumSystemFont(30)
