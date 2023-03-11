@@ -274,20 +274,19 @@ async function main() {
       {
         icon: {
           name: 'person.crop.circle',
-          color: '#FF9500'
+          color: '#43CD80'
         },
         title: '登录京东',
         type: 'login',
         val: setting['code'] === 0 ? '已登录  >' : setting['code'] === 3 ? '已过期  >' : '未登录  >'
       },
       {
-        url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/huaMiao.png',
-        title: '种豆得豆',
-        onClick: async () => {
-          Safari.openInApp('https://plantearth.m.jd.com/plantBean/index?source=lingjingdoushouye', false);
-        },
-        type: 'login',
-        val: '收营养  >'
+        url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/personText.png',
+        type: 'input',
+        title: '改用户名',
+        desc: '自定义用户名',
+        val: '>',
+        inp: 'userName'
       },
       {
         icon: {
