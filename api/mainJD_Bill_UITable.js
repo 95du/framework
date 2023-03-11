@@ -752,7 +752,7 @@ async function main() {
     color = '#e8e8e8',
     cornerWidth = 39
   ) => {
-    let sfi = SFSymbol.named('square.grid.2x2');
+    let sfi = SFSymbol.named('arrowshape.turn.up.forward.circle.fill');
     try {
       sfi = SFSymbol.named(icon);
       sfi.applyFont(
