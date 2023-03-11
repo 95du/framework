@@ -749,7 +749,14 @@ async function main() {
     color = '#e8e8e8',
     cornerWidth = 39
   ) => {
-    const sfi = SFSymbol.named(icon);
+    try {
+      sfi = SFSymbol.named(icon);
+    } catch(e) {
+      icon: {
+        name: 'gearshape.fill',
+        color: '#34C759'
+      }
+      sfi = SFSymbol.named(icon);
     sfi.applyFont(  
       Font.mediumSystemFont(30)
     );
