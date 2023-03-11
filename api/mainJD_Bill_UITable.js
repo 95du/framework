@@ -281,10 +281,7 @@ async function main() {
         val: setting['code'] === 0 ? '已登录  >' : setting['code'] === 3 ? '已过期  >' : '未登录  >'
       },
       {
-        icon: {
-          name: 'camera.macro',
-          color: '#34C759'
-        },
+        url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/huaMiao.png',
         title: '种豆得豆',
         onClick: async () => {
           Safari.openInApp('https://plantearth.m.jd.com/plantBean/index?source=lingjingdoushouye', false);
