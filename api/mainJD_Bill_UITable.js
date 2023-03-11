@@ -293,7 +293,10 @@ async function main() {
         val: '收营养  >'
       },
       {
-        url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/settings.png',
+        icon: {
+          name: 'gearshape.fill',
+          color: '#FF3B2F'
+        },
         type: 'jumpSet',
         title: '偏好设置',
         val: '>',
