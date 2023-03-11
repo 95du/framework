@@ -749,15 +749,16 @@ async function main() {
     color = '#e8e8e8',
     cornerWidth = 39
   ) => {
-    let sfi = SFSymbol.named('arrowshape.turn.up.forward.circle.fill');
     try {
       sfi = SFSymbol.named(icon);
       sfi.applyFont(
         Font.mediumSystemFont(30)
       );
     } catch (e) {
-      console.log(`图标(${icon})异常：` + e);
+      sfi = SFSymbol.named('gearshape.fill');
+      color = '#34C579';
     }
+    
     const imgData = Data.fromPNG(sfi.image).toBase64String();
     const html = `
       <img id="sourceImg" src="data:image/png;base64,${imgData}" />
