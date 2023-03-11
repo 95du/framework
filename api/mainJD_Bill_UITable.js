@@ -752,7 +752,10 @@ async function main() {
     try {
       sfi = SFSymbol.named(icon);
     } catch(e) {
-      icon = 'gearshape.fill';
+      icon = {
+        name: 'gearshape.fill',
+        color: '#42A5F5'
+      }
       sfi = SFSymbol.named(icon);
     }
     sfi.applyFont(
