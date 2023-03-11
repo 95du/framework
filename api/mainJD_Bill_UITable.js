@@ -752,15 +752,15 @@ async function main() {
     color = '#e8e8e8',
     cornerWidth = 39
   ) => {
+    let sfi = SFSymbol.named('square.grid.2x2');
     try {
       sfi = SFSymbol.named(icon);
+      sfi.applyFont(
+        Font.mediumSystemFont(30)
+      );
     } catch (e) {
-      sfi = SFSymbol.named('leaf.fill');
-      color = '#34C579';
+      console.log(`图标(${icon})异常：` + e);
     }
-    sfi.applyFont(
-      Font.mediumSystemFont(30)
-    );
     const imgData = Data.fromPNG(sfi.image).toBase64String();
     const html = `
       <img id="sourceImg" src="data:image/png;base64,${imgData}" />
