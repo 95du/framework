@@ -139,7 +139,7 @@ async function main() {
     rightText.onTap = async () => {
       const delAlert = new Alert();
       delAlert.title = '清空所有数据';
-      delAlert.message = '该操作将把用户储存的所有数据清除，已登录过的用户重置后点击菜单中天翼中心，即可自动获取/更新 Cookie';
+      delAlert.message = '该操作将把用户储存的所有数据清除，已登录过的用户重置后点击菜单中登录京东，即可自动获取/更新 Cookie';
       delAlert.addDestructiveAction('重置');
       delAlert.addCancelAction('取消');
       const action = await delAlert.presentAlert();
