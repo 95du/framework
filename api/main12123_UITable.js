@@ -30,7 +30,7 @@ async function main() {
         leftGap1: 24,
         leftGap2: 7,
         rightGap1: 18,
-        rightGap2: 12,
+        rightGap2: 11,
         carWidth: 225,
         carHeight: 100,
         bottomSize: 230
