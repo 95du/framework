@@ -441,9 +441,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年03月11日\n自动签到、月收支账单统计',
-        val: '1.0.1',
-        ver: 'Version 1.0.1'
+        desc: '2023年03月13日\n自动签到、月收支账单统计\n增加是否使用Plus头像标签',
+        val: '1.0.2',
+        ver: 'Version 1.0.2'
       },
       {
         icon: {
