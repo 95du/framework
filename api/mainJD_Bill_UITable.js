@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: cyan; icon-glyph: tags;
+// icon-color: teal; icon-glyph: tags;
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
@@ -23,7 +23,7 @@ async function main() {
       progressColor2: '#34C759',
       progressWidth: phoneSize < 926 ? '210' : '236',
       progressHeight: phoneSize < 926 ? 8 : 10,
-      avatarSize: phoneSize < 926 ? 57 : 60,
+      avatarSize: phoneSize < 926 ? 58 : 62,
       gradient: [],
       update: 'true',
       appleOS: "true",
