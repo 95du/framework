@@ -26,7 +26,8 @@ async function main() {
       avatarSize: phoneSize < 926 ? 58 : 62,
       gradient: [],
       update: 'true',
-      appleOS: "true",
+      appleOS: 'true',
+      isPlus: 'true',
       randomIndex: 0,
       statistics: 1
     }
@@ -389,6 +390,12 @@ async function main() {
               interval: 26
             },
             {
+              url: 'https://gitcode.net/4qiao/scriptable/raw/master/img/jingdong/crownSymbol.png',
+              type: 'but',
+              title: 'Plus头像',
+              val: 'isPlus'
+            },
+            {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/update.png',
               type: 'but',
               title: '自动更新',
@@ -401,7 +408,7 @@ async function main() {
               val: 'appleOS'
             },
             {
-              interval: 14.8 * Device.screenScale()
+              interval: 50 * Device.screenScale()
             }
           ];
           const table = new UITable();
