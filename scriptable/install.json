@@ -93,12 +93,12 @@
                 "name": "DmYY",
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
-            "title": "JD_SchemeUrl",
+            "title": "JD_SchemeURL",
             "thumb": "https://sweixinfile.hisense.com/media/M00/74/71/Ch4FyWQKIemAA_YKAAFLROzlTrk401.png",
             "version": "1.0.0",
             "description": "跳转京东App指定页面URL",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/jd_schemeUrl.js",
-            "name": "JD_SchemeUrl"
+            "name": "JD_SchemeURL"
         },
         {
             "depend": {
@@ -111,6 +111,18 @@
             "description": "京东收支账单、白条、总资产",
             "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_Bill.js",
             "name": "JD_收支账单"
+        },
+        {
+            "depend": {
+                "name": "DmYY",
+                "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
+            },
+            "title": "JD_京东白条",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/jingDong.png",
+            "version": "1.0.0",
+            "description": "白条信息、白条等级",
+            "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_baitiao.js",
+            "name": "JD_京东白条"
         },
         {
             "depend": {
