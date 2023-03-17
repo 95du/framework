@@ -2,7 +2,7 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: red; icon-glyph: tags;
 /**
- * 脚本名称: JD_京东白条➕等级
+ * 脚本名称: JD_京东白条➕白条等级
  * 小组件作者：95度茅台
  * 版本: Version 1.0.0
  * 2023-03-18 15:00
