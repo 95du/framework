@@ -19,7 +19,7 @@ async function main() {
       minute: '10',
       masking: '0.1',
       transparency: '0.5',
-      progressWidth: phoneSize < 926 ? '232' : '262',
+      progressWidth: phoneSize < 926 ? '235' : '265',
       gradient: [],
       update: 'true',
       appleOS: 'true',
