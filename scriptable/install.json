@@ -117,12 +117,12 @@
                 "name": "DmYY",
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
-            "title": "JD_京东白条",
+            "title": "JD_京东小白鹅",
             "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/jingDong.png",
             "version": "1.0.0",
             "description": "白条信息、白条等级",
             "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_baitiao.js",
-            "name": "JD_京东白条"
+            "name": "JD_京东小白鹅"
         },
         {
             "depend": {
