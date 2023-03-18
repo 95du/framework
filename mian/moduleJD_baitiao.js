@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: red; icon-glyph: tags;
+// icon-color: purple; icon-glyph: tags;
 /**
  * 脚本名称: JD_京东白条➕白条等级
  * 小组件作者：95度茅台
