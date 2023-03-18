@@ -427,12 +427,19 @@ async function main() {
         type: 'options',
         title: '更新代码',
         desc: '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新代码尝试自动修复'
-      },
-      {
-        interval: 40.5 * Device.screenScale()
-      },
+      }
     ];
     await preferences(table, updateVersion, '预览|版本|更新');
+  
+    const botRow = new UITableRow();
+    botRow.height = 40.5 * Device.screenScale();
+    const botImg = ['http://mtw.so/5L1M8z', 'http://mtw.so/68kBSv']
+    const items2 = botImg[Math.floor(Math.random() * botImg.length)];
+    const botImage = botRow.addImageAtURL(items2);
+    botImage.widthWeight = 0.4;
+    botImage.rightAligned();
+    botRow.backgroundColor = bgColor
+    table.addRow(botRow);
   }
   
   
