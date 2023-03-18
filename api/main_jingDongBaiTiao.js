@@ -114,7 +114,7 @@ async function main() {
     // Header effectImage Row
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
-    const topImg = ['aHR0cDovL210dy5zby82ZmFGZkc=', 'aHR0cDovL210dy5zby81U3h2eGc=']
+    const topImg = ['aHR0cDovL210dy5zby81dlpkZDk=', 'aHR0cDovL210dy5zby82MDQwVkw=']
     const items = topImg[Math.floor(Math.random() * topImg.length)];
     const effectImage = effectRow.addImageAtURL(atob(items));
     effectImage.widthWeight = 0.4;
