@@ -125,6 +125,14 @@
             "name": "JD_京东小白鹅"
         },
         {
+            "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/module_jd_finance.js",
+            "title": "JD_京东小金库",
+            "thumb": "https://gitcode.net/4qiao/scriptable/raw/master/img/jingdong/finance.png",
+            "name": "JD_京东小金库",
+            "description": "京东小金库信息",
+            "version": "1.0.0"
+        },
+        {
             "depend": {
                 "name": "DmYY",
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
