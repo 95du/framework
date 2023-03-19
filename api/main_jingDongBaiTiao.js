@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: teal; icon-glyph: tags;
+// icon-color: deep-green; icon-glyph: tags;
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
@@ -20,6 +20,7 @@ async function main() {
       masking: '0.1',
       transparency: '0.5',
       progressWidth: phoneSize < 926 ? '235' : '265',
+      gap: phoneSize < 926 ? 13 : 18,
       gradient: [],
       update: 'true',
       appleOS: 'true',
@@ -415,9 +416,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年03月18日\n 京东白条信息，白条等级\n顶部模块及进度条颜色随着等级变化而变化',
-        val: '1.0.0',
-        ver: 'Version 1.0.0'
+        desc: '2023年03月19日\n更改了一些数据，需重置所有\n 京东白条信息，白条等级\n顶部模块及进度条颜色随着等级变化而变化',
+        val: '1.0.1',
+        ver: 'Version 1.0.1'
       },
       {
         icon: {
