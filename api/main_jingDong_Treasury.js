@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: teal; icon-glyph: tags;
+// icon-color: light-brown; icon-glyph: tags;
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
@@ -365,7 +365,7 @@ async function main() {
               val: 'appleOS'
             },
             {
-              interval: 29.8 * Device.screenScale()
+              interval: 59.5 * Device.screenScale()
             }
           ];
           const table = new UITable();
