@@ -25,9 +25,7 @@ async function main() {
       gradient: [],
       update: 'true',
       appleOS: 'true',
-      isPlus: 'true',
-      randomIndex: 0,
-      statistics: 1
+      isPlus: 'true'
     }
     await saveSettings();
   } else {
@@ -633,11 +631,14 @@ async function main() {
             }, 
             async (inputArr) => {
               const filedVal = inputArr[0].value;
-              if (val === 'gradient' || val === 'progressColor1' || val === 'progressColor2') {
+              if (val === 'gradient') {
                 matchVal = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
+              } else if (val === 'location') {
+                filedVal.match(/^0$|^1$/)[0] ? setting[val] = filedVal : setting[val];
               } else {
-                filedVal.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? setting[val] = filedVal : setting[val]
+                filedVal.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? setting[val] = filedVal : setting[val];
               }
+              
               if (tips && matchVal) {
                 arr = setting[val];
                 arr.push(matchVal);
