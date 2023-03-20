@@ -21,6 +21,7 @@ async function main() {
       transparency: '0.5',
       progressWidth: phoneSize < 926 ? '235' : '265',
       gap: phoneSize < 926 ? 13 : 18,
+      location: '0',
       gradient: [],
       update: 'true',
       appleOS: 'true',
@@ -306,6 +307,13 @@ async function main() {
               val: 'progressWidth'
             },
             {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/progressColor1.png',
+              type: 'input',
+              title: '进度位置',
+              desc: '0 进度条在中间，1 则在底部',
+              val: 'location'
+            },
+            {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
               type: 'input',
               title: '渐变背景',
@@ -383,7 +391,7 @@ async function main() {
               val: 'appleOS'
             },
             {
-              interval: 29.8 * Device.screenScale()
+              interval: 14.8 * Device.screenScale()
             }
           ];
           const table = new UITable();
@@ -431,7 +439,7 @@ async function main() {
       }
     ];
     await preferences(table, updateVersion, '预览|版本|更新');
-  
+    
     const botRow = new UITableRow();
     botRow.height = 40.5 * Device.screenScale();
     const botImg = ['http://mtw.so/5L1M8z', 'http://mtw.so/68kBSv']
@@ -565,10 +573,7 @@ async function main() {
       titleText.titleFont = Font.mediumSystemFont(30);
       
       const url = [
-        'http://mtw.so/6mtSAz',
-        'http://mtw.so/6tW1cQ',
-        'http://mtw.so/5v6zgp',
-        'http://mtw.so/66HNEM'
+        'https://img30.360buyimg.com/cf/jfs/t1/168861/13/35573/4524/6406ba42F1c824763/9c95e827f66aa2e1.png'
       ];
       const items = url[parseInt(Math.random() * url.length)];
       const doudouImage = title.addImageAtURL(items);
