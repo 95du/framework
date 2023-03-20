@@ -21,7 +21,7 @@ async function main() {
       transparency: '0.5',
       progressWidth: phoneSize < 926 ? '235' : '265',
       gap: phoneSize < 926 ? 13 : 18,
-      location: '0',
+      location: '1',
       gradient: [],
       update: 'true',
       appleOS: 'true',
