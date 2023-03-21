@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: deep-green; icon-glyph: tags;
+// icon-color: purple; icon-glyph: tags;
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
@@ -115,7 +115,7 @@ async function main() {
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
     const topImg = ['aHR0cDovL210dy5zby82ME16S2k=', 'aHR0cDovL210dy5zby82ZjkydWc=',
-'aHR0cDovL210dy5zby82MDFYanY='];
+'aHR0cDovL210dy5zby81S1pKN2Y='];
     const items = topImg[Math.floor(Math.random() * topImg.length)];
     const effectImage = effectRow.addImageAtURL(atob(items));
     effectImage.widthWeight = 0.4;
