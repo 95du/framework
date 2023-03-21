@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: purple; icon-glyph: tags;
+// icon-color: teal; icon-glyph: tags;
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
@@ -56,7 +56,7 @@ async function main() {
     if (setting.update === 'false' && F_MGR.fileExists(modulePath)) {
       return modulePath;
     } else {
-      const req = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/jingDong_baitiao.js');
+      const req = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/jingDong_BaiTiao.js');
       const moduleJs = await req.load().catch(() => {
         return null;
       });
@@ -723,7 +723,7 @@ async function main() {
     );
     if (index === 0) return;
     const modulePath = F_MGR.joinPath(path, 'jingDong.js');
-    const reqUpdate = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/jingDong_baitiao.js');
+    const reqUpdate = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/jingDong_BaiTiao.js');
     const codeString = await reqUpdate.loadString();
     if (codeString.indexOf('95度茅台') == -1) {
       notify('更新失败⚠️', '请检查网络或稍后再试');
