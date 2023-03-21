@@ -78,7 +78,7 @@ async function main() {
     if (setting.update === 'false' && F_MGR.fileExists(modulePath)) {
       return modulePath;
     } else {
-      const req = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/12123_UITable.js');
+      const req = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/12123.js');
       const moduleJs = await req.load().catch(() => {
         return null;
       });
@@ -757,7 +757,7 @@ async function main() {
     );
     if (index === 0) return;
     const modulePath = F_MGR.joinPath(path, '12123.js');
-    const reqUpdate = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/12123_UITable.js');
+    const reqUpdate = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/12123.js');
     const codeString = await reqUpdate.loadString();
     if (codeString.indexOf('95度茅台') == -1) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
