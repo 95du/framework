@@ -435,19 +435,12 @@ async function main() {
         type: 'options',
         title: '更新代码',
         desc: '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新代码尝试自动修复'
+      },
+      {
+        interval: 121.8
       }
     ];
     await preferences(table, updateVersion, '预览|版本|更新');
-    
-    const botRow = new UITableRow();
-    botRow.height = 40.5 * Device.screenScale();
-    const botImg = ['http://mtw.so/5L1M8z', 'http://mtw.so/68kBSv']
-    const items2 = botImg[Math.floor(Math.random() * botImg.length)];
-    const botImage = botRow.addImageAtURL(items2);
-    botImage.widthWeight = 0.4;
-    botImage.rightAligned();
-    botRow.backgroundColor = bgColor
-    table.addRow(botRow);
   }
   
   
@@ -572,7 +565,9 @@ async function main() {
       titleText.titleFont = Font.mediumSystemFont(30);
       
       const url = [
-        'https://img30.360buyimg.com/cf/jfs/t1/168861/13/35573/4524/6406ba42F1c824763/9c95e827f66aa2e1.png'
+        'http://mtw.so/5L1M8z',
+        'http://mtw.so/68kBSv',
+        'http://mtw.so/5DtXBK'
       ];
       const items = url[parseInt(Math.random() * url.length)];
       const doudouImage = title.addImageAtURL(items);
