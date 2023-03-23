@@ -10,7 +10,7 @@
 */
 
 const scriptName = '95duJingDong_Treasury';
-const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbl8lMjBqaW5nRG9uZ19Kb3kuanM=');
+const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9taWFuL21haW5famluZ0RvbmdfSm95Lmpz');
 const fm = FileManager.local();
 const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
 if (!fm.fileExists(runPath)) {
