@@ -279,6 +279,17 @@ async function main() {
         val: setting['code'] === 0 ? '已登录  >' : setting['code'] === 3 ? '已过期  >' : '未登录  >'
       },
       {
+        url: 'https://gitcode.net/4qiao/scriptable/raw/master/img/jingdong/WangWang.png',
+        title: '汪汪庄园',
+        onClick: async () => {
+          Safari.open(
+'openApp.jdMobile://virtual?params=%7B%22category%22%3A%22jump%22%2C%22des%22%3A%22m%22%2C%22url%22%3A%22https%3A%2F%2Fjoypark.jd.com%2F%3FactivityId%3D99DZNpaCTAv8f4TuKXr0Ew%26inviterId%3DzXrXTE1udgOiA5aUdMsW8w%26inviteType%3D0%22%7D'  
+          );
+        },
+        type: 'login',
+        val: '收汪币  >'
+      },
+      {
         icon: {
           name: 'gearshape.fill',
           color: '#FF3B2F'
@@ -437,7 +448,7 @@ async function main() {
         desc: '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新代码尝试自动修复'
       },
       {
-        interval: 121.8
+        interval: 25.9 * Device.screenScale()
       }
     ];
     await preferences(table, updateVersion, '预览|版本|更新');
