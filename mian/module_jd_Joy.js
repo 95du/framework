@@ -9,7 +9,7 @@
  * Telegram 交流群 https://t.me/+ViT7uEUrIUV0B_iy
 */
 
-const scriptName = '95duJingDong_Treasury';
+const scriptName = '95duJingDong_Joy';
 const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9taWFuL21haW5famluZ0RvbmdfSm95Lmpz');
 const fm = FileManager.local();
 const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
