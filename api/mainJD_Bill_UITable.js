@@ -38,10 +38,12 @@ async function main() {
   
   // Background Color
   const bgColor = Color.dynamic(
-    new Color('#F5F5F5'), new Color('')
+    new Color('#F5F5F5'),
+    new Color('')
   );
   const topBgColor = Color.dynamic(
-    new Color('#DFDFDF'), new Color('')
+    new Color('#DFDFDF'),
+    new Color('')
   );
   
   // refresh time
