@@ -145,12 +145,12 @@
                 "name": "DmYY",
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
             },
-            "title": "南网在线",
-            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/electric.png",
+            "title": "南网在线_2",
+            "thumb": "http://mtw.so/6mJ00J",
             "version": "1.0.0",
             "description": "南网在线App",
-            "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/electric.js",
-            "name": "南网在线"
+            "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/module_south_PowerGrid.js",
+            "name": "南网在线_2"
         },
         {
             "depend": {
