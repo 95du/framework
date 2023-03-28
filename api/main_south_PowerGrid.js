@@ -73,7 +73,7 @@ async function main() {
   async function userloginWeb() {  
     const open = await generateAlert(
       title = '南网在线登录',
-      message = `\r\n南方电网只包括海南、广东、广西、云南、贵州5个省份\n\n注: 使用小组件需要用户的 Token\n1，使用 Quantumult-X 自动获取。\n2，用户自行在App中抓包获取，在请求头部或响应头部拷贝x-auth-token的值。\n\r\n小组件作者: 95度茅台`,
+      message = `\r\n南方电网只包括海南、广东、广西、云南、贵州5个省份\n\n注: 使用小组件需要用户的 Token\n1，使用 Quantumult-X 自动获取。\n2，用户自行在App中抓包获取，在请求头部或响应头部拷贝x-auth-token的值。\n\r\n小组件作者: 95度茅台\n获取token作者: @Fokit`,
       options = ['取消', '获取']
     );
     if ( open === 1 ) {
@@ -93,7 +93,7 @@ async function main() {
       const input = await alert.presentAlert();
       if ( input == 0 ) {
         setting.token = alert.textFieldValue(0);
-        //setting.updateTime = Date.parse(new Date());
+        setting.updateTime = Date.parse(new Date());
         setting.code = 0
         notify('登录成功', alert.textFieldValue(0));
         await saveSettings();
