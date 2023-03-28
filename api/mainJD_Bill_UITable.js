@@ -288,7 +288,7 @@ async function main() {
       {
         url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/personText.png',
         type: 'input',
-        title: '改用户名',
+        title: '用户名称',
         desc: '自定义用户名',
         val: '>',
         inp: 'userName'
