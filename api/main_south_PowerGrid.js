@@ -119,7 +119,7 @@ async function main() {
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
     const topImg = [
-      'http://mtw.so/5SzTrg',
+      'http://mtw.so/5SGkDK',
       'http://mtw.so/5DBI2Q',
       'http://mtw.so/6fdc88'
     ];
