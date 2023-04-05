@@ -2,12 +2,9 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: purple; icon-glyph: cog;
 async function main() {
-  const F_MGR = FileManager.iCloud();
-  const folder = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du");
-  if (!F_MGR.fileExists(folder)) {
-    F_MGR.createDirectory(folder);
-  }
-  const cacheFile = F_MGR.joinPath(folder, 'setting.json');
+  const F_MGR = FileManager.local();
+  const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
+  const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
   // Get Settings { json }
   const getSettings = (file) => {
@@ -341,7 +338,9 @@ async function main() {
     });
     
     const { code, data } = event;
-    F_MGR.writeString(cacheFile, JSON.stringify(data));
+    F_MGR.writeString(cacheFile, JSON.stringify(
+      { ...settings, ...data }
+    ));
     await injectListener();
   };
   
