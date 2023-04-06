@@ -3,7 +3,7 @@
 // icon-color: purple; icon-glyph: cog;
 
 async function main() {
-  const F_MGR = FileManager.local();
+  const F_MGR = FileManager.local()
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
@@ -51,16 +51,16 @@ async function main() {
       default: '10:10'
     },
     {
-      name: "autoLoop",
-      label: "自动循环",
+      name: "loopSwitch",
+      label: "循环切换",
       type: "switch",
       default: false
     },
     {
-      name: "random",
+      name: "randomSwitch",
       label: "随机切换",
       type: "switch",
-      default: true
+      default: false
     }
   ]
   
@@ -233,6 +233,13 @@ async function main() {
       )
     }
     
+    const iCloudInput = document.querySelector('input[name="useICloud"]')
+    iCloudInput.checked = settings.useICloud
+    iCloudInput
+    .addEventListener('change', (e) => {
+      invoke('toggle', e.target.checked)
+    })
+    
     const formData = {};
     const fragment = document.createDocumentFragment()
     for (const item of formItems) {
@@ -290,6 +297,7 @@ async function main() {
       <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
       <style>${style}</style>
     </head>
+    <!-- body -->
     <body>
     <div class="list">
       <div class="list__header">
@@ -298,7 +306,7 @@ async function main() {
       <form class="list__body" action="javascript:void(0);">
         <label class="form-item">
           <div>自动更新</div>
-          <input name="update" type="checkbox" role="switch">
+          <input name="useICloud" type="checkbox" role="switch">
         </label>
         <label id='reset' class="form-item form-item--link">
           <div>重置所有</div>
@@ -306,6 +314,7 @@ async function main() {
         </label>
       </form>
     </div>
+    <!--通用设置-->
     <div class="list">
       <div class="list__header">
         设置
@@ -338,6 +347,7 @@ async function main() {
     });
     
     const { code, data } = event;
+    settings.useICloud = settings.useICloud == true ? false : true;
     F_MGR.writeString(cacheFile, JSON.stringify(
       { ...settings, ...data }
     ));
