@@ -328,9 +328,14 @@ async function main() {
           break
       }
       settings.useICloud = settings.useICloud == true ? false : true;
-      F_MGR.writeString(cacheFile, JSON.stringify(
-        { ...settings, ...data }
-      ));
+      F_MGR.writeString(
+        cacheFile, 
+        JSON.stringify({ 
+          ...settings, 
+          ...data, 
+          updateTime: Date.now() 
+        })
+      );
       await injectListener();
     };
     
