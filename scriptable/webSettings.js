@@ -51,7 +51,7 @@ async function main() {
       default: '10:10'
     },
     {
-      name: "loop",
+      name: "autoLoop",
       label: "自动循环",
       type: "switch",
       default: false
@@ -341,7 +341,6 @@ async function main() {
     F_MGR.writeString(cacheFile, JSON.stringify(
       { ...settings, ...data }
     ));
-    console.log(settings)
     await injectListener();
   };
   
