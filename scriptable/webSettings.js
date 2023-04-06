@@ -316,7 +316,7 @@ async function main() {
     </body>
   </html>`
   const webView = new WebView();
-  await webView.loadHTML(html);
+  await webView.loadHTML(html, 'https://github.com/Honye/scriptable-scripts');
   
   const injectListener = async () => {
     const event = await webView.evaluateJavaScript(
