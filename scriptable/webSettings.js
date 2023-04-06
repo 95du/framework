@@ -315,7 +315,6 @@ async function main() {
       <script>${js}</script>
     </body>
   </html>`
-  
   const webView = new WebView();
   await webView.loadHTML(html);
   
@@ -342,6 +341,7 @@ async function main() {
     F_MGR.writeString(cacheFile, JSON.stringify(
       { ...settings, ...data }
     ));
+    console.log(settings)
     await injectListener();
   };
   
