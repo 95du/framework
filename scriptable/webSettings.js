@@ -326,8 +326,11 @@ async function main() {
         case 'itemClick':
           onItemClick?.(data);
           break
+        case 'toggle':
+          settings.useICloud = settings.useICloud === true ? false : true;  
+          break
       }
-      settings.useICloud = settings.useICloud == true ? false : true;
+      
       F_MGR.writeString(
         cacheFile, 
         JSON.stringify({ 
