@@ -328,6 +328,7 @@ async function main() {
           break
         case 'toggle':
           settings.useICloud = settings.useICloud === true ? false : true;  
+          settings.useICloud = data
           break
       }
       
