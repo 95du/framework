@@ -24,7 +24,7 @@ async function main() {
       formItems = [],
       onItemClick,
       render,
-      homePage = 'http://boxjs.com'
+      _ = 'http://boxjs.com'
     } = options;
     
     const style =
@@ -77,6 +77,14 @@ async function main() {
       border-radius: var(--card-radius);
       border-radius: 12px;
       overflow: hidden;
+    }
+    .form-item-auth {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 3em;
+      padding: 0.35em 100px;
+      position: relative;
     }
     .form-item {
       display: flex;
@@ -263,6 +271,7 @@ async function main() {
       document.getElementById('reset').addEventListener('click', () => reset())
     })()`;
     
+    const topImageColor = Device.isUsingDarkAppearance() === false ? '黑色风格' : '白色风格';
     
     const html =`
     <html>
@@ -272,6 +281,14 @@ async function main() {
         <style>${style}</style>
       </head>
       <body>
+      <!-- 顶部Logo -->  
+      <div class="list">
+        <form class="list__body" action="javascript:void(0);">
+          <label id="author" class="form-item-auth form-item--link">
+            <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${topImageColor}.png" width="200" height="40">
+          </label>
+        </form>
+      </div>
       <!-- 通用设置 -->
       <div class="list">
         <div class="list__header">
@@ -288,7 +305,7 @@ async function main() {
           </label>
         </form>
       </div>
-      <!--通用设置-->
+      <!-- 通用设置 -->
       <div class="list">
         <div class="list__header">
           设置
@@ -297,9 +314,10 @@ async function main() {
       </div>
         <script>${js}</script>
       </body>
-    </html>`
+    </html>`.trim();
+    
     const webView = new WebView();
-    await webView.loadHTML(html, 'https://github.com/Honye/scriptable-scripts');
+    await webView.loadHTML(html, _);
     
     const injectListener = async () => {
       const event = await webView.evaluateJavaScript(
