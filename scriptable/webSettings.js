@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+await main()
 async function main() {
   const F_MGR = FileManager.local()
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
@@ -271,7 +271,6 @@ async function main() {
         <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
         <style>${style}</style>
       </head>
-      
       <body>
       <!-- 通用设置 -->
       <div class="list">
@@ -398,6 +397,11 @@ async function main() {
         default: '10:00'
       },
       {
+        name: "quantumlt",
+        label: "Quantumult-X 配置",
+        type: "cell"
+      },
+      {
         name: "loopSwitch",
         label: "循环切换",
         type: "switch",
@@ -413,6 +417,9 @@ async function main() {
     onItemClick: async (item) => {
       // type: 'cell'
       const { name } = item;
+      if (name === 'quantumlt') {
+        Safari.openInApp('https://bbs.applehub.cn/forum-post/688/.html/?replytocom=69', false);
+      }
     }
   });
 }
