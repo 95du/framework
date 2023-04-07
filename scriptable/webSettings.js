@@ -327,17 +327,15 @@ async function main() {
           onItemClick?.(data);
           break
         case 'toggleSettings':
-          settings.useICloud = settings.useICloud === true ? false : true;  
-          settings.useICloud = data;
+          settings.useICloud = settings.useICloud == true ? false : true;
           break
       }
       // Save Settings
       F_MGR.writeString(
         cacheFile, 
         JSON.stringify({ 
-          ...settings, 
-          ...data, 
-          updateTime: Date.now() 
+          ...settings,
+          ...data
         })
       );
       await injectListener();
