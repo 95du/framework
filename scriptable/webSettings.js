@@ -199,9 +199,9 @@ async function main() {
       
       const iCloudInput = document.querySelector('input[name="useICloud"]')
       iCloudInput.checked = settings.useICloud
-      iCloudInput
-      .addEventListener('change', (e) => {
-        invoke('toggle', e.target.checked)
+      iCloudInput.addEventListener(
+'change', (e) => {
+        invoke('toggleSettings', e.target.checked)
       })
       
       const formData = {};
@@ -326,12 +326,12 @@ async function main() {
         case 'itemClick':
           onItemClick?.(data);
           break
-        case 'toggle':
+        case 'toggleSettings':
           settings.useICloud = settings.useICloud === true ? false : true;  
-          settings.useICloud = data
+          settings.useICloud = data;
           break
       }
-      
+      // Save Settings
       F_MGR.writeString(
         cacheFile, 
         JSON.stringify({ 
