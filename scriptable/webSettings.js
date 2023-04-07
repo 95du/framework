@@ -391,12 +391,6 @@ async function main() {
         default: initColor.indexDarkColor
       },
       {
-        name: 'checkInAfter',
-        label: '设置时间',
-        type: 'time',
-        default: '10:00'
-      },
-      {
         name: "quantumlt",
         label: "Quantumult-X 配置",
         type: "cell"
@@ -415,7 +409,7 @@ async function main() {
       }
     ],
     onItemClick: async (item) => {
-      // type: 'cell'
+      // type: 'time' 添加时间弹窗选项
       const { name } = item;
       if (name === 'quantumlt') {
         Safari.openInApp('https://bbs.applehub.cn/forum-post/688/.html/?replytocom=69', false);
