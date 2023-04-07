@@ -392,19 +392,19 @@ async function main() {
       },
       {
         name: 'textColorLight',
-        label: 'Text color (light)',
+        label: '标题文字颜色',
         type: 'color',
         default: initColor.textColorLight
       },
       {
         name: "indexLightColor",
-        label: "序号颜色（白天）",
+        label: "标题颜色（白天）",
         type: "color",
         default: initColor.indexLightColor
       },
       {
         name: "indexDarkColor",
-        label: "序号颜色（夜间）",
+        label: "标题颜色（夜间）",
         type: "color",
         default: initColor.indexDarkColor
       },
