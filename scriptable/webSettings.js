@@ -35,6 +35,52 @@ async function main() {
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
     }
+    /* 头像呼吸光环旋转放大开始 **/
+    .avatar {
+      border-radius: 50%;
+      animation: light 4s ease-in-out infinite;
+      transition: 0.5s;
+    }
+    .avatar:hover {
+      transform: scale(1.15) rotate(720deg);
+    }
+    @keyframes light {
+      0% {
+        box-shadow:0 0 4px #f00;
+      }
+      25% {
+        box-shadow:0 0 16px #0f0;
+      }
+      50% {
+        box-shadow:0 0 4px #00f;
+      }
+      75% {
+        box-shadow:0 0 16px #0f0;
+      }
+      100% {
+        box-shadow:0 0 4px #f00;
+      }
+    }
+    /** 头像呼吸光环旋转放大结束 **/
+
+    /** 彩色昵称开始 **/
+    .display-name{
+      background-image: -webkit-linear-gradient(90deg, #07c160, #fb6bea 25%, #3aedff 50%, #fb6bea 75%, #28d079);
+      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-size: 100% 600%;
+      animation: wzw 10s linear infinite;  
+      font-size: 18px;
+    }
+    @keyframes wzw {
+      0% {
+        background-position: 0 0;
+      }
+      100% {
+        background-position: 0 -300%;
+      }
+    }
+    /** 彩色昵称结束 **/
     * {
       -webkit-user-select: none;
       user-select: none;
@@ -82,7 +128,7 @@ async function main() {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      min-height: 3em;
+      min-height: 11em;
       padding: 0.35em 100px;
       position: relative;
     }
@@ -94,6 +140,16 @@ async function main() {
       min-height: 2em;
       padding: 0.5em 20px;
       position: relative;
+    }
+    .form-label {
+      display: flex;
+      align-items: center;
+    }
+    .form-label-img {
+      height: 30;
+    }
+    .form-label-title {
+      margin-left: 12px
     }
     .form-item--link .icon-arrow_right {
       color: #86868b;
@@ -277,34 +333,55 @@ async function main() {
     <html>
       <head>
         <meta name='viewport' content='width=device-width, user-scalable=no'>
-        <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
+        <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
         <style>${style}</style>
       </head>
       <body>
-      <!-- 顶部Logo -->  
-      <div class="list">
-        <form class="list__body" action="javascript:void(0);">
-          <label id="author" class="form-item-auth form-item--link">
-            <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${topImageColor}.png" width="200" height="40">
-          </label>
-        </form>
-      </div>
-      <!-- 通用设置 -->
-      <div class="list">
-        <div class="list__header">
-          通用
+      <!-- author Logo -->
+      <center>
+        <!-- 旋转头像开始 -->
+        <div class="hover-show relative">
+          <span class="avatar-img">
+            <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" width="90" height="90" class="lazyload avatar avatar-id-0"/>
+          </span>
         </div>
+        <br>
+        <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${topImageColor}.png" width="200" height="40">
+        <br>
+        <a href="javascript:;" class="display-name">Author &nbsp; 95度茅台</a>
+        <!-- 旋转头像结束 -->
+      </center>
+      <script 
+        type='text/javascript' 
+        src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/jquery.min.js?ver=7.1' 
+        id='jquery-js'>
+      </script>
+      <script 
+        type='text/javascript' 
+        src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/bootstrap.min.js?ver=7.1' 
+        id='bootstrap-js'>
+      </script>
+      <!-- 通用设置 -->
+      <div class="list" >
         <form class="list__body" action="javascript:void(0);">
-          <label class="form-item">
-            <div>自动更新</div>
+          <label class="form-item form-item--link" >
+            <div class="form-label">
+              <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/update.png"/>
+              <div class="form-label-title">自动更新</div>
+            </div>
             <input name="useICloud" type="checkbox" role="switch">
           </label>
           <label id='reset' class="form-item form-item--link">
-            <div>重置所有</div>
-            <i class="iconfont icon-arrow_right"></i>
+            <div class="form-label">
+              <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/reset.png"/>
+              <div class="form-label-title" data-size="small">重置所有</div>
+              </div>
+              <i class="iconfont icon-arrow_right"></i>
+            </div>
           </label>
         </form>
       </div>
+
       <!-- 通用设置 -->
       <div class="list">
         <div class="list__header">
@@ -382,6 +459,7 @@ async function main() {
         name: "lightColor",
         label: "文字颜色（白天）",
         type: "color",
+        icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',
         default: initColor.lightColor
       },
       {
