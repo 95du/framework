@@ -154,6 +154,11 @@ async function main() {
     .form-item--link .icon-arrow_right {
       color: #86868b;
     }
+    .form-item-right-desc {
+      font-size: 16px;
+      color: #86868b;
+      margin-right: 5px;
+    }
     .form-item + .form-item::before {
       content: "";
       position: absolute;
@@ -261,11 +266,11 @@ async function main() {
         )
       }
       
-      const iCloudInput = document.querySelector('input[name="useICloud"]')
-      iCloudInput.checked = settings.useICloud
-      iCloudInput.addEventListener(
-'change', (e) => {
-        invoke('toggleSettings', e.target.checked)
+      const update = document.querySelector('input[name="update"]')
+      update.checked = settings.update ?? true
+      update.addEventListener('change', (e) => {
+        formData['update'] = e.target.checked
+        invoke('changeSettings', formData)
       })
       
       const formData = {};
@@ -328,7 +333,7 @@ async function main() {
     })()`;
     
     const topImageColor = Device.isUsingDarkAppearance() === false ? '黑色风格' : '白色风格';
-    
+    const isChildLevel = false
     const html =`
     <html>
       <head>
@@ -351,37 +356,30 @@ async function main() {
         <a href="javascript:;" class="display-name">Author &nbsp; 95度茅台</a>
         <!-- 旋转头像结束 -->
       </center>
-      <script 
-        type='text/javascript' 
-        src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/jquery.min.js?ver=7.1' 
-        id='jquery-js'>
-      </script>
-      <script 
-        type='text/javascript' 
-        src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/bootstrap.min.js?ver=7.1' 
-        id='bootstrap-js'>
-      </script>
-      <!-- 通用设置 -->
-      <div class="list" >
+      <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/jquery.min.js?ver=7.1' id='jquery-js'></script>
+      <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/bootstrap.min.js?ver=7.1' id='bootstrap-js'></script>
+      <!--通用设置-->  
+      <div class="list">
         <form class="list__body" action="javascript:void(0);">
-          <label class="form-item form-item--link" >
+          <label id="update" class="form-item form-item--link" >
             <div class="form-label">
               <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/update.png"/>
               <div class="form-label-title">自动更新</div>
             </div>
-            <input name="useICloud" type="checkbox" role="switch">
+            <input name="update" type="checkbox" role="switch" />
           </label>
           <label id='reset' class="form-item form-item--link">
             <div class="form-label">
               <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/reset.png"/>
               <div class="form-label-title" data-size="small">重置所有</div>
               </div>
+              <div class="form-label">
+                <div id="refreshInterval" class="form-item-right-desc">15 小时前</div>
               <i class="iconfont icon-arrow_right"></i>
             </div>
           </label>
         </form>
       </div>
-
       <!-- 通用设置 -->
       <div class="list">
         <div class="list__header">
@@ -505,7 +503,7 @@ async function main() {
       }
     ],
     onItemClick: async (item) => {
-      // type: 'time' 添加时间弹窗选项
+    // type: 'time' 添加时间弹窗选项
       const { name } = item;
       if (name === 'quantumlt') {
         Safari.openInApp('https://bbs.applehub.cn/forum-post/688/.html/?replytocom=69', false);
