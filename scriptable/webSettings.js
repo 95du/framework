@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+await main()
 async function main() {
   const F_MGR = FileManager.local()
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
@@ -17,6 +17,17 @@ async function main() {
   }
   const settings = getSettings(cacheFile);
 
+  /**
+   * 存储当前设置
+   * @param { JSON } string
+   */
+  const writeSettings = async ( saveSet ) => {
+    typeof settings === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify( saveSet )) : null;
+     console.log(JSON.stringify(
+       settings, null, 2)
+    );
+  }
+  
   
   // ====== web start =======//
   const withSettings = async (options) => {
@@ -358,7 +369,7 @@ async function main() {
       </center>
       <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/jquery.min.js?ver=7.1' id='jquery-js'></script>
       <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/bootstrap.min.js?ver=7.1' id='bootstrap-js'></script>
-      <!--通用设置-->  
+      <!-- 通用 -->  
       <div class="list">
         <form class="list__body" action="javascript:void(0);">
           <label id="update" class="form-item form-item--link" >
@@ -418,15 +429,12 @@ async function main() {
         case 'itemClick':
           onItemClick?.(data);
           break
+      };
+      const saveSet = {
+        ...settings,
+        ...data
       }
-      // Save Settings
-      F_MGR.writeString(
-        cacheFile, 
-        JSON.stringify({ 
-          ...settings,
-          ...data
-        })
-      );
+      await writeSettings(saveSet);
       await injectListener();
     };
     
@@ -442,7 +450,7 @@ async function main() {
   
   const initColor = {
     textColorLight: '#34C579',
-    darkColor: '#ffffff',
+    darkColor: '#FFFFFF',
     lightColor: "#333333",
     indexLightColor: '#3F8BFF',
     indexDarkColor: '#FF9500'
