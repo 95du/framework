@@ -157,7 +157,7 @@ async function main() {
       align-items: center;
     }
     .form-label-img {
-      height: 30;
+      height: 28;
     }
     .form-label-title {
       margin-left: 12px
