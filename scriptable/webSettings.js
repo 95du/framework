@@ -386,7 +386,8 @@ async function main() {
               </div>
               <div class="form-label">
                 <div id="refreshInterval" class="form-item-right-desc">15 小时前</div>
-              <i class="iconfont icon-arrow_right"></i>
+                <i class="iconfont icon-arrow_right"></i>
+              </div>
             </div>
           </label>
         </form>
@@ -447,7 +448,6 @@ async function main() {
   
   
   // ======= Initial ========= //
-  
   const initColor = {
     textColorLight: '#34C579',
     darkColor: '#FFFFFF',
@@ -496,13 +496,13 @@ async function main() {
       },
       {
         name: "loopSwitch",
-        label: "循环切换",
+        label: "循环模式",
         type: "switch",
         default: false
       },
       {
         name: "randomSwitch",
-        label: "随机切换",
+        label: "随机模式",
         type: "switch",
         default: false
       }
