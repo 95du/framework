@@ -6,10 +6,10 @@ async function main() {
   const F_MGR = FileManager.local()
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
-  
+
   // Get Settings { json }
   const getSettings = (file) => {
-    if ( F_MGR.fileExists(file) ) {
+    if (F_MGR.fileExists(file)) {
       const data = F_MGR.readString(file);
       return JSON.parse(data);
     }
@@ -21,12 +21,110 @@ async function main() {
    * 存储当前设置
    * @param { JSON } string
    */
-  const writeSettings = async ( saveSet ) => {
-    typeof settings === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify( saveSet )) : null;
-     console.log(JSON.stringify(
-       settings, null, 2)
+  const writeSettings = async (saveSet) => {
+    typeof settings === 'object' ? F_MGR.writeString(cacheFile, JSON.stringify(saveSet)) : null;
+    console.log(JSON.stringify(
+      settings, null, 2)
     );
   }
+  
+    
+  /**
+   * 设置文字颜色( WebView )
+   * @param { string } time
+   * @param { string } color
+   * @param { string } title 
+   */
+  async function webModule() {
+    const modulePath = F_MGR.joinPath(path, 'webView.js');
+    if (F_MGR.fileExists(modulePath)) {
+      return modulePath;
+    } else {
+      const req = new Request('https://gitcode.net/4qiao/framework/raw/master/scriptable/webSettings.js');
+      const moduleJs = await req.load().catch(() => {
+        return null;
+      });
+      if (moduleJs) {
+        F_MGR.write(modulePath, moduleJs);
+        return modulePath;
+      }
+    }
+  }
+  
+  const loadSF2B64 = async (
+    icon = 'square.grid.2x2',
+    color = '#56A8D6',
+    cornerWidth = 39
+  ) => {
+    const sfSymbolImg = await drawTableIcon(icon, color, cornerWidth);
+    return `data:image/png;base64,${Data.fromPNG(sfSymbolImg).toBase64String()}`;
+  }
+  
+  /**
+   * Setting drawTableIcon
+   * @param { Image } image
+   * @param { string } string
+   */  
+  drawTableIcon = async (
+    icon = 'square.grid.2x2',
+    color = '#e8e8e8',
+    cornerWidth = 39
+  ) => {
+    const sfi = SFSymbol.named(icon);
+    sfi.applyFont(  
+      Font.mediumSystemFont(30)
+    );
+    const imgData = Data.fromPNG(sfi.image).toBase64String();
+    const html = `
+      <img id="sourceImg" src="data:image/png;base64,${imgData}" />
+      <img id="silhouetteImg" src="" />
+      <canvas id="mainCanvas" />
+      `;
+    const js = `
+      var canvas = document.createElement("canvas");
+      var sourceImg = document.getElementById("sourceImg");
+      var silhouetteImg = document.getElementById("silhouetteImg");
+      var ctx = canvas.getContext('2d');
+      var size = sourceImg.width > sourceImg.height ? sourceImg.width : sourceImg.height;
+      canvas.width = size;
+      canvas.height = size;
+      ctx.drawImage(sourceImg, (canvas.width - sourceImg.width) / 2, (canvas.height - sourceImg.height) / 2);
+      var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      var pix = imgData.data;
+      for (var i=0, n = pix.length; i < n; i+= 4){
+        pix[i] = 255;
+        pix[i+1] = 255;
+        pix[i+2] = 255;
+        pix[i+3] = pix[i+3];
+      }
+      ctx.putImageData(imgData,0,0);
+      silhouetteImg.src = canvas.toDataURL();
+      output=canvas.toDataURL()
+    `;
+  
+    let wv = new WebView();
+    await wv.loadHTML(html);
+    const base64Image = await wv.evaluateJavaScript(js);
+    const iconImage = await new Request(base64Image).loadImage();
+    const size = new Size(160, 160);
+    const ctx = new DrawContext();
+    ctx.opaque = false;
+    ctx.respectScreenScale = true;
+    ctx.size = size;
+    const path = new Path();
+    const rect = new Rect(0, 0, size.width, size.width);
+  
+    path.addRoundedRect(rect, cornerWidth, cornerWidth);
+    path.closeSubpath();
+    ctx.setFillColor(new Color(color));
+    ctx.addPath(path);
+    ctx.fillPath();
+    const rate = 36;
+    const iw = size.width - rate;
+    const x = (size.width - iw) / 2;
+    ctx.drawImageInRect(iconImage, new Rect(x, x, iw, iw));
+    return ctx.getImage();
+  };
   
   
   // ====== web start =======//
@@ -37,9 +135,9 @@ async function main() {
       render,
       _ = 'http://boxjs.com'
     } = options;
-    
+
     const style =
-    `:root {
+      `:root {
       --color-primary: #007aff;
       --divider-color: rgba(60,60,67,0.36);
       --card-background: #fff;
@@ -263,8 +361,17 @@ async function main() {
     }`;
     
     
+    for (let index = 0; index < formItems.length; index++) {
+      const item = formItems[index]
+      const icon = item.icon;
+      if (typeof icon == 'object') {
+        const { name, color } = icon;
+        item.icon = await loadSF2B64(name, color);
+      }
+    }
+    
     const js =
-    `(() => {
+      `(() => {
       const settings = ${JSON.stringify(settings)}
       const formItems = ${JSON.stringify(formItems)}
       
@@ -291,9 +398,24 @@ async function main() {
         formData[item.name] = value;
         const label = document.createElement("label");
         label.className = "form-item";
+        
         const div = document.createElement("div");
-        div.innerText = item.label;
+        div.className = 'form-label';
         label.appendChild(div);
+        
+        if (item.icon) {
+          const img = document.createElement("img");
+          img.src = item.icon;
+          img.className = 'form-label-img';
+          div.appendChild(img);
+        }
+        
+        const divTitle = document.createElement("div");
+        if (item.icon) {
+          divTitle.className = 'form-label-title';
+        }
+        divTitle.innerText = item.label;
+        div.appendChild(divTitle);
         
         if (item.type === 'cell') {
           label.classList.add('form-item--link')
@@ -344,8 +466,8 @@ async function main() {
     })()`;
     
     const topImageColor = Device.isUsingDarkAppearance() === false ? '黑色风格' : '白色风格';
-    const isChildLevel = false
-    const html =`
+    
+    const html = `
     <html>
       <head>
         <meta name='viewport' content='width=device-width, user-scalable=no'>
@@ -364,7 +486,7 @@ async function main() {
         <br>
         <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${topImageColor}.png" width="200" height="40">
         <br>
-        <a href="javascript:;" class="display-name">Author &nbsp; 95度茅台</a>
+        <a href="javascript:;" class="display-name">95度茅台</a>
         <!-- 旋转头像结束 -->
       </center>
       <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/jquery.min.js?ver=7.1' id='jquery-js'></script>
@@ -395,17 +517,17 @@ async function main() {
       <!-- 通用设置 -->
       <div class="list">
         <div class="list__header">
-          设置
+          通用
         </div>
         <form id="form" class="list__body" action="javascript:void(0);"></form>
       </div>
         <script>${js}</script>
       </body>
     </html>`.trim();
-    
+
     const webView = new WebView();
     await webView.loadHTML(html, _);
-    
+
     const injectListener = async () => {
       const event = await webView.evaluateJavaScript(
         `(() => {
@@ -424,29 +546,25 @@ async function main() {
       ).catch((err) => {
         console.error(err);
       });
-      
+
       const { code, data } = event;
-      switch (code) {
-        case 'itemClick':
-          onItemClick?.(data);
-          break
-      };
-      const saveSet = {
-        ...settings,
-        ...data
+      if (code === 'itemClick') {
+        onItemClick?.(data);
+      } else {
+        const saveSet = { ...settings, ...data };
+        await writeSettings(saveSet);
       }
-      await writeSettings(saveSet);
       await injectListener();
     };
-    
+
     injectListener().catch((e) => {
       console.error(e);
       throw e
     });
     await webView.present();
   }
-  
-  
+
+
   // ======= Initial ========= //
   const initColor = {
     textColorLight: '#34C579',
@@ -455,7 +573,7 @@ async function main() {
     indexLightColor: '#3F8BFF',
     indexDarkColor: '#FF9500'
   };
-    
+
   await withSettings({
     formItems: [
       {
@@ -469,49 +587,71 @@ async function main() {
         name: "darkColor",
         label: "文字颜色（夜间）",
         type: "color",
+        icon: {
+          name: 'rectangle.on.rectangle',
+          color: '#938BF0'
+        },
         default: initColor.darkColor
       },
       {
         name: 'textColorLight',
         label: '标题文字颜色',
         type: 'color',
+        icon: {
+          name: 'gearshape.fill',
+          color: '#FF3B2F'
+        },
         default: initColor.textColorLight
       },
       {
         name: "indexLightColor",
         label: "标题颜色（白天）",
         type: "color",
+        icon: {
+          name: 'externaldrive.fill',
+          color: '#F9A825'
+        },
         default: initColor.indexLightColor
       },
       {
         name: "indexDarkColor",
         label: "标题颜色（夜间）",
         type: "color",
+        icon: {
+          name: 'applelogo',
+          color: '#00BCD4'
+        },
         default: initColor.indexDarkColor
       },
       {
         name: "quantumlt",
         label: "Quantumult-X 配置",
-        type: "cell"
+        type: "cell",
+        icon: {
+          name: 'pin.fill',
+          color: '#F57C00'
+        }
       },
       {
         name: "loopSwitch",
         label: "循环模式",
         type: "switch",
+        icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
         default: false
       },
       {
         name: "randomSwitch",
         label: "随机模式",
         type: "switch",
+        icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
         default: false
       }
     ],
     onItemClick: async (item) => {
-    // type: 'time' 添加时间弹窗选项
+      // type: 'time' 添加时间弹窗选项
       const { name } = item;
       if (name === 'quantumlt') {
-        Safari.openInApp('https://bbs.applehub.cn/forum-post/688/.html/?replytocom=69', false);
+        await importModule(await webModule()).main();
       }
     }
   });
