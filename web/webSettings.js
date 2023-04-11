@@ -36,11 +36,11 @@ async function main() {
    * @param { string } title 
    */
   async function webModule() {
-    const modulePath = F_MGR.joinPath(path, 'webView.js');
+    const modulePath = F_MGR.joinPath(path, 'getScript.js');
     if (F_MGR.fileExists(modulePath)) {
       return modulePath;
     } else {
-      const req = new Request('https://gitcode.net/4qiao/framework/raw/master/scriptable/webSettings.js');
+      const req = new Request('https://gitcode.net/4qiao/framework/raw/master/web/getScript.js');
       const moduleJs = await req.load().catch(() => {
         return null;
       });
@@ -132,7 +132,6 @@ async function main() {
     const {
       formItems = [],
       onItemClick,
-      render,
       _ = 'http://boxjs.com'
     } = options;
 
@@ -232,14 +231,6 @@ async function main() {
       border-radius: var(--card-radius);
       border-radius: 12px;
       overflow: hidden;
-    }
-    .form-item-auth {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 11em;
-      padding: 0.35em 100px;
-      position: relative;
     }
     .form-item {
       display: flex;
@@ -362,7 +353,7 @@ async function main() {
     
     
     for (let index = 0; index < formItems.length; index++) {
-      const item = formItems[index]
+      const item = formItems[index];
       const icon = item.icon;
       if (typeof icon == 'object') {
         const { name, color } = icon;
@@ -480,7 +471,7 @@ async function main() {
         <!-- 旋转头像开始 -->
         <div class="hover-show relative">
           <span class="avatar-img">
-            <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" width="90" height="90" class="lazyload avatar avatar-id-0"/>
+            <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" width="95" height="95" class="lazyload avatar avatar-id-0"/>
           </span>
         </div>
         <br>
@@ -556,7 +547,7 @@ async function main() {
       }
       await injectListener();
     };
-
+    
     injectListener().catch((e) => {
       console.error(e);
       throw e
@@ -588,14 +579,14 @@ async function main() {
         label: "文字颜色（夜间）",
         type: "color",
         icon: {
-          name: 'rectangle.on.rectangle',
+          name: 'textformat',
           color: '#938BF0'
         },
         default: initColor.darkColor
       },
       {
         name: 'textColorLight',
-        label: '标题文字颜色',
+        label: "图标颜色（白天）",
         type: 'color',
         icon: {
           name: 'gearshape.fill',
@@ -624,8 +615,8 @@ async function main() {
         default: initColor.indexDarkColor
       },
       {
-        name: "quantumlt",
-        label: "Quantumult-X 配置",
+        name: "message",
+        label: "更新信息",
         type: "cell",
         icon: {
           name: 'pin.fill',
@@ -641,7 +632,7 @@ async function main() {
       },
       {
         name: "randomSwitch",
-        label: "随机模式",
+        label: "始终深色",
         type: "switch",
         icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
         default: false
@@ -650,7 +641,7 @@ async function main() {
     onItemClick: async (item) => {
       // type: 'time' 添加时间弹窗选项
       const { name } = item;
-      if (name === 'quantumlt') {
+      if (name === 'message') {
         await importModule(await webModule()).main();
       }
     }
