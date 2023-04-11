@@ -6,7 +6,6 @@ async function main() {
   const F_MGR = FileManager.local()
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
-
   // Get Settings { json }
   const getSettings = (file) => {
     if (F_MGR.fileExists(file)) {
@@ -16,6 +15,7 @@ async function main() {
     return {}
   }
   const settings = getSettings(cacheFile);
+
 
   /**
    * 存储当前设置
@@ -457,6 +457,11 @@ async function main() {
     })()`;
     
     const topImageColor = Device.isUsingDarkAppearance() === false ? '黑色风格' : '白色风格';
+    const baseUrl = 'https://bbs.applehub.cn/wp-content/themes/zibll/';  
+    const jsPaths = [
+      `${baseUrl}js/libs/jquery.min.js?ver=7.1`,
+      `${baseUrl}js/libs/bootstrap.min.js?ver=7.1`,
+    ];
     
     const html = `
     <html>
@@ -466,52 +471,50 @@ async function main() {
         <style>${style}</style>
       </head>
       <body>
-      <!-- author Logo -->
-      <center>
         <!-- 旋转头像开始 -->
-        <div class="hover-show relative">
-          <span class="avatar-img">
-            <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" width="95" height="95" class="lazyload avatar avatar-id-0"/>
-          </span>
-        </div>
-        <br>
-        <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${topImageColor}.png" width="200" height="40">
-        <br>
-        <a href="javascript:;" class="display-name">95度茅台</a>
+        <center>
+          <div class="hover-show relative">
+            <span class="avatar-img">
+              <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" width="95" height="95" class="lazyload avatar avatar-id-0"/>
+            </span>
+          </div>
+          <br>
+          <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${topImageColor}.png" width="200" height="40">
+          <br>
+          <a href="javascript:;" class="display-name">95度茅台</a>
+        </center>
         <!-- 旋转头像结束 -->
-      </center>
-      <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/jquery.min.js?ver=7.1' id='jquery-js'></script>
-      <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/bootstrap.min.js?ver=7.1' id='bootstrap-js'></script>
-      <!-- 通用 -->  
-      <div class="list">
-        <form class="list__body" action="javascript:void(0);">
-          <label id="update" class="form-item form-item--link" >
-            <div class="form-label">
-              <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/update.png"/>
-              <div class="form-label-title">自动更新</div>
-            </div>
-            <input name="update" type="checkbox" role="switch" />
-          </label>
-          <label id='reset' class="form-item form-item--link">
-            <div class="form-label">
-              <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/reset.png"/>
-              <div class="form-label-title" data-size="small">重置所有</div>
-              </div>
+        ${jsPaths.map(path => `<script type='text/javascript' src='${path}'></script>`).join('\n')}
+        <!-- 通用 -->  
+        <div class="list">
+          <form class="list__body" action="javascript:void(0);">
+            <label id="update" class="form-item form-item--link" >
               <div class="form-label">
-                <div id="refreshInterval" class="form-item-right-desc">15 小时前</div>
-                <i class="iconfont icon-arrow_right"></i>
+                <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/update.png"/>
+                <div class="form-label-title">自动更新</div>
               </div>
-            </div>
-          </label>
-        </form>
-      </div>
-      <!-- 通用设置 -->
-      <div class="list">
-        <div class="list__header">
-          通用
+              <input name="update" type="checkbox" role="switch" />
+            </label>
+            <label id='reset' class="form-item form-item--link">
+              <div class="form-label">
+                <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/reset.png"/>
+                <div class="form-label-title">重置所有</div>
+                </div>
+                <div class="form-label">
+                  <div class="form-item-right-desc">15 小时前</div>
+                  <i class="iconfont icon-arrow_right"></i>
+                </div>
+              </div>
+            </label>
+          </form>
         </div>
-        <form id="form" class="list__body" action="javascript:void(0);"></form>
-      </div>
+        <!-- 通用设置 -->
+        <div class="list">
+          <div class="list__header">
+            通用
+          </div>
+          <form id="form" class="list__body" action="javascript:void(0);"></form>
+        </div>
         <script>${js}</script>
       </body>
     </html>`.trim();
@@ -615,6 +618,13 @@ async function main() {
         default: initColor.indexDarkColor
       },
       {
+        name: "loopSwitch",
+        label: "循环模式",
+        type: "switch",
+        icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
+        default: false
+      },
+      {
         name: "message",
         label: "更新信息",
         type: "cell",
@@ -622,13 +632,6 @@ async function main() {
           name: 'pin.fill',
           color: '#F57C00'
         }
-      },
-      {
-        name: "loopSwitch",
-        label: "循环模式",
-        type: "switch",
-        icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
-        default: false
       },
       {
         name: "randomSwitch",
