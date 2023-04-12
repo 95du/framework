@@ -253,7 +253,7 @@ document.getElementById('userClick').addEventListener('click', () => {
   </html>
   `
   const webView = new WebView();
-  await webView.loadHTML(html, 'http://boxjs.com')
+  await webView.loadHTML(html);
   const injectListener = async () => {
     const event = await webView.evaluateJavaScript(
       `(() => {
