@@ -445,17 +445,36 @@ async function main() {
         invoke('myName', myName);
       });
       
+      // loading
+      const toggleLoading = (e) => {
+        const target = e.currentTarget;
+        target.classList.add('loading');
+        const icon = e.currentTarget.querySelector('.iconfont');
+        const className = icon.className;
+        icon.className = 'iconfont icon-loading';
+        setTimeout(function() {
+          target.classList.remove('loading');
+          icon.className = className;
+          window.removeEventListener('JWeb', listener);
+        }, 600);
+      };
+      
+document.getElementById('reset').addEventListener('click', (e) => {
+        toggleLoading(e);
+      });
+      
+      // Reset Data
       const reset = () => {
         for (const item of formItems) {
           const el = document.querySelector(\`.form-item__input[name="\${item.name}"]\`)
-          formData[item.name] = item.default
+          formData[item.name] = item.default;
           if (item.type === 'switch') {
             el.checked = item.default
           } else {
-            el && (el.value = item.default)
+            el && (el.value = item.default);
           }
         }
-        invoke('removeSettings', formData)
+        invoke('remove', formData);
       }
       document.getElementById('reset').addEventListener('click', () => reset())
     })()`;
