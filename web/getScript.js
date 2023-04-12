@@ -4,7 +4,7 @@
 
 async function main() {
   const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', '白色风格'] : ['white', '黑色风格'];
-  const scriptName = 'JD_京东小白鹅';
+  const name = 'JD_京东小白鹅';
   const scriptUrl = 'https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_baitiao.js';
   
   const js = `
@@ -272,9 +272,9 @@ document.getElementById('userClick').addEventListener('click', () => {
     if (code === 'userClick') {
       const script = await new Request(scriptUrl).loadString();
       const fm = FileManager.iCloud()
-        fm.writeString(fm.documentsDirectory() + `/${scriptName}.js`, script);
+        fm.writeString(fm.documentsDirectory() + `/${name}.js`, script);
+      Safari.open('scriptable:///run/' + encodeURIComponent(name));
     }
-    Safari.open('scriptable:///run/' + encodeURIComponent(scriptName));
     //await injectListener();
   };
     
