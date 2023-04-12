@@ -30,14 +30,20 @@ async function main() {
   
     
   /**
-   * 设置文字颜色( WebView )
+   * 跳转到安装页面
    * @param { string } time
    * @param { string } color
    * @param { string } title 
    */
   async function webModule() {
+    function getDuration( timer ) {
+      const timeAgo = new Date(Date.now() - timer);
+      const minutes = timeAgo.getUTCMinutes();
+      return minutes;
+    }
+    const duration = getDuration(settings.updateTime);
     const modulePath = F_MGR.joinPath(path, 'getScript.js');
-    if (F_MGR.fileExists(modulePath)) {
+    if ( duration <= 10 && F_MGR.fileExists(modulePath) ) {
       return modulePath;
     } else {
       const req = new Request('https://gitcode.net/4qiao/framework/raw/master/web/getScript.js');
@@ -135,8 +141,8 @@ async function main() {
       _ = 'http://boxjs.com'
     } = options;
 
-    const style =
-      `:root {
+    const style = `
+    :root {
       --color-primary: #007aff;
       --divider-color: rgba(60,60,67,0.36);
       --card-background: #fff;
@@ -361,8 +367,8 @@ async function main() {
       }
     }
     
-    const js =
-      `(() => {
+    const js =`
+    (() => {
       const settings = ${JSON.stringify(settings)}
       const formItems = ${JSON.stringify(formItems)}
       
@@ -380,7 +386,7 @@ async function main() {
       update.addEventListener('change', (e) => {
         formData['update'] = e.target.checked
         invoke('changeSettings', formData)
-      })
+      });
       
       const formData = {};
       const fragment = document.createDocumentFragment()
@@ -409,24 +415,24 @@ async function main() {
         div.appendChild(divTitle);
         
         if (item.type === 'cell') {
-          label.classList.add('form-item--link')
-          const icon = document.createElement('i')
-          icon.className = 'iconfont icon-arrow_right'
-          label.appendChild(icon)
+          label.classList.add('form-item--link');
+          const icon = document.createElement('i');
+          icon.className = 'iconfont icon-arrow_right';
+          label.appendChild(icon);
           label.addEventListener('click', () => {
             invoke('itemClick', item)
           })
         } else {
-          const input = document.createElement("input")
-          input.className = 'form-item__input'
-          input.name = item.name
-          input.type = item.type
-          input.value = value
+          const input = document.createElement("input");
+          input.className = 'form-item__input';
+          input.name = item.name;
+          input.type = item.type;
+          input.value = value;
           // Switch
           if (item.type === 'switch') {
-            input.type = 'checkbox'
-            input.role = 'switch'
-            input.checked = value
+            input.type = 'checkbox';
+            input.role = 'switch';
+            input.checked = value;
           }
           input.addEventListener("change", (e) => {
             formData[item.name] =
@@ -445,7 +451,7 @@ async function main() {
         invoke('myName', myName);
       });
       
-      // loading
+      // loading Animations
       const toggleLoading = (e) => {
         const target = e.currentTarget;
         target.classList.add('loading');
@@ -544,7 +550,6 @@ document.getElementById('reset').addEventListener('click', (e) => {
 
     const webView = new WebView();
     await webView.loadHTML(html, _);
-
     const injectListener = async () => {
       const event = await webView.evaluateJavaScript(
         `(() => {
@@ -563,6 +568,7 @@ document.getElementById('reset').addEventListener('click', (e) => {
       ).catch((err) => {
         console.error(err);
       });
+      
       const { code, data } = event;
       if (code === 'itemClick') {
         onItemClick?.(data);
