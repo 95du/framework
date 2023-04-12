@@ -439,8 +439,12 @@ async function main() {
         }
         fragment.appendChild(label);
       }
-      document.getElementById('form').appendChild(fragment)
-    
+      document.getElementById('form').appendChild(fragment);
+      document.getElementById("myName").addEventListener("click", () => {
+        console.log("95度茅台");
+        invoke('myName', myName);
+      });
+      
       const reset = () => {
         for (const item of formItems) {
           const el = document.querySelector(\`.form-item__input[name="\${item.name}"]\`)
@@ -481,7 +485,7 @@ async function main() {
           <br>
           <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${topImageColor}.png" width="200" height="40">
           <br>
-          <a href="javascript:;" class="display-name">95度茅台</a>
+          <a href="javascript:;" class="display-name" id="myName">95度茅台</a>
         </center>
         <!-- 旋转头像结束 -->
         ${jsPaths.map(path => `<script type='text/javascript' src='${path}'></script>`).join('\n')}
@@ -540,10 +544,11 @@ async function main() {
       ).catch((err) => {
         console.error(err);
       });
-
       const { code, data } = event;
       if (code === 'itemClick') {
         onItemClick?.(data);
+      } else if (code === 'myName') {
+        await importModule(await webModule()).main();
       } else {
         const saveSet = { ...settings, ...data };
         await writeSettings(saveSet);
