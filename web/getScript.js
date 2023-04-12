@@ -39,7 +39,7 @@ async function main() {
           text-align: center;
           font-size: 16px;
           margin-top: 30px;
-          margin-bottom: 150px;
+          margin-bottom: 152px;
         }
         /* 头像呼吸光环旋转放大开始 **/
         .avatar {
