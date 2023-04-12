@@ -16,6 +16,7 @@ async function main() {
       };
       
 document.getElementById('userClick').addEventListener('click', () => {
+        console.log('95度茅台')
         invoke('userClick', userClick);
       });
     })()`;
@@ -157,7 +158,7 @@ document.getElementById('userClick').addEventListener('click', () => {
                   <div class="update-content">作者: &nbsp; 95度茅台</div>
                 </a>
                 <br />
-                <div class="form-label-title">🔥 2023年3月25日
+                <div class="form-label-title">🔥2023年3月25日
                   <li>修复已知问题</li>
                   <li>性能优化，改进用户体验</li>
                 </div>
@@ -183,7 +184,7 @@ document.getElementById('userClick').addEventListener('click', () => {
         window.onload = function() {
           setTimeout(function() {
             $('.signin-loader').click()
-          }, 1000);
+          }, 1500);
         };
       </script>
       <script type="text/javascript">
@@ -245,6 +246,7 @@ document.getElementById('userClick').addEventListener('click', () => {
           height: 40px;
           margin: 0;
         }
+      </style>
       <!-- 底部波浪结束 -->
     </body>
   </html>
@@ -268,6 +270,7 @@ document.getElementById('userClick').addEventListener('click', () => {
     ).catch((err) => {
       console.error(err);
     });
+    
     const { code } = event;
     if (code === 'userClick') {
       const script = await new Request(scriptUrl).loadString();
