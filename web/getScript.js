@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: orange; icon-glyph: cannabis;
-  
+
 async function main() {
   const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', '白色风格'] : ['white', '黑色风格'];
   
@@ -39,7 +39,7 @@ async function main() {
           text-align: center;
           font-size: 16px;
           margin-top: 30px;
-          margin-bottom: 350px;
+          margin-bottom: 150px;
         }
         /* 头像呼吸光环旋转放大开始 **/
         .avatar {
@@ -114,6 +114,9 @@ async function main() {
        <div class="button-container text-content">  
               <button type="button" class="but radius jb-yellow padding-lg btn-lengthen">更新内容</button>
             </div>
+            <center>
+              <img src="https://photo.applehub.cn:443/images/2023/04/06/lan.png">
+            </center>
             <div class="social-separator separator muted-3-color em09 mt20 mb20">Version 1.0.0</div>
      </div>
         </div>
@@ -210,7 +213,7 @@ async function main() {
           }
         }
         .wiiuii_layout {
-          top: 5%;
+          top: 0;
           width: 100%;
           height: 40px;
           position: relative;
