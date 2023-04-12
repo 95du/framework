@@ -112,7 +112,7 @@ document.getElementById('userClick').addEventListener('click', () => {
         <div class="container">
           <div class="author-header mb20 radius8 main-shadow main-bg full-widget-sm">
             <div class="page-cover">
-              <img class="lazyload fit-cover user-cover user-cover-id-0" src="https://sweixinfile.hisense.com/media/M00/71/C8/Ch4FyWOI6oCAf4P1AEgKkK6qUUk542.gif" alt="封面">
+              <img class="lazyload fit-cover user-cover user-cover-id-0" src="https://sweixinfile.hisense.com/media/M00/75/82/Ch4FyWQ28-KAGA_GAEgKkK6qUUk293.gif" alt="封面">
               <div class="absolute linear-mask"></div>
             </div>
             <!-- 旋转头像 -->
