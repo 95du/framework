@@ -46,6 +46,7 @@ document.getElementById('userClick').addEventListener('click', () => {
           font-size: 20px;
           margin-top: 5px;
           margin-bottom: 5px;
+          font-weight: bold;
         }
         .form-label-title {
           margin-left: 20px
@@ -152,7 +153,7 @@ document.getElementById('userClick').addEventListener('click', () => {
             <div class="tab-content">
               <div class="box-body">
                 <div class="title-h-center fa-2x">
-                  <div class="title">JD_京东小白鹅</div>
+                  <div class="title">${name}</div>
                   </div>
                 <a class="muted-color px30" class="display-name" >
                   <div class="update-content">作者: &nbsp; 95度茅台</div>
