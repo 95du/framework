@@ -4,6 +4,21 @@
 
 async function main() {
   const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', '白色风格'] : ['white', '黑色风格'];
+  const scriptName = 'JD_京东小白鹅';
+  const scriptUrl = 'https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_baitiao.js';
+  
+  const js = `
+    (() => {
+      window.invoke = (code) => {
+        window.dispatchEvent(
+          new CustomEvent('JBridge', { detail: { code } })
+        );
+      };
+      
+document.getElementById('userClick').addEventListener('click', () => {
+        invoke('userClick', userClick);
+      });
+    })()`;
   
   const html = `
   <html>
@@ -30,6 +45,9 @@ async function main() {
           font-size: 20px;
           margin-top: 5px;
           margin-bottom: 5px;
+        }
+        .form-label-title {
+          margin-left: 20px
         }
         .update-content {
           text-align: center;
@@ -112,19 +130,19 @@ async function main() {
           </div>
           <div class="signin-loader" >
        <div class="button-container text-content">  
-              <button type="button" class="but radius jb-yellow padding-lg btn-lengthen">更新内容</button>
+              <button type="button" class="but radius jb-yellow padding-lg btn-lengthen">敬请期待</button>
             </div>
             <center>
               <img src="https://photo.applehub.cn:443/images/2023/04/06/lan.png">
             </center>
-            <div class="social-separator separator muted-3-color em09 mt20 mb20">Version 1.0.0</div>
+            <div class="social-separator separator muted-3-color em09 mt20 mb20">95度茅台</div>
      </div>
         </div>
       </main>
       <!-- 弹窗开始 -->
       <div class="modal fade" id="u_sign" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
-          <div class="sign zib-widget blur-bg relative" style="border-radius: 25px;">
+          <div class="sign zib-widget blur-bg relative" style="border-radius: 27px;">
             <div class="text-center">
               <div class="sign-logo box-body">
                 <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${logoColor}.png" class="lazyload">
@@ -139,18 +157,19 @@ async function main() {
                   <div class="update-content">作者: &nbsp; 95度茅台</div>
                 </a>
                 <br />
-                <center>
+                <div class="form-label-title">🔥 2023年3月25日
                   <li>修复已知问题</li>
-                  <li>修复已知问题</li>
-                </center>
+                  <li>性能优化，改进用户体验</li>
+                </div>
               </div>
               <div id="sign-in">
                 <div class="tab-content">
                   <form>
                     <input machine-verification="geetest" type="hidden" name="captcha_mode" value="geetest">
                     <div class="box-body">
-                      <button type="button" class="but radius jb-blue padding-lg signsubmit-loader btn-block" onclick="location.href='https://sharecuts.cn/user/KVlQooAqzA'">立即获取</button>
-                    </div>
+                      <button id="userClick" type="button" class="but radius jb-blue padding-lg signsubmit-loader btn-block">立即更新</button>
+                     </div>
+                    <script>${js}</script>
                   </form>
                 </div>
               </div>
@@ -231,7 +250,38 @@ async function main() {
   </html>
   `
   const webView = new WebView();
-  await webView.loadHTML(html)
+  await webView.loadHTML(html, 'http://boxjs.com')
+  const injectListener = async () => {
+    const event = await webView.evaluateJavaScript(
+      `(() => {
+        const controller = new AbortController()
+        const listener = (e) => {
+          completion(e.detail)
+          controller.abort()
+        }
+        window.addEventListener(
+          'JBridge',
+          listener
+        )
+      })()`,
+      true
+    ).catch((err) => {
+      console.error(err);
+    });
+    const { code } = event;
+    if (code === 'userClick') {
+      const script = await new Request(scriptUrl).loadString();
+      const fm = FileManager.iCloud()
+        fm.writeString(fm.documentsDirectory() + `/${scriptName}.js`, script);
+    }
+    Safari.open('scriptable:///run/' + encodeURIComponent(scriptName));
+    //await injectListener();
+  };
+    
+  injectListener().catch((e) => {
+    console.error(e);
+    throw e
+  });
   await webView.present();
 }
 module.exports = { main }
