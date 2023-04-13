@@ -1,6 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: tags;
+
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
@@ -8,27 +9,34 @@ async function main() {
   if (!F_MGR.fileExists(path)) {
     F_MGR.createDirectory(path);
   }
-  // filesPath
+  const cacheFile = F_MGR.joinPath(path, 'setting.json');
+  // Background image Path
   const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
   const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
-  const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
-  if (!F_MGR.fileExists(cacheFile)) {
-    setting = {
-      minute: '10',
-      light: '0.7',
-      dark: '0.6',
-      masking: '0.1',
-      radian: '30',
-      update: 'true',
-      appleOS: "true",
-      randomIndex: 0
+  const DEFAULT_SETTINGS = {
+    minute: '10',
+    light: '0.7',
+    dark: '0.6',
+    masking: '0.1',
+    radian: '30',
+    update: 'true',
+    appleOS: "true",
+    randomIndex: 0
+  };
+  
+  const getSettings = (file) => {
+    let setting = {};
+    if (F_MGR.fileExists(file)) {
+      const data = F_MGR.readString(file);
+      return JSON.parse(data);
+    } else {
+      setting = DEFAULT_SETTINGS;
+      saveSettings();
     }
-    await saveSettings();
-  } else {
-    data = F_MGR.readString(cacheFile);
-    setting = JSON.parse(data);
+    return setting;
   }
+  const setting = getSettings(cacheFile);
   
   // Background Color
   const bgColor = Color.dynamic(
@@ -658,7 +666,7 @@ async function main() {
    * 存储当前设置
    * @param { JSON } string
    */
-  async function saveSettings () {
+  async function saveSettings() {
     typeof setting === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify(setting)) : null
     console.log(JSON.stringify(setting, null, 2))
   }
