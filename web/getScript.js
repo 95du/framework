@@ -137,7 +137,7 @@ document.getElementById('userClick').addEventListener('click', () => {
               <img class="lazyload fit-cover user-cover user-cover-id-0" src="https://sweixinfile.hisense.com/media/M00/75/82/Ch4FyWQ28-KAGA_GAEgKkK6qUUk293.gif" alt="封面">
               <div class="absolute linear-mask"></div>
             </div>
-            <!-- 旋转头像 -->
+            <!-- 旋转头像开始 -->
             <div class="header-content">
               <div class="flex header-info relative hh signin-loader">
                 <div class="flex0 header-avatar">
@@ -150,6 +150,7 @@ document.getElementById('userClick').addEventListener('click', () => {
                 <a href="javascript:;" class="display-name">Scriptable 小组件</a>
               </div>
             </div>
+            <!-- 旋转头像结束 -->
           </div>
           <div class="signin-loader" >
          <div class="button-container text-content">  
@@ -186,15 +187,10 @@ document.getElementById('userClick').addEventListener('click', () => {
                 </div>
               </div>
               <div id="sign-in">
-                <div class="tab-content">
-                  <form>
-                    <input machine-verification="geetest" type="hidden" name="captcha_mode" value="geetest">
-                    <div class="box-body">
-                      <button id="userClick" type="button" class="but radius jb-blue padding-lg signsubmit-loader btn-block">立即更新</button>
-                     </div>
-                    <script>${js}</script>
-                  </form>
+                <div class="box-body">
+                  <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
                 </div>
+                <script>${js}</script>
               </div>
               <p class="social-separator separator muted-5-color em12">Version 1.0.0</p>
             </div>
@@ -208,11 +204,9 @@ document.getElementById('userClick').addEventListener('click', () => {
             $('.signin-loader').click()
           }, 1500);
         };
-      </script>
-      <script type="text/javascript">
         window._win = {
           uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
-          qj_loading: '1',
+          qj_loading: '1'
         }
       </script>
       <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/jquery.min.js?ver=7.1' id='jquery-js'></script>
