@@ -154,7 +154,7 @@ document.getElementById('userClick').addEventListener('click', () => {
               <div class="box-body">
                 <div class="title-h-center fa-2x">
                   <div class="title">${name}</div>
-                  </div>
+                </div>
                 <a class="muted-color px30" class="display-name" >
                   <div class="update-content">作者: &nbsp; 95度茅台</div>
                 </a>
