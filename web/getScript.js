@@ -3,9 +3,27 @@
 // icon-color: orange; icon-glyph: cannabis;
 
 async function main() {
+  const F_MGR = FileManager.local()
+  const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
+
   const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', '白色风格'] : ['white', '黑色风格'];
   const name = 'JD_京东小白鹅';
   const scriptUrl = 'https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_baitiao.js';
+  
+  async function downloadScripts() {
+    const n = new Notification();
+    n.sound = 'popup'
+    n.schedule();
+    const modulePath = F_MGR.joinPath(path, 'store.js');
+    const req = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdmlwL21haW45NWR1U3RvcmUuanM='));
+    const moduleJs = await req.load().catch(() => {
+      return null;
+    });
+    if ( moduleJs ) {
+      F_MGR.write(modulePath, moduleJs);
+      return modulePath;
+    }
+  }
   
   const js = `
     (() => {
@@ -16,8 +34,11 @@ async function main() {
       };
       
 document.getElementById('userClick').addEventListener('click', () => {
-        console.log('95度茅台')
         invoke('userClick', userClick);
+      });
+      document.getElementById('myName').addEventListener('click', () => {
+        console.log('95度茅台')
+        invoke('myName', myName);
       });
     })()`;
   
@@ -156,7 +177,7 @@ document.getElementById('userClick').addEventListener('click', () => {
                   <div class="title">${name}</div>
                 </div>
                 <a class="muted-color px30" class="display-name" >
-                  <div class="update-content">作者: &nbsp; 95度茅台</div>
+                  <div id="myName" class="update-content">作者: &nbsp; 95度茅台</div>
                 </a>
                 <br />
                 <div class="form-label-title">🔥2023年3月25日
@@ -276,10 +297,12 @@ document.getElementById('userClick').addEventListener('click', () => {
     if (code === 'userClick') {
       const script = await new Request(scriptUrl).loadString();
       const fm = FileManager.iCloud()
-        fm.writeString(fm.documentsDirectory() + `/${name}.js`, script);
+      fm.writeString(fm.documentsDirectory() + `/${name}.js`, script);
       Safari.open('scriptable:///run/' + encodeURIComponent(name));
+    } else if (code === 'myName') {
+      await importModule(await downloadScripts()).main();
     }
-    //await injectListener();
+    await injectListener();
   };
     
   injectListener().catch((e) => {
