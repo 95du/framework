@@ -671,7 +671,7 @@ async function main() {
    * 存储当前设置
    * @param { JSON } string
    */
-  async function saveSettings () {
+  async function saveSettings() {
     typeof setting === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify(setting)) : null
     console.log(JSON.stringify(setting, null, 2))
   }
