@@ -1,6 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: tags;
+
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
@@ -702,7 +703,7 @@ async function main() {
    * 存储当前设置
    * @param { JSON } string
    */
-  async function saveSettings () {
+  async function saveSettings() {
     typeof setting === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify(setting)) : null
     console.log(JSON.stringify(setting, null, 2))
   }
