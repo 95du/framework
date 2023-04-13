@@ -131,7 +131,7 @@ document.getElementById('userClick').addEventListener('click', () => {
             </div>
           </div>
           <div class="signin-loader" >
-       <div class="button-container text-content">  
+         <div class="button-container text-content">  
               <button type="button" class="but radius jb-yellow padding-lg btn-lengthen">敬请期待</button>
             </div>
             <center>
