@@ -1,32 +1,43 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: pink; icon-glyph: phone-volume;
+
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duTelecom");
-  // filesPath
+  if (!F_MGR.fileExists(path)) {
+    F_MGR.createDirectory(path);
+  }
+  const cacheFile = F_MGR.joinPath(path, 'setting.json');
+  // Background image Path
   const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
   const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
-  const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
-  if (!F_MGR.fileExists(cacheFile)) {
-    setting = {
-      minute: '10',
-      words: [],
-      transparency: '0.5',
-      masking: '0.3',
-      balanceColor: '#FF0000',
-      gradient: [],
-      update: 'true',
-      appleOS: "true",
-      init: false
+  const DEFAULT_SETTINGS = {
+    minute: '10',
+    words: [],
+    transparency: '0.5',
+    masking: '0.3',
+    balanceColor: '#FF0000',
+    gradient: [],
+    update: 'true',
+    appleOS: "true",
+    init: false
+  };
+  
+  const getSettings = (file) => {
+    let setting = {};
+    if (F_MGR.fileExists(file)) {
+      const data = F_MGR.readString(file);
+      return JSON.parse(data);
+    } else {
+      setting = DEFAULT_SETTINGS;
+      saveSettings();
     }
-    await saveSettings();
-  } else {
-    data = F_MGR.readString(cacheFile);
-    setting = JSON.parse(data);
+    return setting;
   }
+  const setting = getSettings(cacheFile);
   
   // Background Color
   const bgColor = Color.dynamic(
