@@ -41,6 +41,7 @@ async function main() {
       ...layout,
       minute: '10',
       picture: [],
+      imgArr: [],
       transparency: '0.5',
       masking: '0.3',
       gradient: [],
