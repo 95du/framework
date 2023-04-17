@@ -10,6 +10,17 @@ async function main() {
   const name = 'JD_京东小白鹅';
   const scriptUrl = 'https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_baitiao.js';
   
+  const baseUrl = 'https://bbs.applehub.cn/wp-content/themes/zibll/';  
+  const cssPaths = [
+    `${baseUrl}css/bootstrap.min.css?ver=7.1`,
+    `${baseUrl}css/main.min.css?ver=7.1`
+  ];
+  const jsPaths = [
+    `${baseUrl}js/libs/jquery.min.js?ver=7.1`,
+    `${baseUrl}js/libs/bootstrap.min.js?ver=7.1`,
+    `${baseUrl}js/loader.js?ver=7.1`
+  ];
+  
   async function downloadScripts() {
     const n = new Notification();
     n.sound = 'popup'
@@ -46,8 +57,7 @@ document.getElementById('userClick').addEventListener('click', () => {
   <html>
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=0.0, viewport-fit=cover">
-      <link rel='stylesheet' id='_bootstrap-css' href='https://bbs.applehub.cn/wp-content/themes/zibll/css/bootstrap.min.css?ver=7.1' type='text/css' media='all' />
-      <link rel='stylesheet' id='_main-css' href='https://bbs.applehub.cn/wp-content/themes/zibll/css/main.min.css?ver=7.1' type='text/css' media='all' />
+      ${cssPaths.map(path => `<link rel='stylesheet' href='${path}' type='text/css' media='all'>`).join('\n')}
       <style>
         .modal-dialog {
           /* position: fixed; */
@@ -143,7 +153,7 @@ document.getElementById('userClick').addEventListener('click', () => {
                 <div class="flex0 header-avatar">
                   <div class="hover-show relative">
                     <span class="avatar-img">
-                      <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" class="lazyload avatar avatar-id-0">
+                      <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/autoGPT.png" class="lazyload avatar avatar-id-0">
                     </span>
                   </div>
                 </div>
@@ -202,16 +212,14 @@ document.getElementById('userClick').addEventListener('click', () => {
         window.onload = function() {
           setTimeout(function() {
             $('.signin-loader').click()
-          }, 1500);
+          }, 1000);
         };
         window._win = {
-          uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
-          qj_loading: '1'
+          uri: '${baseUrl}',
+          qj_loading: '1',
         }
       </script>
-      <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/jquery.min.js?ver=7.1' id='jquery-js'></script>
-      <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/libs/bootstrap.min.js?ver=7.1' id='bootstrap-js'></script>
-      <script type='text/javascript' src='https://bbs.applehub.cn/wp-content/themes/zibll/js/loader.js?ver=7.1' id='_loader-js'></script>
+      ${jsPaths.map(path => `<script type='text/javascript' src='${path}'></script>`).join('\n')}
       <!-- 底部波浪开始 -->  
       <div class="wiiuii_layout">
         <svg class="editorial" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
