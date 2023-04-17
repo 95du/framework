@@ -6,17 +6,25 @@ async function main() {
   const version = '1.0.0'
   const uri = Script.name();
   const F_MGR = FileManager.local();
-  const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
-  if (!F_MGR.fileExists(path)) {
-    F_MGR.createDirectory(path);
-  }
-  const cacheFile = F_MGR.joinPath(path, 'setting.json');
+  const path = F_MGR.joinPath(
+    F_MGR.documentsDirectory(),
+    '95du_electric'
+  );
   
-  // backgroundPath
-  const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
-  const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
+  /**
+   * 获取电报机器人的数据存储目录路径
+   * @returns {string} - 目录路径
+   */
+  const getSettingPath = () => {
+    F_MGR.createDirectory(path, true);
+    return F_MGR.joinPath(path, 'setting.json', true);
+  };
   
-  // Get Settings { json }
+  /**
+   * 读取储存的设置
+   * @returns {object} 初始化
+   * @returns {object} - 设置对象
+   */
   const DEFAULT_SETTINGS = {
     minute: '10',
     masking: '0.1',
@@ -33,20 +41,31 @@ async function main() {
     avatarImage: 'http://mtw.so/6un5TI'
   };
   
-  const getSettings = (file) => {
+  const getSettings = ( file ) => {
     let setting = {};
-    if (F_MGR.fileExists(file)) {
-      const data = F_MGR.readString(file);
-      return JSON.parse(data);
+    if ( F_MGR.fileExists(file) ) {
+      return JSON.parse(F_MGR.readString(file));
     } else {
       setting = DEFAULT_SETTINGS;
       saveSettings();
     }
     return setting;
   }
-  const setting = getSettings(cacheFile);
+  const setting = await getSettings(getSettingPath());
   
-  // Background Color
+  /**
+   * 获取背景图片存储目录路径
+   * @returns {string} - 目录路径
+   */
+  const getBgImagePath = () => {
+    const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), '95duBackground');
+    F_MGR.createDirectory(bgPath, true)
+    return F_MGR.joinPath(bgPath, Script.name() + '.jpg');
+  }
+  
+  /**
+   * Background Color
+   */
   const bgColor = Color.dynamic(
     new Color('#F5F5F5'), new Color('')
   );
@@ -55,12 +74,16 @@ async function main() {
   );
   
   // refresh time
-  if (setting.minute) {  
+  if ( setting.minute ) {  
     const widget = new ListWidget();
     widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(setting.minute));
   }
   
-  if (config.runsInWidget) {
+  
+  /**
+   * 桌面显示组件
+   */
+  if ( config.runsInWidget ) {
     await importModule(await downloadModule()).main();
   }
   
@@ -165,7 +188,6 @@ async function main() {
       const action = await delAlert.presentAlert();
       if (action == 0) {
         F_MGR.remove(path);
-        notify('已清空数据', '请重新运行或重新配置小组件');
         Safari.open('scriptable:///run/' + encodeURIComponent(uri));
       }
     };
@@ -198,7 +220,7 @@ async function main() {
           const iPadOS = html.match(/<title>(iPadOS.*?)<\/title>/)[1];
           const arr = html.split('<item>');
           
-          let newArr =[];
+          let newArr = [];
           for (const item of arr) {
             const iOS = item.match(/<title>(.*?)<\/title>/)[1];
             if (iOS.indexOf('iOS 16') > -1) {
@@ -384,6 +406,12 @@ async function main() {
               interval: 26
             },
             {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/webColor.png',
+              type: 'web',
+              title: '颜色设置',
+              val: ' >'
+            },
+            {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
               title: '颜色代码',
               onClick: async () => {
@@ -409,7 +437,7 @@ async function main() {
               val: 'appleOS'
             },
             {
-              interval: 29.8 * Device.screenScale()
+              interval: 14.9 * Device.screenScale()
             }
           ];
           const table = new UITable();
@@ -657,20 +685,13 @@ async function main() {
               if (tips && matchVal) {
                 arr = setting[val];
                 arr.push(matchVal);
-                let count = 0;  
-                for (let obj of arr) {
-                  count++
-                }
-                notify('添加成功', `当前数据库中已储存 ${count} 个数值`);
+                notify('添加成功', `当前数据库中已储存 ${arr.length} 个数值`);
               } else if (matchVal) {
                 matchVal ? setting[val] = filedVal : setting[val]
               }
             });
           } else if (type === 'but') {
             setting[val] = setting[val] === 'true' ? "false" : "true"
-            let n = new Notification();
-            n.sound = 'popup'
-            n.schedule();
           } else if (type == 'clear') {
             const clear = await generateAlert(title, desc, ['取消', '确认']);
             if (clear === 1) {
@@ -680,6 +701,9 @@ async function main() {
             }
           } else if (type === 'background') {
             await importModule(await backgroundModule()).main();
+          } else if (type === 'web') {
+            await importModule(await webModule()).main();
+            return;
           }
           // Refresh Save
           await refreshAllRows();
@@ -698,11 +722,42 @@ async function main() {
   
   
   /**
+   * 设置文字颜色( WebView )
+   * @param { string } time
+   * @param { string } color
+   * @param { string } title 
+   */
+  async function webModule() {
+    function getDuration( timer ) {
+      const timeAgo = new Date(Date.now() - timer);
+      const minutes = timeAgo.getUTCMinutes();
+      return minutes;
+    }
+    const duration = getDuration(setting.updateTime);
+    const modulePath = F_MGR.joinPath(path, 'webView.js');
+    if ( duration <= 10 && F_MGR.fileExists(modulePath) ) {
+      return modulePath;
+    } else {
+      const req = new Request('https://gitcode.net/4qiao/framework/raw/master/web/webSettings.js');
+      const moduleJs = await req.load().catch(() => {
+        return null;
+      });
+      if (moduleJs) {
+        setting.updateTime = Date.now()
+        await saveSettings()
+        F_MGR.write(modulePath, moduleJs);
+        return modulePath;
+      }
+    }
+  }
+  
+  
+  /**
    * 存储当前设置
    * @param { JSON } string
    */
   async function saveSettings() {
-    typeof setting === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify(setting)) : null
+    typeof setting === 'object' ?  F_MGR.writeString(getSettingPath(), JSON.stringify(setting)) : null
     console.log(JSON.stringify(setting, null, 2))
   }
   
