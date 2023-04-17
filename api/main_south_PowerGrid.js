@@ -3,7 +3,7 @@
 // icon-color: light-brown; icon-glyph: tags;
 
 async function main() {
-  const version = '1.0.0'
+  const version = '1.0.1'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(
@@ -26,13 +26,13 @@ async function main() {
    * @returns {object} - 设置对象
    */
   const DEFAULT_SETTINGS = {
+    version,
     minute: '10',
     masking: '0.1',
     transparency: '0.5',
     gradient: [],
     update: 'true',
     appleOS: 'true',
-    version: '1.0.0',
     progressWidth: Device.screenSize().height < 926 ? '225' : '255',
     gap: Device.screenSize().height < 926 ? 15 : 20,
     location: '1',
@@ -470,9 +470,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年03月27日\n南方电网，如图所示',
+        desc: '2023年04月18日\n增加缓存图片到本地24小时 ( 减少网络请求 )',
         val: version,
-        ver: 'Version 1.0.0'
+        ver: 'Version 1.0.1'
       },
       {
         icon: {
@@ -805,7 +805,7 @@ async function main() {
   }
   // Version Update Notice
   if ( version != setting.version && setting.update === 'false' ) {
-    notify(uri, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
+    notify('南网在线', `新版本更新 Version ${version}  ( 可开启自动更新 )`);
     setting.version = version;
     await saveSettings();
   }
