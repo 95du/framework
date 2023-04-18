@@ -3,41 +3,70 @@
 // icon-color: blue; icon-glyph: tags;
 
 async function main() {
+  const version = '1.0.3'
   const uri = Script.name();
   const F_MGR = FileManager.local();
-  const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duJingDong_Bill");
-  if (!F_MGR.fileExists(path)) {
-    F_MGR.createDirectory(path);
-  }
-  // filesPath
-  const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
-  const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
-  const cacheFile = F_MGR.joinPath(path, 'setting.json');
+  const path = F_MGR.joinPath(
+    F_MGR.documentsDirectory(),
+    '95duJingDong_Bill'
+  );
   
-  if (!F_MGR.fileExists(cacheFile)) {
-    const phoneSize = Device.screenSize().height;
-    setting = {
-      minute: '10',
-      masking: '0.1',
-      transparency: '0.5',
-      progressColor1: '#FF9500',
-      progressColor2: '#34C759',
-      progressWidth: phoneSize < 926 ? '215' : '243',
-      progressHeight: phoneSize < 926 ? 9 : 10,
-      gradient: [],
-      update: 'true',
-      appleOS: 'true',
-      isPlus: 'true',
-      randomIndex: 0,
-      statistics: 1
+  /**
+   * 获取数据存储目录路径
+   * @returns {string} - 目录路径
+   */
+  const getSettingPath = () => {
+    F_MGR.createDirectory(path, true);
+    return F_MGR.joinPath(path, 'setting.json', true);
+  };
+  
+  /**
+   * 读取储存的设置
+   * @returns {object} 初始化
+   * @returns {object} - 设置对象
+   */
+  const DEFAULT_SETTINGS = {
+    version: version,
+    minute: '10',
+    masking: '0.1',
+    transparency: '0.5',
+    progressColor1: '#FF9500',
+    progressColor2: '#34C759',
+    progressWidth: Device.screenSize().height < 926 ? '215' : '243',
+    progressHeight: Device.screenSize().height < 926 ? 9 : 10,
+    gradient: [],
+    update: 'true',
+    appleOS: 'true',
+    isPlus: 'true',
+    randomIndex: 0,
+    statistics: 1
+  };
+  
+  const getSettings = ( file ) => {
+    let setting = {};
+    if ( F_MGR.fileExists(file) ) {
+      return JSON.parse(F_MGR.readString(file));
+    } else {
+      setting = DEFAULT_SETTINGS;
+      saveSettings();
     }
-    await saveSettings();
-  } else {
-    data = F_MGR.readString(cacheFile);
-    setting = JSON.parse(data);
-  }
+    return setting;
+  };
+  const setting = await getSettings(getSettingPath());
   
-  // Background Color
+  /**
+   * 获取背景图片存储目录路径
+   * @returns {string} - 目录路径
+   */
+  const getBgImagePath = () => {
+    const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), '95duBackground');
+    F_MGR.createDirectory(bgPath, true)
+    return F_MGR.joinPath(bgPath, Script.name() + '.jpg');
+  };
+  
+  /**
+   * Background Color
+   */
   const bgColor = Color.dynamic(
     new Color('#F5F5F5'),
     new Color('')
@@ -368,7 +397,7 @@ async function main() {
               title: '图片背景',
               onClick: async () => {
                 const img = await Photos.fromLibrary();
-                await F_MGR.writeImage(bgImage, img);
+                await F_MGR.writeImage(getBgImagePath(), img);
                 notify('设置成功', '桌面组件稍后将自动刷新');
               }
             },
@@ -446,9 +475,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年03月13日\n自动签到、月收支账单统计\n增加是否使用Plus头像标签',
-        val: '1.0.2',
-        ver: 'Version 1.0.2'
+        desc: '2023年04月18日\n增加图片缓存24小时( 减少网络请求 )',
+        val: '1.0.3',
+        ver: 'Version 1.0.3'
       },
       {
         icon: {
@@ -677,7 +706,9 @@ async function main() {
             const clear = await generateAlert(title, desc, ['取消', '确认']);
             if (clear === 1) {
               setting.gradient = [];
-              F_MGR.remove(bgImage);
+              F_MGR.remove(
+                getBgImagePath()
+              );
               notify('删除成功', '桌面组件稍后将自动刷新');
             }
           } else if (type === 'background') {
@@ -704,7 +735,7 @@ async function main() {
    * @param { JSON } string
    */
   async function saveSettings() {
-    typeof setting === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify(setting)) : null
+    typeof setting === 'object' ?  F_MGR.writeString(getSettingPath(), JSON.stringify(setting)) : null
     console.log(JSON.stringify(setting, null, 2))
   }
   
@@ -748,7 +779,12 @@ async function main() {
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
   }
-  
+  // Version Update Notice  
+  if ( version != setting.version && setting.update === 'false' ) {
+    notify('京东收支账单', `新版本更新 Version ${version}  ( 可开启自动更新 )`);
+    setting.version = version;
+    await saveSettings();
+  }
   
   /**
    * Setting drawTableIcon
