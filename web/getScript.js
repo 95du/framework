@@ -170,7 +170,7 @@ document.getElementById('userClick').addEventListener('click', () => {
               <img src="https://photo.applehub.cn:443/images/2023/04/06/lan.png">
             </center>
             <div class="social-separator separator muted-3-color em09 mt20 mb20">95度茅台</div>
-     </div>
+       </div>
         </div>
       </main>
       <!-- 弹窗开始 -->
@@ -196,12 +196,10 @@ document.getElementById('userClick').addEventListener('click', () => {
                   <li>性能优化，改进用户体验</li>
                 </div>
               </div>
-              <div id="sign-in">
-                <div class="box-body">
-                  <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
-                </div>
-                <script>${js}</script>
+              <div class="box-body">
+                <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
               </div>
+              <script>${js}</script>
               <p class="social-separator separator muted-5-color em12">Version 1.0.0</p>
             </div>
           </div>
