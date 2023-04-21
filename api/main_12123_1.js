@@ -167,7 +167,7 @@ async function main() {
     const title = '交管12123';
     const message = Ver;
     const destructiveActions = ['更新代码', '重置所有'];
-    const actions = ['使用说明', '组件下载', '修改车牌', '预览组件', '退出菜单'];
+    const actions = ['使用说明','组件下载', '修改车牌', '预览组件', '退出菜单'];
   
     const showAlert = (
       title,
@@ -192,8 +192,12 @@ async function main() {
   
     const response = await alert.presentAlert();
     switch (response) {
-      case 1:
+      case 0:
         F_MGR.remove(moduleDir);
+        Safari.open('scriptable:///run/' + encodeURIComponent(uri));  
+        break;
+      case 1:
+        F_MGR.remove(path);
         Safari.open('scriptable:///run/' + encodeURIComponent(uri));
         break;
       case 2:
@@ -210,24 +214,6 @@ async function main() {
         break;
       case 6:
         return;
-      case 0:
-        const codeString = await new Request(update).loadString();
-        const iCloudInUse = F_MGR.isFileStoredIniCloud(module.filename);
-        const finish = showAlert();
-        if (codeString.includes('95度茅台') && iCloudInUse) {
-          F_MGR.writeString(
-            module.filename, 
-            codeString
-          );
-          finish.title = '更新成功';
-          finish.addAction('OK');
-          await finish.presentAlert();
-          Safari.open('scriptable:///run/' + encodeURIComponent(uri));
-        } else {
-          finish.title = '更新失败';
-          finish.addAction('OK');
-          await finish.presentAlert();
-        }
      // Main Menu
     }
   }
