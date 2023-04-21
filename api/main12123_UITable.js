@@ -3,63 +3,89 @@
 // icon-color: cyan; icon-glyph: car;
 
 async function main() {
-  const version = '1.1.6'
+  const version = '1.2.0'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du12123");
-  if (!F_MGR.fileExists(path)) {
-    F_MGR.createDirectory(path);
-  }
-  // filesPath
-  const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
-  const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
-  const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
-  if (!F_MGR.fileExists(cacheFile)) {
-    const phone = Device.screenSize().height  
-    if (phone < 926) {
-      layout = {
-        leftGap1: 20,
-        leftGap2: 3,
-        rightGap1: 14,
-        rightGap2: 8,
-        carWidth: 208,
-        carHeight: 100,
-        bottomSize: 212
-      }
-    } else {
-      layout = {
-        leftGap1: 24,
-        leftGap2: 7,
-        rightGap1: 18,
-        rightGap2: 11,
-        carWidth: 225,
-        carHeight: 100,
-        bottomSize: 230
-      }
-    };
-    setting = {
-      ...layout,
-      minute: '10',
-      picture: [],
-      imgArr: [],
-      transparency: '0.5',
-      masking: '0.3',
-      gradient: [],
-      myPlate: '琼A·849A8',
-      botStr: `${phone < 926 ? '' : '请'}保持良好的驾驶习惯，务必遵守交通规则`,
-      verifyToken: null,
-      update: 'true',
-      appleOS: "true",
-      version: '1.1.6'
+  /**
+   * 获取数据存储目录路径
+   * @returns {string} - 目录路径
+   */
+  const getSettingPath = () => {
+    F_MGR.createDirectory(path, true);
+    return F_MGR.joinPath(path, 'setting.json', true);
+  };
+  
+  /**
+   * 读取储存的设置
+   * @returns {object} - 设置对象
+   */
+  const phone = Device.screenSize().height  
+  if (phone < 926) {
+    layout = {
+      leftGap1: 20,
+      leftGap2: 3,
+      rightGap1: 14,
+      rightGap2: 8,
+      carWidth: 208,
+      carHeight: 100,
+      bottomSize: 212
     }
-    await saveSettings();
   } else {
-    data = F_MGR.readString(cacheFile);
-    setting = JSON.parse(data);
-  }
+    layout = {
+      leftGap1: 24,
+      leftGap2: 7,
+      rightGap1: 18,
+      rightGap2: 11,
+      carWidth: 225,
+      carHeight: 100,
+      bottomSize: 230
+    }
+  };
+
+  const DEFAULT_SETTINGS = {
+    ...layout,
+    version,
+    minute: '10',
+    picture: [],
+    imgArr: [],
+    transparency: '0.5',
+    masking: '0.3',
+    gradient: [],
+    update: 'true',
+    appleOS: "true",
+    myPlate: '琼A·849A8',
+    botStr: `${phone < 926 ? '' : '请'}保持良好的驾驶习惯，务必遵守交通规则`,
+    verifyToken: null
+  };
   
-  // Background Color
+  const getSettings = (file) => {
+    let setting = {};
+    if (F_MGR.fileExists(file)) {
+      return JSON.parse(F_MGR.readString(file));
+    } else {
+      setting = DEFAULT_SETTINGS;
+      saveSettings();
+    }
+    return setting;
+  };
+  const setting = await getSettings(getSettingPath());
+  
+  /**
+   * 获取背景图片存储目录路径
+   * @returns {string} - 目录路径
+   */
+  const getBgImagePath = () => {
+    const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), '95duBackground');
+    F_MGR.createDirectory(bgPath, true);
+    return F_MGR.joinPath(bgPath, Script.name() + '.jpg');
+  };
+  
+  
+  /**
+   * Background Color
+   */
   const bgColor = Color.dynamic(
     new Color('#F5F5F5'), new Color('')
   );
@@ -451,9 +477,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年04月16日\n\n增加储存车辆图片到本地 ‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
-        val: '1.1.6',
-        ver: 'Version 1.1.6'
+        desc: '2023年04月21日\n\n增加储存车辆图片到本地 ‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
+        val: version,
+        ver: 'Version 1.2.0'
       },
       {
         icon: {
@@ -726,7 +752,7 @@ async function main() {
    * @param { JSON } string
    */
   async function saveSettings() {
-    typeof setting === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify(setting)) : null
+    typeof setting === 'object' ?  F_MGR.writeString(getSettingPath(), JSON.stringify(setting)) : null
     console.log(JSON.stringify(setting, null, 2))
   }
   
