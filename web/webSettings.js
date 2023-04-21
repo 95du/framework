@@ -1,12 +1,22 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
-  const F_MGR = FileManager.local()
-  const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
-  const cacheFile = F_MGR.joinPath(path, 'setting.json');
-
+  const F_MGR = FileManager.local();
+  const mainPath = F_MGR.joinPath(F_MGR.documentsDirectory(), '95du_electric');
+  F_MGR.createDirectory(mainPath, true);
+  
+  /**
+   * 获取电报机器人的数据存储目录路径
+   * @returns {string} - 目录路径
+   */
+  const getSettingPath = () => {
+    F_MGR.createDirectory(
+      mainPath, true
+    );
+    return F_MGR.joinPath(mainPath, 'setting.json', true);
+  };
 
   /**
    * 读取储存的设置
@@ -19,35 +29,35 @@ async function main() {
       return JSON.parse(data);
     }
     return {}
-  }
-  const settings = await getSettings(cacheFile);
+  };
+  const settings = await getSettings(getSettingPath());
 
   /**
    * 存储当前设置
    * @param { JSON } string
    */
   const writeSettings = async (saveSet) => {
-    typeof settings === 'object' ? F_MGR.writeString(cacheFile, JSON.stringify(saveSet)) : null;
+    typeof settings === 'object' ? F_MGR.writeString(getSettingPath(), JSON.stringify(saveSet)) : null;
     console.log(JSON.stringify(
       settings, null, 2)
-    );
-  }
+    )
+  };
   
   /**
    * 跳转到安装页面
    * @param { string } time
    * @param { string } color
-   * @param { string } title 
+   * @param { string } module
    */
-  async function webModule(scriptName, url) {
+  const webModule = async (scriptName, url) => {
     function getDuration( timer ) {
       const timeAgo = new Date(Date.now() - timer);
       const minutes = timeAgo.getUTCMinutes();
       return minutes;
     }
     const duration = getDuration(settings.updateTime);
-    const modulePath = F_MGR.joinPath(path, scriptName);
-    if ( duration <= 10 && F_MGR.fileExists(modulePath) ) {
+    const modulePath = F_MGR.joinPath(mainPath, scriptName);
+    if ( duration <= 10 && await F_MGR.fileExists(modulePath) ) {
       return modulePath;
     } else {
       const req = new Request(url);
@@ -59,7 +69,7 @@ async function main() {
         return modulePath;
       }
     }
-  }
+  };
   
   /**
    * Setting drawTableIcon
@@ -73,7 +83,7 @@ async function main() {
   ) => {
     const sfSymbolImg = await drawTableIcon(icon, color, cornerWidth);
     return `data:image/png;base64,${Data.fromPNG(sfSymbolImg).toBase64String()}`;
-  }
+  };
   
   drawTableIcon = async (
     icon = 'square.grid.2x2',
@@ -88,8 +98,8 @@ async function main() {
     const html = `
       <img id="sourceImg" src="data:image/png;base64,${imgData}" />
       <img id="silhouetteImg" src="" />
-      <canvas id="mainCanvas" />
-      `;
+      <canvas id="mainCanvas" />`;
+      
     const js = `
       var canvas = document.createElement("canvas");
       var sourceImg = document.getElementById("sourceImg");
