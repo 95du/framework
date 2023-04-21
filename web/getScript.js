@@ -1,14 +1,14 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: orange; icon-glyph: cannabis;
-
+main()
 async function main() {
   const F_MGR = FileManager.local()
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du_electric");
 
   const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', '白色风格'] : ['white', '黑色风格'];
-  const name = 'JD_京东小白鹅';
-  const scriptUrl = 'https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_baitiao.js';
+  const name = '交管12123_2';
+  const scriptUrl = 'https://gitcode.net/4qiao/framework/raw/master/mian/module12123.js';
   
   const baseUrl = 'https://bbs.applehub.cn/wp-content/themes/zibll/';  
   const cssPaths = [
@@ -191,7 +191,7 @@ document.getElementById('userClick').addEventListener('click', () => {
                   <div id="myName" class="update-content">作者: &nbsp; 95度茅台</div>
                 </a>
                 <br />
-                <div class="form-label-title">🔥2023年3月25日
+                <div class="form-label-title">🔥2023年4月21日
                   <li>修复已知问题</li>
                   <li>性能优化，改进用户体验</li>
                 </div>
@@ -200,7 +200,7 @@ document.getElementById('userClick').addEventListener('click', () => {
                 <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
               </div>
               <script>${js}</script>
-              <p class="social-separator separator muted-5-color em12">Version 1.0.0</p>
+              <p class="social-separator separator muted-5-color em12">Version 1.2.0</p>
             </div>
           </div>
         </div>
@@ -210,7 +210,7 @@ document.getElementById('userClick').addEventListener('click', () => {
         window.onload = function() {
           setTimeout(function() {
             $('.signin-loader').click()
-          }, 1000);
+          }, 1500);
         };
         window._win = {
           uri: '${baseUrl}',
