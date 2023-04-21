@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: cyan; icon-glyph: car;
-
+main()
 async function main() {
   const version = '1.2.0'
   const uri = Script.name();
@@ -100,7 +100,7 @@ async function main() {
   }
   
   if (config.runsInWidget) {
-    await importModule(await downloadModule()).main();
+    importModule(await downloadModule()).main();
   }
   
   async function downloadModule() {
@@ -595,7 +595,7 @@ async function main() {
             notify('设置成功', '桌面组件稍后将自动刷新');
           });
         } else if (type == 'preview') {
-          await importModule(await downloadModule()).main();
+          importModule(await downloadModule()).main();
         } else if (type == 'alipay') {
           await getVerifyToken();
         }
