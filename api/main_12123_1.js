@@ -13,7 +13,9 @@ async function main() {
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), '95du12123_1');  
   F_MGR.createDirectory(path, true);  
+  const moduleDir = F_MGR.joinPath(F_MGR.documentsDirectory(), '95du12123_1/Running');
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
+  
   
   /**
    * 存储当前设置
@@ -191,7 +193,7 @@ async function main() {
     const response = await alert.presentAlert();
     switch (response) {
       case 1:
-        F_MGR.remove(path);
+        F_MGR.remove(moduleDir);
         Safari.open('scriptable:///run/' + encodeURIComponent(uri));
         break;
       case 2:
