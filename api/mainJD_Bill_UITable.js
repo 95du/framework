@@ -43,8 +43,7 @@ async function main() {
   };
   
   const getSettings = ( file ) => {
-    let setting = {};
-    if ( F_MGR.fileExists(file) ) {
+    if (F_MGR.fileExists(file)) {
       return JSON.parse(F_MGR.readString(file));
     } else {
       setting = DEFAULT_SETTINGS;
@@ -52,7 +51,7 @@ async function main() {
     }
     return setting;
   };
-  const setting = await getSettings(getSettingPath());
+  setting = await getSettings(getSettingPath());
   
   /**
    * 获取背景图片存储目录路径
