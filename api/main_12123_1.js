@@ -98,7 +98,7 @@ async function main() {
           referer
         })
         if (imgArr?.length) {
-          Timer.schedule(1500, false, () => {notify('Boxjs_12123', 'verifyToken/Sign/Referer 储存成功')})
+          Timer.schedule(1500, false, () => {notify('Boxjs_12123', 'verifyToken/Sign/Referer 储存成功'), createWidget()});
         }
       }
     } catch (e) {
@@ -212,7 +212,7 @@ async function main() {
         return;
      // Main Menu
     }
-  }
+  };
   
   
   /**
