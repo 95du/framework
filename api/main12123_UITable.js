@@ -405,7 +405,7 @@ async function main() {
               title: '图片背景',
               onClick: async () => {
                 const img = await Photos.fromLibrary();
-                await F_MGR.writeImage(bgImage, img);
+                await F_MGR.writeImage(getBgImagePath(), img);
                 notify('设置成功', '桌面组件稍后将自动刷新');
               }
             },
@@ -701,7 +701,9 @@ async function main() {
             const clear = await generateAlert(title, desc, ['取消', '确认']);
             if (clear === 1) {
               setting.gradient = [];
-              F_MGR.remove(bgImage);
+              F_MGR.remove(
+                getBgImagePath()
+              );
               notify('删除成功', '桌面组件稍后将自动刷新');
             }
           } else if (type === 'background') {
