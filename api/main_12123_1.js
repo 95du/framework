@@ -109,7 +109,7 @@ async function main() {
 
   if (!setting.referer || setting.verifyToken === null || sign === null) {
     await getBoxjsData();
-  }
+  };
   
   /**
    * 获取请求数据
@@ -169,10 +169,7 @@ async function main() {
     const destructiveActions = ['更新代码', '重置所有'];
     const actions = ['使用说明','组件下载', '修改车牌', '预览组件', '退出菜单'];
   
-    const showAlert = (
-      title,
-      message
-    ) => {
+    const showAlert = (title, message) => {
       let alert = new Alert();
       alert.title = title;
       alert.message = message;
@@ -419,8 +416,8 @@ async function main() {
   
     // Car icon
     const carIconStack = leftStack.addStack();
-    carIconStack.layoutHorizontally();
-    carIconStack.centerAlignContent();
+    carIconStack.layoutHorizontally()
+    carIconStack.centerAlignContent()
     const man = SFSymbol.named('car');
     const carIcon = carIconStack.addImage(man.image);
     carIcon.imageSize = new Size(15, 15);
@@ -607,7 +604,7 @@ async function main() {
   async function downloadModule() {
     const modulePath = F_MGR.joinPath(path, 'store.js');
     if (F_MGR.fileExists(modulePath)) {
-      await F_MGR.remove(modulePath)
+      await F_MGR.remove(modulePath);
     }
     const req = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdmlwL21haW45NWR1U3RvcmUuanM='));
     const moduleJs = await req.load().catch(() => {
