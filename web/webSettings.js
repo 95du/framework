@@ -85,7 +85,7 @@ async function main() {
     return `data:image/png;base64,${Data.fromPNG(sfSymbolImg).toBase64String()}`;
   };
   
-  drawTableIcon = async (
+  const drawTableIcon = async (
     icon = 'square.grid.2x2',
     color = '#e8e8e8',
     cornerWidth = 39
