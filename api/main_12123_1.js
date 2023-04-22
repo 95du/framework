@@ -177,7 +177,7 @@ async function main() {
     }
   
     const alert = showAlert(
-      title, 
+      title,
       message
     );
     for (const action of destructiveActions) {
@@ -247,7 +247,7 @@ async function main() {
     alert.addAction('确定');
     alert.addCancelAction('取消');
     const input = await alert.presentAlert();
-    myPlate = alert.textFieldValue(0);
+    const myPlate = alert.textFieldValue(0);
     if (!myPlate || input === -1) {
       return;
     } else {
@@ -542,7 +542,7 @@ async function main() {
     } else {
       textAddress = tipsStack.addText(`${vio.violationAddress}，` + `${vio.violation}`);
       if ( success && detail ) {
-        textAddress.url = `${photos}`
+        textAddress.url = photos;
       }
     }
     textAddress.font = Font.mediumSystemFont(nothing || !success ? 11.5 : 11);
