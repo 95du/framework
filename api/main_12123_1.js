@@ -33,8 +33,6 @@ async function main() {
    * @param {string} file
    * @returns {object} Initial
    */
-  let imgArr = [];
-  let myPlate = '琼A·99999'
   const phone = Device.screenSize().height  
   if (phone < 926) {
     layout = {
@@ -57,10 +55,11 @@ async function main() {
       bottomSize: 230
     }
   };
-
+ 
+  let imgArr = [];
   const DEFAULT_SETTINGS = {
     ...layout,
-    myPlate,
+    myPlate: '琼A·99999',
     imgArr,
     botStr: `${phone < 926 ? '' : '请'}保持良好的驾驶习惯，务必遵守交通规则`,
     verifyToken: null
@@ -238,16 +237,14 @@ async function main() {
    * 用于违章时获取数据
    */
   const licensePlate = async () => {
-    const cacheFileExists = F_MGR.fileExists(cacheFile);
-    const noPlate = '琼A·99999';
     const alert = new Alert();
     alert.title = '输入车牌号';
     alert.message = '用于违章时获取数据';
-    alert.addTextField('输入正确的车牌号', cacheFileExists ? myPlate : noPlate);
+    alert.addTextField('输入正确的车牌号', myPlate);
     alert.addAction('确定');
     alert.addCancelAction('取消');
     const input = await alert.presentAlert();
-    const myPlate = alert.textFieldValue(0);
+    myPlate = alert.textFieldValue(0);
     if (!myPlate || input === -1) {
       return;
     } else {
