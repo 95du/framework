@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-main()
+
 async function main() {
   const F_MGR = FileManager.local();
   const mainPath = F_MGR.joinPath(F_MGR.documentsDirectory(), '95du_electric');
