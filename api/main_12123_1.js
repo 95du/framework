@@ -206,7 +206,7 @@ async function main() {
         await importModule(await downloadModule()).main();
         break;
       case 4:
-        await licensePlate();
+        await changePlate();
         break;
       case 5:
         createWidget();
@@ -239,23 +239,33 @@ async function main() {
    * 添加车牌号
    * 用于违章时获取数据
    */
-  const licensePlate = async () => {
+  const changePlate = async () => {
     const alert = new Alert();
-    alert.title = '输入车牌号';
-    alert.message = '用于违章时获取数据';
-    alert.addTextField('输入正确的车牌号', myPlate);
+    alert.title = '输入正确的车牌号';
+    alert.addTextField('需输入正确的车牌号', myPlate);
     alert.addAction('确定');
     alert.addCancelAction('取消');
     const input = await alert.presentAlert();
     myPlate = alert.textFieldValue(0);
-    if (!myPlate || input === -1) {
-      return;
-    } else {
-      const updatedSettings = { ...setting, myPlate };
-      await writeSettings(updatedSettings);
-      await createWidget();
+    if (myPlate && input !== -1) {
+      const valid = validatePlateNumber(myPlate);
+      if (valid) {
+        const updateSettings = { ...setting, myPlate };
+        await (writeSettings(updateSettings).then(createWidget));
+      } else {
+        await changePlate();
+      }
     }
   };
+   
+  /**
+   * 校验车牌号格式是否正确
+   * 验证通过返回 true，否则返回 false。
+   */
+   function validatePlateNumber(plateNumber) {
+     const regExp = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领][A-Z]\·?[A-Z0-9]{5,6}$/;
+     return regExp.test(plateNumber);
+   };
   
   /**
    * 发送请求获取信息
@@ -305,7 +315,7 @@ async function main() {
   
   // 获取违章对应的发证机关信息
   const getIssueData = async (vioList) => {
-    const { plate } = myPlate.match(/(^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领])([A-Z])/);
+    const { plate } = myPlate.match(/(^[\u4e00-\u9fa5])([A-Z])/);
     const params = {
       internalOrder: vioList.internalOrder,
       plateType: 2,
@@ -371,6 +381,7 @@ async function main() {
   
   
   //=========> Create <=========//
+  
   async function createWidget() {
     const widget = new ListWidget();
     widget.backgroundColor = Color.white();
