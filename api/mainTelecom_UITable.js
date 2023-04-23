@@ -3,18 +3,21 @@
 // icon-color: pink; icon-glyph: phone-volume;
 
 async function main() {
+  const version = '1.0.5';
   const uri = Script.name();
   const F_MGR = FileManager.local();
+  
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duTelecom");
-  if (!F_MGR.fileExists(path)) {
-    F_MGR.createDirectory(path);
-  }
+  F_MGR.createDirectory(path, true);
+  
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
+  
   // Background image Path
   const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
   const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
   
   const DEFAULT_SETTINGS = {
+    version,
     minute: '10',
     words: [],
     transparency: '0.5',
@@ -39,7 +42,7 @@ async function main() {
   }
   const setting = getSettings(cacheFile);
   
-  // Background Color
+  // UITable Background Color
   const bgColor = Color.dynamic(
     new Color('#F5F5F5'), new Color('')
   );
@@ -417,9 +420,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年03月01日\n修复每日用量错误问题 ( 每月1日自动清零 )，之前版本需重置所有',
-        val: '1.0.3',
-        ver: 'Version 1.0.3'
+        desc: '2023年04月23日\n1，修复修复重置后错误问题\n2，增加图片缓存24小时',
+        val: version,
+        ver: 'Version 1.0.5'
       },
       {
         icon: {
@@ -711,7 +714,12 @@ async function main() {
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
   }
-  
+  // Version Update Notice  
+  if ( version != setting.version && setting.update === 'false' ) {
+    notify('中国电信', `新版本更新 Version ${version}  ( 可开启自动更新 )`);
+    setting.version = version;
+    await saveSettings();
+  }
   
   /**
    * Setting drawTableIcon
