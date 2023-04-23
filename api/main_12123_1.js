@@ -11,9 +11,12 @@
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
+  
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), '95du12123_1');  
   F_MGR.createDirectory(path, true);  
+  
   const moduleDir = F_MGR.joinPath(F_MGR.documentsDirectory(), '95du12123_1/Running');
+  
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
   
