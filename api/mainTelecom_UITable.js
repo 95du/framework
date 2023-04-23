@@ -30,7 +30,6 @@ async function main() {
   };
   
   const getSettings = (file) => {
-    let setting = {};
     if (F_MGR.fileExists(file)) {
       const data = F_MGR.readString(file);
       return JSON.parse(data);
@@ -40,7 +39,7 @@ async function main() {
     }
     return setting;
   }
-  const setting = getSettings(cacheFile);
+  setting = getSettings(cacheFile);
   
   // UITable Background Color
   const bgColor = Color.dynamic(
