@@ -701,11 +701,13 @@ async function main() {
           } else if (type == 'clear') {
             const clear = await generateAlert(title, desc, ['取消', '确认']);
             if (clear === 1) {
+              notify('删除成功', '桌面组件稍后将自动刷新');
               setting.gradient = [];
+              setting.picture = [];
+              setting.imgArr = [];
               F_MGR.remove(
                 getBgImagePath()
               );
-              notify('删除成功', '桌面组件稍后将自动刷新');
             }
           } else if (type === 'background') {
             await importModule(await backgroundModule()).main();
