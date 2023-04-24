@@ -12,10 +12,6 @@ async function main() {
   
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
   
-  // Background image Path
-  const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
-  const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
-  
   const DEFAULT_SETTINGS = {
     version,
     minute: '10',
@@ -40,6 +36,18 @@ async function main() {
     return setting;
   }
   setting = getSettings(cacheFile);
+  
+  /**
+   * 获取背景图片存储目录路径
+   * @returns {string} - 目录路径
+   */
+  const getBgImagePath = () => {
+    const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), '95duBackground');
+    if (!F_MGR.fileExists(bgPath)) {
+      F_MGR.createDirectory(bgPath);
+    }
+    return F_MGR.joinPath(bgPath, Script.name() + '.jpg');
+  };
   
   // UITable Background Color
   const bgColor = Color.dynamic(
@@ -347,7 +355,7 @@ async function main() {
               title: '图片背景',
               onClick: async () => {
                 const img = await Photos.fromLibrary();
-                await F_MGR.writeImage(bgImage, img);
+                await F_MGR.writeImage(getBgImagePath(), img);
                 notify('设置成功', '桌面组件稍后将自动刷新');
               }
             },
@@ -642,7 +650,9 @@ async function main() {
             const clear = await generateAlert(title, desc, ['取消', '确认']);
             if (clear === 1) {
               setting.gradient = [];
-              F_MGR.remove(bgImage);
+              F_MGR.remove(
+                getBgImagePath()
+              );
               notify('删除成功', '桌面组件稍后将自动刷新');
             }
           } else if (type === 'background') {
