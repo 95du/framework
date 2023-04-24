@@ -77,7 +77,7 @@ async function main() {
    */
   const getBgImagePath = () => {
     const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), '95duBackground');
-    if (!F_MGR.fileExists(bgPath) {
+    if (!F_MGR.fileExists(bgPath)) {
       F_MGR.createDirectory(bgPath);
     }
     return F_MGR.joinPath(bgPath, Script.name() + '.jpg');
