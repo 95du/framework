@@ -197,7 +197,9 @@ document.getElementById('userClick').addEventListener('click', () => {
                 </div>
               </div>
               <div class="box-body">
-                <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
+                <div id="sign-in">
+                  <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
+                </div>
               </div>
               <script>${js}</script>
               <p class="social-separator separator muted-5-color em12">Version 1.2.0</p>
