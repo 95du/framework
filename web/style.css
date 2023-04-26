@@ -219,6 +219,28 @@ a:focus,a:hover {
   --this-bg: linear-gradient(135deg, #59c3fb 10%, #268df7 100%);
 }
 
+.jb-cyan {
+  --this-bg: linear-gradient(140deg, #039ab3 10%, #58dbcf 90%);
+}
+
+.jb-green,.order-type-5 .pay-tag {
+  --this-bg: linear-gradient(135deg, #60e464 10%, #5cb85b 100%);
+}
+
+.jb-purple,.order-type-6 .pay-tag {
+  --this-bg: linear-gradient(135deg, #f98dfb 10%, #ea00f9 100%);
+}
+
+.jb-vip1,.order-type-4 .pay-tag {
+  --this-bg: linear-gradient(25deg, #eabe7b 10%, #f5e3c7 70%, #edc788 100%);
+  --this-color: #866127;
+}
+
+.jb-vip2,.order-type-8 .pay-tag {
+  --this-bg: linear-gradient(317deg, #4d4c4c 30%, #7b7b7b 70%, #5f5c5c 100%);
+  --this-color: #ddd;
+}
+
 .tab-nav-theme li:before,.title-h-center:before,.title-h-left:before,.title-theme:before,.wp-posts-content>h1.has-text-align-center:before,.wp-posts-content>h1.wp-block-heading:before,.wp-posts-content>h1:not([class]):before,.wp-posts-content>h2.has-text-align-center:before,.wp-posts-content>h2.wp-block-heading:before,.wp-posts-content>h2:not([class]):before,.wp-posts-content>h3.has-text-align-center:before,.wp-posts-content>h3.wp-block-heading:before,.wp-posts-content>h3:not([class]):before,.wp-posts-content>h4.has-text-align-center:before,.wp-posts-content>h4.wp-block-heading:before,.wp-posts-content>h4:not([class]):before,.zib-widget>h3:before {
   position: absolute;
   content: '';
