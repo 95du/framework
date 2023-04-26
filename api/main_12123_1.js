@@ -325,7 +325,7 @@ async function main() {
     };
     const issue = await requestInfo(api2, params);
     const issueArr = issue.data.vioCity.filter((item) => item.vioCount >= 1);
-    return getRandomItem(issueArr);
+    return await getRandomItem(issueArr);
   };
   
   // 获取违章对应的违法行为信息
