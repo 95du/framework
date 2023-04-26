@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-main()
+
 async function main() {
   const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_electric');
@@ -9,6 +9,8 @@ async function main() {
   
   const name = '交管12123_2';
   const scriptUrl = 'https://gitcode.net/4qiao/framework/raw/master/mian/module12123.js';
+  const version = '1.2.1'
+  const updateDate = '2023年4月26日'
   
   /**
    * 获取存储路径
@@ -149,7 +151,11 @@ async function main() {
     return ctx.getImage();
   };
   
-  
+  /**
+   * 获取css字符串并使用缓存
+   * @param {string} File Extension
+   * @returns {string} - Request
+   */
   const useFileManager = ({ cacheTime } = {}) => {
     return {
       readString: (fileName) => {
@@ -335,9 +341,10 @@ document.getElementById('reset').addEventListener('click', (e) => {
       document.getElementById('reset').addEventListener('click', () => reset())
     })()`;
     
+    // 主题颜色
     const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', '白色风格'] : ['white', '黑色风格'];
     
-    const baseUrl = 'https://bbs.applehub.cn/wp-content/themes/zibll/';  
+    const baseUrl = 'https://bbs.applehub.cn/wp-content/themes/zibll/';
     
     const jsPaths = [
       `${baseUrl}js/libs/jquery.min.js?ver=7.1`,
@@ -345,6 +352,78 @@ document.getElementById('reset').addEventListener('click', (e) => {
       `${baseUrl}js/loader.js?ver=7.1`
     ];
     
+    // 旋转头像
+    const avatar = `  
+    <center>
+      <div class="hover-show relative">
+        <span class="avatar-img hh signin-loader">
+          <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" width="95" height="95" class="lazyload avatar avatar-id-0"/>
+        </span>
+      </div>
+      <br>
+      <img id="store" src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${logoColor}.png" width="200" height="40">
+      <br>
+      <a href="javascript:;" class="display-name" id="myName">95度茅台</a>
+    </center>
+    `
+    // 弹窗
+    const popup = `
+    <div class="modal fade" id="u_sign" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="sign zib-widget blur-bg relative" style="border-radius: 27px;">
+          <div class="text-center">
+            <div class="sign-logo box-body">
+              <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${logoColor}.png" class="lazyload">
+            </div>
+          </div>
+          <div class="tab-content">
+            <div class="box-body">
+              <div class="title-h-center fa-2x">
+                <div class="title">${name}</div>
+              </div>
+              <a class="muted-color px30" class="display-name">
+                <div id="myName" class="update-content">作者: &nbsp; 95度茅台</div>
+              </a>
+              <br />
+              <div class="form-label-title">🔥&nbsp; ${updateDate}
+                <li>修复已知问题</li>
+                <li>性能优化，改进用户体验</li>
+              </div>
+            </div>
+            <div class="box-body">
+              <div id="sign-in">
+                <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
+              </div>
+            </div>
+            <p class="social-separator separator muted-5-color em12">Version ${version}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      window.onload = function() {
+        setTimeout(function() {
+          $('.signin-loader').click()
+        }, 1200);
+      };
+    </script>
+    <script type="text/javascript">
+      window._win = {
+        uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
+        qj_loading: '1',
+      }
+    </script>
+    `
+  
+    /**
+     * @param {string} style
+     * @param {string} themeColor
+     * @param {string} avatar
+     * @param {string} popup
+     * @param {string[]} jsPaths
+     * @param {string} js
+     * @returns {string} html
+     */
     const html = `
     <html>
       <head>
@@ -354,67 +433,13 @@ document.getElementById('reset').addEventListener('click', (e) => {
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
         <!-- 旋转头像开始 -->
-        <center>
-          <div class="hover-show relative">
-            <span class="avatar-img hh signin-loader">
-              <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" width="95" height="95" class="lazyload avatar avatar-id-0"/>
-            </span>
-          </div>
-          <br>
-          <img id="store" src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${logoColor}.png" width="200" height="40">
-          <br>
-          <a href="javascript:;" class="display-name" id="myName">95度茅台</a>
-        </center>
+        ${avatar}
         <!-- 旋转头像结束 -->
         <div class="flex header-info relative hh signin-loader">
         </div>
         <!-- 弹窗开始 -->
-        <div class="modal fade" id="u_sign" tabindex="-1" role="dialog">
-          <div class="modal-dialog" role="document">
-            <div class="sign zib-widget blur-bg relative" style="border-radius: 27px;">
-              <div class="text-center">
-                <div class="sign-logo box-body">
-                  <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${logoColor}.png" class="lazyload">
-                </div>
-              </div>
-              <div class="tab-content">
-                <div class="box-body">
-                  <div class="title-h-center fa-2x">
-                    <div class="title">${name}</div>
-                  </div>
-                  <a class="muted-color px30" class="display-name" >
-                    <div id="myName" class="update-content">作者: &nbsp; 95度茅台</div>
-                  </a>
-                  <br />
-                  <div class="form-label-title">🔥2023年4月21日
-                    <li>修复已知问题</li>
-                    <li>性能优化，改进用户体验</li>
-                  </div>
-                </div>
-                <div class="box-body">
-                  <div id="sign-in">
-                    <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
-                  </div>
-                </div>
-                <p class="social-separator separator muted-5-color em12">Version 1.2.0</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        ${popup}
         <!-- 弹窗结束 -->
-        <script type="text/javascript">
-          window.onload = function() {
-            setTimeout(function() {
-              $('.signin-loader').click()
-            }, 1000);
-          };
-        </script>
-        <script type="text/javascript">
-          window._win = {
-            uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
-            qj_loading: '1',
-          }
-        </script>
         ${jsPaths.map(path => `<script type='text/javascript' src='${path}'></script>`).join('\n')}
         <!-- 通用 -->  
         <div class="list">
@@ -475,7 +500,7 @@ document.getElementById('reset').addEventListener('click', (e) => {
       if (code === 'itemClick') {
         onItemClick?.(data);
       } else if (code === 'myName') {
-        await importModule(await webModule('getScript.js', 'https://gitcode.net/4qiao/framework/raw/master/web/getScript.js')).main();
+        Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
       } else if (code === 'store') {
         await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
       } else if (code === 'userClick') {
