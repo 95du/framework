@@ -3,7 +3,7 @@
 // icon-color: cyan; icon-glyph: car;
 
 async function main() {
-  const version = '1.2.0'
+  const version = '1.2.1'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du12123");
@@ -478,9 +478,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年04月21日\n\n增加储存车辆图片到本地 ‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
+        desc: '2023年04月26日\n\n修复桌面及预览无法显示问题 ‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
         val: version,
-        ver: 'Version 1.2.0'
+        ver: 'Version 1.2.1'
       },
       {
         icon: {
