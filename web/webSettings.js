@@ -1,21 +1,24 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
-  const F_MGR = FileManager.local();
-  const mainPath = F_MGR.joinPath(F_MGR.documentsDirectory(), '95du_electric');
-  F_MGR.createDirectory(mainPath, true);
+  const fm = FileManager.local();
+  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_electric');
+  fm.createDirectory(mainPath, true);
+  
+  const name = '交管12123_2';
+  const scriptUrl = 'https://gitcode.net/4qiao/framework/raw/master/mian/module12123.js';
   
   /**
-   * 获取电报机器人的数据存储目录路径
-   * @returns {string} - 目录路径
+   * 获取存储路径
+   * @returns {string} - string
    */
   const getSettingPath = () => {
-    F_MGR.createDirectory(
+    fm.createDirectory(
       mainPath, true
     );
-    return F_MGR.joinPath(mainPath, 'setting.json', true);
+    return fm.joinPath(mainPath, 'setting.json', true);
   };
 
   /**
@@ -24,8 +27,8 @@ async function main() {
    * @returns {object} - JSON
    */
   const getSettings = (file) => {
-    if (F_MGR.fileExists(file)) {
-      const data = F_MGR.readString(file);
+    if (fm.fileExists(file)) {
+      const data = fm.readString(file);
       return JSON.parse(data);
     }
     return {}
@@ -37,7 +40,7 @@ async function main() {
    * @param { JSON } string
    */
   const writeSettings = async (saveSet) => {
-    typeof settings === 'object' ? F_MGR.writeString(getSettingPath(), JSON.stringify(saveSet)) : null;
+    typeof settings === 'object' ? fm.writeString(getSettingPath(), JSON.stringify(saveSet)) : null;
     console.log(JSON.stringify(
       settings, null, 2)
     )
@@ -56,8 +59,8 @@ async function main() {
       return minutes;
     }
     const duration = getDuration(settings.updateTime);
-    const modulePath = F_MGR.joinPath(mainPath, scriptName);
-    if ( duration <= 10 && await F_MGR.fileExists(modulePath) ) {
+    const modulePath = fm.joinPath(mainPath, scriptName);
+    if ( duration <= 10 && await fm.fileExists(modulePath) ) {
       return modulePath;
     } else {
       const req = new Request(url);
@@ -65,7 +68,7 @@ async function main() {
         return null;
       });
       if (moduleJs) {
-        F_MGR.write(modulePath, moduleJs);
+        fm.write(modulePath, moduleJs);
         return modulePath;
       }
     }
@@ -147,6 +150,36 @@ async function main() {
   };
   
   
+  const useFileManager = ({ cacheTime } = {}) => {
+    return {
+      readString: (fileName) => {
+        const filePath = fm.joinPath(mainPath, fileName);
+        const currentTime = (new Date()).getTime();
+        if (fm.fileExists(filePath) && cacheTime && ((currentTime - fm.creationDate(filePath).getTime()) / ( 60 * 60 * 1000 )) <= cacheTime) {
+          return fm.readString(filePath);
+        }
+        return null;
+      },
+      writeString: (fileName, content) => fm.writeString(fm.joinPath(mainPath, fileName), content)
+    }
+  };
+    
+  const getString = async (url) => {
+    return await new Request(url).loadString();
+  };
+  
+  const getCacheString = async (cssFileName, cssFileUrl) => {
+    const cache = useFileManager({ cacheTime: 24 });
+    const cssString = cache.readString(cssFileName);
+    if (cssString) {
+      return cssString;
+    }
+    const res = await getString(cssFileUrl);
+    cache.writeString(cssFileName, res);
+    return res;
+  };
+  
+  
   // ====== web start =======//
   const withSettings = async (options) => {
     const {
@@ -154,6 +187,8 @@ async function main() {
       onItemClick,
       _ = 'http://boxjs.com'
     } = options;
+
+    const cssStyle = await getCacheString('cssStyle.css', 'https://gitcode.net/4qiao/framework/raw/master/web/style.css');
 
     const style = `
     :root {
@@ -163,213 +198,7 @@ async function main() {
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
     }
-    /* 头像呼吸光环旋转放大开始 **/
-    .avatar {
-      border-radius: 50%;
-      animation: light 4s ease-in-out infinite;
-      transition: 0.5s;
-    }
-    .avatar:hover {
-      transform: scale(1.15) rotate(720deg);
-    }
-    @keyframes light {
-      0% {
-        box-shadow:0 0 4px #f00;
-      }
-      25% {
-        box-shadow:0 0 16px #0f0;
-      }
-      50% {
-        box-shadow:0 0 4px #00f;
-      }
-      75% {
-        box-shadow:0 0 16px #0f0;
-      }
-      100% {
-        box-shadow:0 0 4px #f00;
-      }
-    }
-    /** 头像呼吸光环旋转放大结束 **/
-
-    /** 彩色昵称开始 **/
-    .display-name{
-      background-image: -webkit-linear-gradient(90deg, #07c160, #fb6bea 25%, #3aedff 50%, #fb6bea 75%, #28d079);
-      -webkit-text-fill-color: transparent;
-      -webkit-background-clip: text;
-      background-size: 100% 600%;
-      animation: wzw 10s linear infinite;  
-      font-size: 18px;
-    }
-    @keyframes wzw {
-      0% {
-        background-position: 0 0;
-      }
-      100% {
-        background-position: 0 -300%;
-      }
-    }
-    /** 彩色昵称结束 **/
-    * {
-      -webkit-user-select: none;
-      user-select: none;
-    }
-    body {
-      margin: 10px 0;
-      -webkit-font-smoothing: antialiased;
-      font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
-      accent-color: var(--color-primary);
-    }
-    input {
-      -webkit-user-select: auto;
-      user-select: auto;
-    }
-    body {
-      background: #f2f2f7;
-    }
-    button {
-      font-size: 16px;
-      background: var(--color-primary);
-      color: #fff;
-      border-radius: 8px;
-      border: none;
-      padding: 0.24em 0.5em;
-    }
-    button .iconfont {
-      margin-right: 6px;
-    }
-    .list {
-      margin: 15px;
-    }
-    .list__header {
-      margin: 0 20px;
-      color: var(--list-header-color);
-      font-size: 13px;
-    }
-    .list__body {
-      margin-top: 10px;
-      background: var(--card-background);
-      border-radius: var(--card-radius);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .form-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 16px;
-      min-height: 2em;
-      padding: 0.5em 20px;
-      position: relative;
-    }
-    .form-label {
-      display: flex;
-      align-items: center;
-    }
-    .form-label-img {
-      height: 28;
-    }
-    .form-label-title {
-      margin-left: 12px
-    }
-    .form-item--link .icon-arrow_right {
-      color: #86868b;
-    }
-    .form-item-right-desc {
-      font-size: 16px;
-      color: #86868b;
-      margin-right: 5px;
-    }
-    .form-item + .form-item::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 20px;
-      right: 0;
-      border-top: 0.5px solid var(--divider-color);
-    }
-    .form-item .iconfont {
-      margin-right: 4px;
-    }
-    .form-item input,
-    .form-item select {
-      font-size: 14px;
-      text-align: right;
-    }
-    .form-item input[type="checkbox"] {
-      width: 1.25em;
-      height: 1.25em;
-    }
-    input[type="number"] {
-      width: 4em;
-    }
-    input[type="date"] {
-      min-width: 6.4em;
-    }
-    input[type='checkbox'][role='switch'] {
-      position: relative;
-      display: inline-block;
-      appearance: none;
-      width: 40px;
-      height: 24px;
-      border-radius: 24px;
-      background: #ccc;
-      transition: 0.3s ease-in-out;
-    }
-    input[type='checkbox'][role='switch']::before {
-      content: '';
-      position: absolute;
-      left: 2px;
-      top: 2px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #fff;
-      transition: 0.3s ease-in-out;
-    }
-    input[type='checkbox'][role='switch']:checked {
-      background: var(--color-primary);
-    }
-    input[type='checkbox'][role='switch']:checked::before {
-      transform: translateX(16px);
-    }
-    .actions {
-      margin: 15px;
-    }
-    .copyright {
-      margin: 15px;
-      font-size: 12px;
-      color: #86868b;
-    }
-    .copyright a {
-      color: #515154;
-      text-decoration: none;
-    }
-    .preview.loading {
-      pointer-events: none;
-    }
-    .icon-loading {
-      display: inline-block;
-      animation: 1s linear infinite spin;
-    }
-    @keyframes spin {
-      0% {
-        transform: rotate(0);
-      }
-      100% {
-        transform: rotate(1turn);
-      }
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --divider-color: rgba(84,84,88,0.65);
-        --card-background: #1c1c1e;
-        --list-header-color: rgba(235,235,245,0.6);
-      }
-      body {
-        background: #000;
-        color: #fff;
-      }
-    }`;
+    ${cssStyle}`;
     
     
     for (let index = 0; index < formItems.length; index++) {
@@ -460,6 +289,9 @@ async function main() {
         fragment.appendChild(label);
       }
       document.getElementById('form').appendChild(fragment);
+      document.getElementById('userClick').addEventListener('click', () => {
+        invoke('userClick', userClick);
+      });
       document.getElementById("myName").addEventListener("click", () => {
         console.log("95度茅台");
         invoke('myName', myName);
@@ -503,34 +335,86 @@ document.getElementById('reset').addEventListener('click', (e) => {
       document.getElementById('reset').addEventListener('click', () => reset())
     })()`;
     
-    const topImageColor = Device.isUsingDarkAppearance() === false ? '黑色风格' : '白色风格';
+    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', '白色风格'] : ['white', '黑色风格'];
+    
     const baseUrl = 'https://bbs.applehub.cn/wp-content/themes/zibll/';  
+    
     const jsPaths = [
       `${baseUrl}js/libs/jquery.min.js?ver=7.1`,
       `${baseUrl}js/libs/bootstrap.min.js?ver=7.1`,
+      `${baseUrl}js/loader.js?ver=7.1`
     ];
     
     const html = `
     <html>
       <head>
-        <meta name='viewport' content='width=device-width, user-scalable=no'>
+        <meta name='viewport' content='width=device-width, user-scalable=no, viewport-fit=cover'>
         <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
         <style>${style}</style>
       </head>
-      <body>
+      <body class="${themeColor}-theme nav-fixed site-layout-1">
         <!-- 旋转头像开始 -->
         <center>
           <div class="hover-show relative">
-            <span class="avatar-img">
+            <span class="avatar-img hh signin-loader">
               <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" width="95" height="95" class="lazyload avatar avatar-id-0"/>
             </span>
           </div>
           <br>
-          <img id="store" src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${topImageColor}.png" width="200" height="40">
+          <img id="store" src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${logoColor}.png" width="200" height="40">
           <br>
           <a href="javascript:;" class="display-name" id="myName">95度茅台</a>
         </center>
         <!-- 旋转头像结束 -->
+        <div class="flex header-info relative hh signin-loader">
+        </div>
+        <!-- 弹窗开始 -->
+        <div class="modal fade" id="u_sign" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="sign zib-widget blur-bg relative" style="border-radius: 27px;">
+              <div class="text-center">
+                <div class="sign-logo box-body">
+                  <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${logoColor}.png" class="lazyload">
+                </div>
+              </div>
+              <div class="tab-content">
+                <div class="box-body">
+                  <div class="title-h-center fa-2x">
+                    <div class="title">${name}</div>
+                  </div>
+                  <a class="muted-color px30" class="display-name" >
+                    <div id="myName" class="update-content">作者: &nbsp; 95度茅台</div>
+                  </a>
+                  <br />
+                  <div class="form-label-title">🔥2023年4月21日
+                    <li>修复已知问题</li>
+                    <li>性能优化，改进用户体验</li>
+                  </div>
+                </div>
+                <div class="box-body">
+                  <div id="sign-in">
+                    <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
+                  </div>
+                </div>
+                <p class="social-separator separator muted-5-color em12">Version 1.2.0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 弹窗结束 -->
+        <script type="text/javascript">
+          window.onload = function() {
+            setTimeout(function() {
+              $('.signin-loader').click()
+            }, 1000);
+          };
+        </script>
+        <script type="text/javascript">
+          window._win = {
+            uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
+            qj_loading: '1',
+          }
+        </script>
         ${jsPaths.map(path => `<script type='text/javascript' src='${path}'></script>`).join('\n')}
         <!-- 通用 -->  
         <div class="list">
@@ -594,6 +478,11 @@ document.getElementById('reset').addEventListener('click', (e) => {
         await importModule(await webModule('getScript.js', 'https://gitcode.net/4qiao/framework/raw/master/web/getScript.js')).main();
       } else if (code === 'store') {
         await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
+      } else if (code === 'userClick') {
+        const script = await new Request(scriptUrl).loadString();
+        const fm = FileManager.iCloud()
+        fm.writeString(fm.documentsDirectory() + `/${name}.js`, script);
+        Safari.open('scriptable:///run/' + encodeURIComponent(name));
       } else {
         const saveSet = { ...settings, ...data };
         await writeSettings(saveSet);
