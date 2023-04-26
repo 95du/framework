@@ -279,14 +279,14 @@ async function main() {
   const requestInfo = async (api, params) => {
     const request = new Request(infoURL);
     request.method = 'POST';
-    request.body = `params=${encodeURIComponent(JSON.stringify({
+    request.body = 'params=' + encodeURIComponent(JSON.stringify({
       productId,
       api,
       sign,
       version,
       verifyToken,
       params,
-    }))}`;
+    }));
     const response = await request.loadJSON();
     if (!response.success) {
       await handleError(request);
@@ -296,7 +296,7 @@ async function main() {
   
   // 获取车辆违章信息
   const getVehicleViolation = async (vehicle) => {
-    const vioList = getRandomItem(vehicle);
+    const vioList = await getRandomItem(vehicle);
     if (!vioList) {
       return undefined;
     }
@@ -305,12 +305,13 @@ async function main() {
       return undefined;
     }
     const surveils = await getSurveils(vioList, issueData);
-    const detail = getRandomItem(surveils);
+    const detail = await getRandomItem(surveils);
     if (!detail) {
       return undefined;
     }
-    const vio = await getViolationMsg(detail);
-    const photos = getRandomItem(vio.photos);
+    const vioDetail = await getViolationMsg(detail);
+    const vio = vioDetail.detail;
+    const photos = await getRandomItem(vioDetail.photos);
     return { vioList, detail, vio, photos };
   };
   
@@ -345,7 +346,7 @@ async function main() {
       issueOrganization: detail.issueOrganization,
     };
     const violationMsg = await requestInfo(api4, params);
-    return violationMsg.data.detail;
+    return violationMsg.data;
   };
   
   // 查询主函数
@@ -366,7 +367,10 @@ async function main() {
   };
   
   // 获取随机数组元素
-  const getRandomItem = (array) => (array.length ? array[Math.floor(Math.random() * array.length)] : undefined);
+  const getRandomItem = async (array) => {
+    const infoRandom = array[Math.floor(Math.random() * array.length)];
+    return infoRandom;
+  }
   
   // 处理错误
   const handleError = async (response) => {
@@ -415,11 +419,13 @@ async function main() {
     widget.setPadding(nothing || !success ? 19 : 15, 18, 15, 14);
     const mainStack = widget.addStack();
     mainStack.layoutHorizontally();
-    // Left Stack Violation Data
+    mainStack.centerAlignContent();
+
     const leftStack = mainStack.addStack();
+    leftStack.setPadding(0, 0, 3, 0);
     leftStack.layoutVertically();
     leftStack.addSpacer();
-    // plateStack
+
     const plateStack = leftStack.addStack();
     textPlate = plateStack.addText(myPlate);
     textPlate.font = Font.mediumSystemFont(myPlate.length > 8 ? 16.5 : 19);
@@ -542,7 +548,7 @@ async function main() {
     const img = await getRandomImage();
     const imageCar = carImageStack.addImage(img);
     imageCar.imageSize = new Size(setting.carWidth, setting.carHeight);
-    rightStack.addSpacer(2);
+    rightStack.addSpacer();
   
     // Display Address
     const tipsStack = rightStack.addStack();
@@ -560,7 +566,7 @@ async function main() {
     textAddress.font = Font.mediumSystemFont(nothing || !success ? 11.5 : 11);
     textAddress.textColor = new Color('#484848');
     textAddress.centerAlignText();
-    rightStack.addSpacer();
+    //rightStack.addSpacer();
     
     // jump show status
     barStack2.url = statusUrl;
