@@ -3,7 +3,7 @@
 // icon-color: cyan; icon-glyph: car;
 
 async function main() {
-  const version = '1.2.1'
+  const version = '1.2.5'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du12123");
@@ -26,21 +26,19 @@ async function main() {
     layout = {
       leftGap1: 20,
       leftGap2: 3,
-      rightGap1: 14,
-      rightGap2: 8,
+      carStackWidth: 208,
       carWidth: 208,
       carHeight: 100,
-      bottomSize: 212
+      bottomSize: 208
     }
   } else {
     layout = {
       leftGap1: 24,
       leftGap2: 7,
-      rightGap1: 18,
-      rightGap2: 11,
+      carStackWidth: 225,
       carWidth: 225,
       carHeight: 100,
-      bottomSize: 230
+      bottomSize: 225
     }
   };
 
@@ -371,7 +369,7 @@ async function main() {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/layout.png',
               type: 'size',
               title: '布局调整',
-              desc: 'Pro尺寸以下机型微调\n⚠️1 至 4 项建议同时修改( 比如某一项减 1，这四项同时减 1 )',
+              desc: 'Pro Max 尺寸以下机型微调',
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
@@ -478,9 +476,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年04月26日\n\n修复桌面及预览无法显示问题 ‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
+        desc: '2023年04月28日\n\n布局修正，修复已知问题 ‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
         val: version,
-        ver: 'Version 1.2.1'
+        ver: 'Version 1.2.5'
       },
       {
         icon: {
@@ -718,8 +716,7 @@ async function main() {
               options: [
                 {hint: '左一间隔', value: String(setting['leftGap1'])},
                 {hint: '左二间隔', value: String(setting['leftGap2'])},
-                {hint: '右一间隔', value: String(setting['rightGap1'])},
-                {hint: '右二间隔', value: String(setting['rightGap2'])},
+                {hint: '车图容器宽度', value: String(setting['carStackWidth'])},
                 {hint: '车图宽度', value: String(setting['carWidth'])},
                 {hint: '车图高度', value: String(setting['carHeight'])},
                 {hint: '图下尺寸', value: String(setting['bottomSize'])}
@@ -728,8 +725,7 @@ async function main() {
             async (inputArr) => {
               setting.leftGap1 = Number(inputArr[0].value);
               setting.leftGap2 = Number(inputArr[1].value);
-              setting.rightGap1 = Number(inputArr[2].value);
-              setting.rightGap2 = Number(inputArr[3].value);
+              setting.carStackWidth = Number(inputArr[3].value);
               setting.carWidth = Number(inputArr[4].value);
               setting.carHeight = Number(inputArr[5].value);
               setting.bottomSize = Number(inputArr[6].value);
