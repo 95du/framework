@@ -1,16 +1,18 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
-  const fm = FileManager.local();
-  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_electric');
-  fm.createDirectory(mainPath, true);
-  
-  const name = '交管12123_2';
-  const scriptUrl = 'https://gitcode.net/4qiao/framework/raw/master/mian/module12123.js';
+  const rootUrl = 'https://gitcode.net/4qiao/framework/raw/master/'
+  const scriptName = '交管12123_2'
+  const scriptUrl = `${rootUrl}mian/module12123.js`;
   const version = '1.2.1'
   const updateDate = '2023年4月26日'
+  
+  
+  const fm = FileManager.iCloud();
+  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
+  fm.createDirectory(mainPath, true);
   
   /**
    * 获取存储路径
@@ -156,17 +158,20 @@ async function main() {
    * @param {string} File Extension
    * @returns {string} - Request
    */
+  const cache = fm.joinPath(mainPath, 'cachePath');
+  fm.createDirectory(cache, true);
+  
   const useFileManager = ({ cacheTime } = {}) => {
     return {
       readString: (fileName) => {
-        const filePath = fm.joinPath(mainPath, fileName);
+        const filePath = fm.joinPath(cache, fileName);
         const currentTime = (new Date()).getTime();
         if (fm.fileExists(filePath) && cacheTime && ((currentTime - fm.creationDate(filePath).getTime()) / ( 60 * 60 * 1000 )) <= cacheTime) {
           return fm.readString(filePath);
         }
         return null;
       },
-      writeString: (fileName, content) => fm.writeString(fm.joinPath(mainPath, fileName), content)
+      writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content)
     }
   };
     
@@ -180,9 +185,9 @@ async function main() {
     if (cssString) {
       return cssString;
     }
-    const res = await getString(cssFileUrl);
-    cache.writeString(cssFileName, res);
-    return res;
+    const response = await getString(cssFileUrl);
+    cache.writeString(cssFileName, response);
+    return response;
   };
   
   
@@ -194,7 +199,7 @@ async function main() {
       _ = 'http://boxjs.com'
     } = options;
 
-    const cssStyle = await getCacheString('cssStyle.css', 'https://gitcode.net/4qiao/framework/raw/master/web/style.css');
+    const cssStyle = await getCacheString('cssStyle.css', `${rootUrl}web/style.css`);
 
     const style = `
     :root {
@@ -215,6 +220,12 @@ async function main() {
         item.icon = await loadSF2B64(name, color);
       }
     }
+    
+    const clearCache = await loadSF2B64('arrow.triangle.2.circlepath', '#FFAA00');
+    
+    const userlogin = await loadSF2B64('person.crop.circle', '#43CD80');
+    
+    const appleOS = await loadSF2B64('applelogo', '#E76EFF');
     
     const js =`
     (() => {
@@ -306,6 +317,23 @@ async function main() {
         console.log("组件商店");
         invoke('store', store);
       });
+      document.getElementById("clearCache").addEventListener("click", (e) => {
+        console.log("清除缓存");
+        toggleLoading(e);
+        invoke('clearCache', clearCache);
+      });
+      
+document.getElementById("login").addEventListener("click", (e) => {
+        console.log("用户登录");
+        toggleLoading(e);
+        invoke('login', login);
+      });
+      
+document.getElementById("preview").addEventListener("click", (e) => {
+        console.log("组件预览");
+        toggleLoading(e);
+        invoke('preview', preview);
+      });
       
       // loading Animations
       const toggleLoading = (e) => {
@@ -342,26 +370,24 @@ document.getElementById('reset').addEventListener('click', (e) => {
     })()`;
     
     // 主题颜色
-    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', '白色风格'] : ['white', '黑色风格'];
+    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
     
-    const baseUrl = 'https://bbs.applehub.cn/wp-content/themes/zibll/';
-    
-    const jsPaths = [
-      `${baseUrl}js/libs/jquery.min.js?ver=7.1`,
-      `${baseUrl}js/libs/bootstrap.min.js?ver=7.1`,
-      `${baseUrl}js/loader.js?ver=7.1`
-    ];
-    
+    const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
+    const scriptTags = await Promise.all(scripts.map(async (script) => {
+      const content = await getCacheString(script, `${rootUrl}web/${script}`);
+      return `<script>${content}</script>`;
+    }));
+        
     // 旋转头像
     const avatar = `  
     <center>
       <div class="hover-show relative">
         <span class="avatar-img hh signin-loader">
-          <img alt="头像" src="https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png" width="95" height="95" class="lazyload avatar avatar-id-0"/>
+          <img alt="头像" src="${rootUrl}img/icon/4qiao.png" width="95" height="95" class="lazyload avatar avatar-id-0"/>
         </span>
       </div>
       <br>
-      <img id="store" src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${logoColor}.png" width="200" height="40">
+      <img id="store" src="${rootUrl}img/picture/appleHub_${logoColor}.png" width="200" height="40">
       <br>
       <a href="javascript:;" class="display-name" id="myName">95度茅台</a>
     </center>
@@ -373,16 +399,18 @@ document.getElementById('reset').addEventListener('click', (e) => {
         <div class="sign zib-widget blur-bg relative" style="border-radius: 27px;">
           <div class="text-center">
             <div class="sign-logo box-body">
-              <img src="https://bbs.applehub.cn/wp-content/uploads/2022/11/Text_${logoColor}.png" class="lazyload">
+              <img src="${rootUrl}img/picture/appleHub_${logoColor}.png" class="lazyload">
             </div>
           </div>
           <div class="tab-content">
             <div class="box-body">
               <div class="title-h-center fa-2x">
-                <div class="title">${name}</div>
+                <div class="title">
+                  ${scriptName}
+                </div>
               </div>
               <a class="muted-color px30" class="display-name">
-                <div id="myName" class="update-content">作者: &nbsp; 95度茅台</div>
+                <div id="myName" class="update-content">Version ${version}</div>
               </a>
               <br />
               <div class="form-label-title">🔥&nbsp; ${updateDate}
@@ -392,10 +420,10 @@ document.getElementById('reset').addEventListener('click', (e) => {
             </div>
             <div class="box-body">
               <div id="sign-in">
-                <button id="userClick" type="button" class="but radius jb-blue padding-lg  btn-block">立即更新</button>
+                <button id="userClick" type="button" class="but radius jb-pink padding-lg  btn-block">立即更新</button>
               </div>
             </div>
-            <p class="social-separator separator muted-5-color em12">Version ${version}</p>
+            <p class="social-separator separator muted-5-color em12">95度茅台</p>
           </div>
         </div>
       </div>
@@ -434,37 +462,76 @@ document.getElementById('reset').addEventListener('click', (e) => {
       <body class="${themeColor}-theme nav-fixed site-layout-1">
         <!-- 旋转头像开始 -->
         ${avatar}
-        <!-- 旋转头像结束 -->
+        <!-- 弹窗开始 -->
         <div class="flex header-info relative hh signin-loader">
         </div>
-        <!-- 弹窗开始 -->
         ${popup}
-        <!-- 弹窗结束 -->
-        ${jsPaths.map(path => `<script type='text/javascript' src='${path}'></script>`).join('\n')}
+        ${scriptTags.join('\n')}
         <!-- 通用 -->  
         <div class="list">
           <form class="list__body" action="javascript:void(0);">
             <label id="update" class="form-item form-item--link" >
               <div class="form-label">
-                <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/update.png"/>
+                <img class="form-label-img" src="${rootUrl}img/symbol/update.png"/>
                 <div class="form-label-title">自动更新</div>
               </div>
               <input name="update" type="checkbox" role="switch" />
             </label>
             <label id='reset' class="form-item form-item--link">
               <div class="form-label">
-                <img class="form-label-img" src="https://gitcode.net/4qiao/framework/raw/master/img/symbol/reset.png"/>
+                <img class="form-label-img" src="${rootUrl}img/symbol/reset.png"/>
                 <div class="form-label-title">重置所有</div>
                 </div>
                 <div class="form-label">
-                  <div class="form-item-right-desc">15 小时前</div>
                   <i class="iconfont icon-arrow_right"></i>
                 </div>
               </div>
             </label>
           </form>
         </div>
-        <!-- 通用设置 -->
+        <!-- 通用设置 -->  
+        <div class="list">
+          <div class="list__header">设置</div>
+          <form class="list__body" action="javascript:void(0);">
+            <label id="clearCache" class="form-item form-item--link">
+              <div class="form-label">
+                <img class="form-label-img" src="${clearCache}"/>
+                <div class="form-label-title">清除缓存</div>
+              </div>
+              <i class="iconfont icon-arrow_right"></i>
+            </label>
+            <label id="location" class="form-item form-item--link">
+              <div class="form-label">
+                <img class="form-label-img" src="${appleOS}"/>
+                <div class="form-label-title">AppleOS</div>
+              </div>
+              <input name="location" type="checkbox" role="switch" />
+            </label>
+            <label id="login" class="form-item form-item--link">
+              <div class="form-label">
+                <img class="form-label-img" src="${userlogin}"/>
+                <div class="form-label-title">用户登录</div>
+              </div>
+              <div class="form-label">
+                <div id="refreshInterval" class="form-item-right-desc">已登录</div>
+                <i class="iconfont icon-arrow_right"></i>
+              </div>
+            </label>
+          </form>
+        </div>
+        <!-- 组件预览 -->  
+        <div class="list">
+          <form class="list__body" action="javascript:void(0);">
+            <label id="preview" class="form-item form-item--link">
+              <div class="form-label">
+                <img class="form-label-img" src="${rootUrl}img/symbol/preview.png"/>
+                <div class="form-label-title">预览组件</div>
+              </div>
+              <i class="iconfont icon-arrow_right"></i>
+            </label>
+          </form>
+        </div>
+        <!-- 颜色设置 -->
         <div class="list">
           <div class="list__header">
             通用
@@ -497,20 +564,33 @@ document.getElementById('reset').addEventListener('click', (e) => {
       });
       
       const { code, data } = event;
-      if (code === 'itemClick') {
-        onItemClick?.(data);
-      } else if (code === 'myName') {
-        Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
-      } else if (code === 'store') {
-        await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
-      } else if (code === 'userClick') {
-        const script = await new Request(scriptUrl).loadString();
-        const fm = FileManager.iCloud()
-        fm.writeString(fm.documentsDirectory() + `/${name}.js`, script);
-        Safari.open('scriptable:///run/' + encodeURIComponent(name));
-      } else {
-        const saveSet = { ...settings, ...data };
-        await writeSettings(saveSet);
+      if (code == 'clearCache') {
+        fm.remove(cache);
+      }
+      switch (code) {
+        case 'preview':
+          break;
+        case 'itemClick':
+          onItemClick?.(data);
+          break;
+        case 'store':
+          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);  
+          break;
+        case 'myName':
+          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();  
+          break;
+        case 'userClick':
+          const script = await new Request(scriptUrl).loadString();
+          const fm = FileManager.iCloud()
+          fm.writeString(fm.documentsDirectory() + `/${scriptName}.js`, script);
+          Safari.open(`scriptable:///run/${encodeURI(scriptName)}`);
+          break;
+        case 'changeSettings':
+          const saveSet = { ...settings, ...data };
+          writeSettings(saveSet);
+          break;
+        case 'login':
+          break;
       }
       await injectListener();
     };
@@ -529,7 +609,8 @@ document.getElementById('reset').addEventListener('click', (e) => {
     darkColor: '#FFFFFF',
     lightColor: "#333333",
     indexLightColor: '#3F8BFF',
-    indexDarkColor: '#FF9500'
+    indexDarkColor: '#FF9500',
+    gradient: '#BE7DFF'
   };
 
   await withSettings({
@@ -583,10 +664,10 @@ document.getElementById('reset').addEventListener('click', (e) => {
       },
       {
         name: "loopSwitch",
-        label: "循环模式",
-        type: "switch",
+        label: "渐变背景",
+        type: "color",
         icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
-        default: false
+        default: initColor.gradient
       },
       {
         name: "message",
