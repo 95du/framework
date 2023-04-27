@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-main()
+
 async function main() {
   const rootUrl = 'https://gitcode.net/4qiao/framework/raw/master/'
   const scriptName = '交管12123_2'
