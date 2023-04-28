@@ -3,7 +3,7 @@
 // icon-color: cyan; icon-glyph: car;
 
 async function main() {
-  const version = '1.2.5'
+  const version = '1.2.6'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du12123");
@@ -151,7 +151,7 @@ async function main() {
     // Header effectImage Row
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
-    const topImg = ['aHR0cDovL210dy5zby82dEE1QlE=', 'aHR0cDovL210dy5zby82ZUNtVTg=']
+    const topImg = ['aHR0cDovL210dy5zby81VDQ1dkU=', 'aHR0cDovL210dy5zby82ZUNtVTg=']
     const items = topImg[Math.floor(Math.random()*topImg.length)];
     const effectImage = effectRow.addImageAtURL(atob(items));
     effectImage.widthWeight = 0.4;
@@ -480,7 +480,7 @@ async function main() {
         title: '当前版本',
         desc: '2023年04月28日\n\n布局修正，修复已知问题 ‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
         val: version,
-        ver: 'Version 1.2.5'
+        ver: 'Version 1.2.6'
       },
       {
         icon: {
