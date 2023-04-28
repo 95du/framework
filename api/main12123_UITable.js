@@ -3,7 +3,7 @@
 // icon-color: cyan; icon-glyph: car;
 
 async function main() {
-  const version = '1.2.6'
+  const version = '1.2.7'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95du12123");
@@ -24,8 +24,6 @@ async function main() {
   const phone = Device.screenSize().height  
   if (phone < 926) {
     layout = {
-      leftGap1: 20,
-      leftGap2: 3,
       lrfeStackWidth: 100,
       carStackWidth: 208,
       carWidth: 208,
@@ -34,8 +32,6 @@ async function main() {
     }
   } else {
     layout = {
-      leftGap1: 24,
-      leftGap2: 7,
       lrfeStackWidth: 107,
       carStackWidth: 225,
       carWidth: 225,
@@ -480,7 +476,7 @@ async function main() {
         title: '当前版本',
         desc: '2023年04月28日\n\n布局修正，修复已知问题 ‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
         val: version,
-        ver: 'Version 1.2.6'
+        ver: 'Version 1.2.7'
       },
       {
         icon: {
@@ -726,13 +722,11 @@ async function main() {
               ]
             }, 
             async (inputArr) => {
-              setting.leftGap1 = Number(inputArr[0].value);
-              setting.leftGap2 = Number(inputArr[1].value);
-              setting.lrfeStackWidth = Number(inputArr[2].value);
-              setting.carStackWidth = Number(inputArr[3].value);
-              setting.carWidth = Number(inputArr[4].value);
-              setting.carHeight = Number(inputArr[5].value);
-              setting.bottomSize = Number(inputArr[6].value);
+              setting.lrfeStackWidth = Number(inputArr[0].value);
+              setting.carStackWidth = Number(inputArr[1].value);
+              setting.carWidth = Number(inputArr[2].value);
+              setting.carHeight = Number(inputArr[3].value);
+              setting.bottomSize = Number(inputArr[4].value);
               notify('设置成功', '桌面组件稍后将自动刷新');
             });
           }
