@@ -712,8 +712,6 @@ async function main() {
               title: title,
               message: desc,
               options: [
-                {hint: '左一间隔', value: String(setting['leftGap1'])},
-                {hint: '左二间隔', value: String(setting['leftGap2'])},
                 {hint: '左边容器宽度', value: String(setting['lrfeStackWidth'])},
                 {hint: '车图容器宽度', value: String(setting['carStackWidth'])},
                 {hint: '车图宽度', value: String(setting['carWidth'])},
