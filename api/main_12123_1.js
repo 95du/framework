@@ -41,6 +41,7 @@ async function main() {
     layout = {
       leftGap1: 20,
       leftGap2: 3,  
+      lrfeStackWidth: 100,
       carStackWidth: 208,
       carWidth: 208,
       carHeight: 100,
@@ -50,6 +51,7 @@ async function main() {
     layout = {
       leftGap1: 24,
       leftGap2: 7,
+      lrfeStackWidth: 107,
       carStackWidth: 225,
       carWidth: 225,
       carHeight: 100,
@@ -438,7 +440,7 @@ async function main() {
     mainStack.centerAlignContent()
     
     const leftStack = mainStack.addStack();
-    leftStack.size = new Size(107, 0)
+    leftStack.size = new Size(setting.leftStackWidth, 0)
     leftStack.layoutVertically();
     leftStack.centerAlignContent();
 
