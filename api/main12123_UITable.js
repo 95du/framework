@@ -728,7 +728,7 @@ async function main() {
             async (inputArr) => {
               setting.leftGap1 = Number(inputArr[0].value);
               setting.leftGap2 = Number(inputArr[1].value);
-              setting.lrfeStackWidth = Number(inputArr[1].value);
+              setting.lrfeStackWidth = Number(inputArr[2].value);
               setting.carStackWidth = Number(inputArr[3].value);
               setting.carWidth = Number(inputArr[4].value);
               setting.carHeight = Number(inputArr[5].value);
