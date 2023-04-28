@@ -310,7 +310,7 @@ a:focus,a:hover {
 .separator::after,.separator::before {
   content: "";
   background: var(--main-border-color);
-  max-width: 22%;
+  max-width: 23%;
   height: 1px;
   margin: 0 1em;
   flex: 1;
