@@ -324,8 +324,12 @@ async function main() {
       _issueOrganization: plate,
     };
     const issue = await requestInfo(api2, params);
-    const issueArr = issue.data.vioCity.filter((item) => item.vioCount >= 1);
-    return await getRandomItem(issueArr);
+    try {
+      const issueArr = issue.data.vioCity.filter((item) => item.vioCount >= 1);
+      return await getRandomItem(issueArr);
+    } catch (e) {
+      console.log(e);
+    }
   };
   
   // 获取违章对应的违法行为信息
