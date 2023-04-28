@@ -41,7 +41,7 @@ async function main() {
     layout = {
       leftGap1: 20,
       leftGap2: 3,  
-      lrfeStackWidth: 100,
+      leftStackWidth: 100,
       carStackWidth: 208,
       carWidth: 208,
       carHeight: 100,
@@ -51,7 +51,7 @@ async function main() {
     layout = {
       leftGap1: 24,
       leftGap2: 7,
-      lrfeStackWidth: 107,
+      leftStackWidth: 107,
       carStackWidth: 225,
       carWidth: 225,
       carHeight: 100,
@@ -547,12 +547,11 @@ async function main() {
      * @param {string} string
      */
     const rightStack = mainStack.addStack();
-    rightStack.setPadding(-15, 5, 0, 0);
     rightStack.layoutVertically();
     rightStack.centerAlignContent();
     
     const carImageStack = rightStack.addStack();
-    carImageStack.centerAlignContent();
+    carImageStack.setPadding(-15, 15, 0, 0);
     carImageStack.size = new Size(setting.carStackWidth, 0);
     const img = await getRandomImage();
     const imageCar = carImageStack.addImage(img);
