@@ -39,8 +39,6 @@ async function main() {
   const phone = Device.screenSize().height  
   if (phone < 926) {
     layout = {
-      leftGap1: 20,
-      leftGap2: 3,  
       leftStackWidth: 100,
       carStackWidth: 208,
       carWidth: 208,
@@ -49,8 +47,6 @@ async function main() {
     }
   } else {
     layout = {
-      leftGap1: 24,
-      leftGap2: 7,
       leftStackWidth: 107,
       carStackWidth: 225,
       carWidth: 225,
@@ -431,7 +427,7 @@ async function main() {
     topStack.addSpacer();
     
     const text12123 = topStack.addText('交管12123');
-    text12123.font = Font.boldSystemFont(14);
+    text12123.font = Font.boldSystemFont(15);
     text12123.rightAlignText();
     text12123.textColor = new Color('#0061FF');
     
@@ -444,7 +440,8 @@ async function main() {
     mainStack.centerAlignContent()
     
     const leftStack = mainStack.addStack();
-    leftStack.size = new Size(setting.leftStackWidth, 0)
+    leftStack.size = new Size(setting.leftStackWidth, 0);  
+    leftStack.setPadding(0, 0, (nothing || !success) ? 2 : 3, 0);
     leftStack.layoutVertically();
     leftStack.centerAlignContent();
 
@@ -491,7 +488,7 @@ async function main() {
     const textUpdateTime = updateTime.addText(nothing || !success || `${vio.violationTime}` === 'undefined' ? referer.match(/validPeriodEnd=(\d{4}-\d{2}-\d{2})&/)[1] : `${vio.violationTime}`);
     textUpdateTime.font = Font.mediumSystemFont(nothing ? 13 : 12);
     textUpdateTime.textColor = new Color('#484848');
-    leftStack.addSpacer(nothing || !success ? setting.leftGap1 : setting.leftGap2);
+    leftStack.addSpacer();
       
     
     /**
@@ -556,10 +553,14 @@ async function main() {
     
     const carImageStack = rightStack.addStack();
     if ( success && detail ) {
-      violationText = `${vio.violationAddress}，${vio.violation}`
-    }
-    const length = nothing || !success ? setting.botStr.length <= 19 : violationText.length <= 19;
-    carImageStack.setPadding(length ? -10 : -20, 5, 0, 0);
+      const shortText = `${vio.violationAddress}，${vio.violation}`;
+      if ( shortText.length <= 19 ) {
+        violationText = `${shortText}，违章序列号 ${detail.violationSerialNumber}`;
+      } else {
+        violationText = shortText;
+      }
+    };
+    carImageStack.setPadding(nothing || !success ? -12 : -20, 5, 0, 0);
     carImageStack.size = new Size(setting.carStackWidth, 0);
     const img = await getRandomImage();
     const imageCar = carImageStack.addImage(img);
