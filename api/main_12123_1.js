@@ -421,8 +421,9 @@ async function main() {
      */
     widget.setPadding(15, 18, 15, 15);
     const topStack = widget.addStack();
+    if ( detail && success ) topStack.setPadding(0, 0, 3, 0);
     topStack.layoutHorizontally();
-    topStack.centerAlignContent()
+    topStack.centerAlignContent();
     
     const plateText = topStack.addText(myPlate);
     plateText.font = Font.mediumSystemFont(19);
