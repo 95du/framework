@@ -6,11 +6,11 @@ async function main() {
   const rootUrl = 'https://gitcode.net/4qiao/framework/raw/master/'
   const scriptName = '交管12123_2'
   const scriptUrl = `${rootUrl}mian/module12123.js`;
-  const version = '1.2.1'
-  const updateDate = '2023年4月26日'
+  const version = '1.2.5'
+  const updateDate = '2023年4月28日'
   
   
-  const fm = FileManager.iCloud();
+  const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
   fm.createDirectory(mainPath, true);
   
@@ -154,7 +154,7 @@ async function main() {
   };
   
   /**
-   * 获取css字符串并使用缓存
+   * 获取css及js字符串并使用缓存
    * @param {string} File Extension
    * @returns {string} - Request
    */
@@ -221,7 +221,7 @@ async function main() {
       }
     }
     
-    const clearCache = await loadSF2B64('arrow.triangle.2.circlepath', '#FFAA00');
+    const clearCache = await loadSF2B64('arrow.triangle.2.circlepath', '#FF9500');
     
     const userlogin = await loadSF2B64('person.crop.circle', '#43CD80');
     
@@ -387,9 +387,9 @@ document.getElementById('reset').addEventListener('click', (e) => {
         </span>
       </div>
       <br>
-      <img id="store" src="${rootUrl}img/picture/appleHub_${logoColor}.png" width="200" height="40">
+      <img id="myName" src="${rootUrl}img/picture/appleHub_${logoColor}.png" width="200" height="40">
       <br>
-      <a href="javascript:;" class="display-name" id="myName">95度茅台</a>
+      <a href="javascript:;" class="display-name" id="store">组件商店</a>
     </center>
     `
     // 弹窗
@@ -413,7 +413,8 @@ document.getElementById('reset').addEventListener('click', (e) => {
                 <div id="myName" class="update-content">Version ${version}</div>
               </a>
               <br />
-              <div class="form-label-title">🔥&nbsp; ${updateDate}
+              <div class="form-label-title">  
+                <li>${updateDate}&nbsp;🔥</li>
                 <li>修复已知问题</li>
                 <li>性能优化，改进用户体验</li>
               </div>
@@ -574,10 +575,10 @@ document.getElementById('reset').addEventListener('click', (e) => {
           onItemClick?.(data);
           break;
         case 'store':
-          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);  
+          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();  
           break;
         case 'myName':
-          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();  
+          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
           break;
         case 'userClick':
           const script = await new Request(scriptUrl).loadString();
