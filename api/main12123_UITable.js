@@ -27,7 +27,7 @@ async function main() {
       lrfeStackWidth: 100,
       carStackWidth: 208,
       carWidth: 208,
-      carHeight: 100,
+      carHeight: 95,
       bottomSize: 208
     }
   } else {
