@@ -3,7 +3,7 @@
 // icon-color: deep-purple; icon-glyph: cog;
 
 async function main() {
-  const rootUrl = 'https://gitcode.net/4qiao/framework/raw/master/'
+  const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   const scriptName = '交管12123_2'
   const scriptUrl = `${rootUrl}mian/module12123.js`;
   const version = '1.2.5'
@@ -192,7 +192,7 @@ async function main() {
   
   
   // ====== web start =======//
-  const withSettings = async (options) => {
+  const renderAppView = async (options) => {
     const {
       formItems = [],
       onItemClick,
@@ -443,7 +443,86 @@ document.getElementById('reset').addEventListener('click', (e) => {
       }
     </script>
     `
-  
+    // body
+    const body = `
+    <!-- 旋转头像开始 -->
+    ${avatar}
+    <!-- 弹窗开始 -->
+    <div class="flex header-info relative hh signin-loader">
+    </div>
+    ${popup}
+    ${scriptTags.join('\n')}
+    <!-- 通用 -->  
+    <div class="list">
+      <form class="list__body" action="javascript:void(0);">
+        <label id="update" class="form-item form-item--link" >
+          <div class="form-label">
+            <img class="form-label-img" src="${rootUrl}img/symbol/update.png"/>
+            <div class="form-label-title">自动更新</div>
+          </div>
+          <input name="update" type="checkbox" role="switch" />
+        </label>
+        <label id='reset' class="form-item form-item--link">
+          <div class="form-label">
+            <img class="form-label-img" src="${rootUrl}img/symbol/reset.png"/>
+            <div class="form-label-title">重置所有</div>
+          </div>
+          <div class="form-label">
+            <i class="iconfont icon-arrow_right"></i>
+          </div>
+        </label>
+      </form>
+    </div>
+    <!-- 通用设置 -->  
+    <div class="list">
+      <div class="list__header">设置</div>
+      <form class="list__body" action="javascript:void(0);">
+        <label id="clearCache" class="form-item form-item--link">
+          <div class="form-label">
+            <img class="form-label-img" src="${clearCache}"/>
+            <div class="form-label-title">清除缓存</div>
+          </div>
+          <i class="iconfont icon-arrow_right"></i>
+        </label>
+        <label id="location" class="form-item form-item--link">
+          <div class="form-label">
+            <img class="form-label-img" src="${appleOS}"/>
+            <div class="form-label-title">AppleOS</div>
+          </div>
+          <input name="location" type="checkbox" role="switch" />
+        </label>
+        <label id="login" class="form-item form-item--link">
+          <div class="form-label">
+            <img class="form-label-img" src="${userlogin}"/>
+            <div class="form-label-title">用户登录</div>
+          </div>
+          <div class="form-label">
+            <div id="refreshInterval" class="form-item-right-desc">已登录</div>
+            <i class="iconfont icon-arrow_right"></i>
+          </div>
+        </label>
+      </form>
+    </div>
+    <!-- 组件预览 -->  
+    <div class="list">
+      <form class="list__body" action="javascript:void(0);">
+        <label id="preview" class="form-item form-item--link">
+          <div class="form-label">
+            <img class="form-label-img" src="${rootUrl}img/symbol/preview.png"/>
+            <div class="form-label-title">预览组件</div>
+          </div>
+          <i class="iconfont icon-arrow_right"></i>
+        </label>
+      </form>
+    </div>
+    <!-- 颜色设置 -->
+    <div class="list">
+      <div class="list__header">通用</div>
+        <form id="form" class="list__body" action="javascript:void(0);">
+        </form>
+    </div>
+    `
+    
     /**
      * @param {string} style
      * @param {string} themeColor
@@ -461,84 +540,7 @@ document.getElementById('reset').addEventListener('click', (e) => {
         <style>${style}</style>
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
-        <!-- 旋转头像开始 -->
-        ${avatar}
-        <!-- 弹窗开始 -->
-        <div class="flex header-info relative hh signin-loader">
-        </div>
-        ${popup}
-        ${scriptTags.join('\n')}
-        <!-- 通用 -->  
-        <div class="list">
-          <form class="list__body" action="javascript:void(0);">
-            <label id="update" class="form-item form-item--link" >
-              <div class="form-label">
-                <img class="form-label-img" src="${rootUrl}img/symbol/update.png"/>
-                <div class="form-label-title">自动更新</div>
-              </div>
-              <input name="update" type="checkbox" role="switch" />
-            </label>
-            <label id='reset' class="form-item form-item--link">
-              <div class="form-label">
-                <img class="form-label-img" src="${rootUrl}img/symbol/reset.png"/>
-                <div class="form-label-title">重置所有</div>
-                </div>
-                <div class="form-label">
-                  <i class="iconfont icon-arrow_right"></i>
-                </div>
-              </div>
-            </label>
-          </form>
-        </div>
-        <!-- 通用设置 -->  
-        <div class="list">
-          <div class="list__header">设置</div>
-          <form class="list__body" action="javascript:void(0);">
-            <label id="clearCache" class="form-item form-item--link">
-              <div class="form-label">
-                <img class="form-label-img" src="${clearCache}"/>
-                <div class="form-label-title">清除缓存</div>
-              </div>
-              <i class="iconfont icon-arrow_right"></i>
-            </label>
-            <label id="location" class="form-item form-item--link">
-              <div class="form-label">
-                <img class="form-label-img" src="${appleOS}"/>
-                <div class="form-label-title">AppleOS</div>
-              </div>
-              <input name="location" type="checkbox" role="switch" />
-            </label>
-            <label id="login" class="form-item form-item--link">
-              <div class="form-label">
-                <img class="form-label-img" src="${userlogin}"/>
-                <div class="form-label-title">用户登录</div>
-              </div>
-              <div class="form-label">
-                <div id="refreshInterval" class="form-item-right-desc">已登录</div>
-                <i class="iconfont icon-arrow_right"></i>
-              </div>
-            </label>
-          </form>
-        </div>
-        <!-- 组件预览 -->  
-        <div class="list">
-          <form class="list__body" action="javascript:void(0);">
-            <label id="preview" class="form-item form-item--link">
-              <div class="form-label">
-                <img class="form-label-img" src="${rootUrl}img/symbol/preview.png"/>
-                <div class="form-label-title">预览组件</div>
-              </div>
-              <i class="iconfont icon-arrow_right"></i>
-            </label>
-          </form>
-        </div>
-        <!-- 颜色设置 -->
-        <div class="list">
-          <div class="list__header">
-            通用
-          </div>
-          <form id="form" class="list__body" action="javascript:void(0);"></form>
-        </div>
+        ${body}
         <script>${js}</script>
       </body>
     </html>`.trim();
@@ -567,15 +569,19 @@ document.getElementById('reset').addEventListener('click', (e) => {
       const { code, data } = event;
       if (code == 'clearCache') {
         fm.remove(cache);
+      } else if (code == 'remove' || code === 'changeSettings') {
+        const saveSet = { ...settings, ...data };
+        writeSettings(saveSet);
       }
       switch (code) {
         case 'preview':
+          await importModule(await webModule('12123.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/12123.js')).main();
           break;
         case 'itemClick':
           onItemClick?.(data);
           break;
         case 'store':
-          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();  
+          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
           break;
         case 'myName':
           Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
@@ -585,10 +591,6 @@ document.getElementById('reset').addEventListener('click', (e) => {
           const fm = FileManager.iCloud()
           fm.writeString(fm.documentsDirectory() + `/${scriptName}.js`, script);
           Safari.open(`scriptable:///run/${encodeURI(scriptName)}`);
-          break;
-        case 'changeSettings':
-          const saveSet = { ...settings, ...data };
-          writeSettings(saveSet);
           break;
         case 'login':
           break;
@@ -614,7 +616,7 @@ document.getElementById('reset').addEventListener('click', (e) => {
     gradient: '#BE7DFF'
   };
 
-  await withSettings({
+  await renderAppView({
     formItems: [
       {
         name: "lightColor",
