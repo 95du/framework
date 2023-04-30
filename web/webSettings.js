@@ -154,8 +154,9 @@ async function main() {
   };
   
   /**
-   * 获取css及js字符串并使用缓存
+   * 获取css及js字符串和图片并使用缓存
    * @param {string} File Extension
+   * @param {Image} Basr64 
    * @returns {string} - Request
    */
   const cache = fm.joinPath(mainPath, 'cachePath');
@@ -171,10 +172,20 @@ async function main() {
         }
         return null;
       },
-      writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content)
+      writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),  
+      // cache Image
+      readImage: (filePath) => {
+        const imgPath = fm.joinPath(cache, filePath);
+        return fm.fileExists(imgPath) ? fm.readImage(imgPath) : null;
+      },
+      writeImage: (filePath, image) => fm.writeImage(fm.joinPath(cache, filePath), image)
     }
   };
-    
+  
+  /**
+   * 获取css，js字符串并使用缓存
+   * @param {string} string
+   */
   const getString = async (url) => {
     return await new Request(url).loadString();
   };
@@ -189,6 +200,29 @@ async function main() {
     cache.writeString(cssFileName, response);
     return response;
   };
+  
+  /**
+   * 获取网络图片并使用缓存
+   * @param {Image} url
+   */
+  const getImage = async (url) => {
+    return await new Request(url).loadImage();
+  };
+  
+  const getLogoImage = async (name, url) => {
+    const cache = useFileManager();
+    const image = cache.readImage(name);
+    if (image) {
+      return image;
+    }
+    const res = await getImage(url);
+    cache.writeImage(name, res);
+    return res;
+  };
+  
+  const toBase64 = async (img) => {
+    return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
+  }
   
   
   // ====== web start =======//
@@ -372,6 +406,10 @@ document.getElementById('reset').addEventListener('click', (e) => {
     // 主题颜色
     const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
     
+    const authorAvatar = await toBase64(await getLogoImage("author.png", `${rootUrl}img/icon/4qiao.png`));
+
+    const appleHub = await toBase64(await getLogoImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`));
+    
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
       const content = await getCacheString(script, `${rootUrl}web/${script}`);
@@ -383,11 +421,11 @@ document.getElementById('reset').addEventListener('click', (e) => {
     <center>
       <div class="hover-show relative">
         <span class="avatar-img hh signin-loader">
-          <img alt="头像" src="${rootUrl}img/icon/4qiao.png" width="95" height="95" class="lazyload avatar avatar-id-0"/>
+          <img alt="头像" src="${authorAvatar}" width="95" height="95" class="lazyload avatar avatar-id-0"/>
         </span>
       </div>
       <br>
-      <img id="myName" src="${rootUrl}img/picture/appleHub_${logoColor}.png" width="200" height="40">
+      <img id="myName" src="${appleHub}" width="200" height="40">
       <br>
       <a href="javascript:;" class="display-name" id="store">组件商店</a>
     </center>
@@ -399,7 +437,7 @@ document.getElementById('reset').addEventListener('click', (e) => {
         <div class="sign zib-widget blur-bg relative" style="border-radius: 27px;">
           <div class="text-center">
             <div class="sign-logo box-body">
-              <img src="${rootUrl}img/picture/appleHub_${logoColor}.png" class="lazyload">
+              <img src="${appleHub}" class="lazyload">
             </div>
           </div>
           <div class="tab-content">
