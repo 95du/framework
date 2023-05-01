@@ -226,6 +226,14 @@ async function main() {
   
   
   // ====== web start =======//
+  
+  dismissLoading = (webView) => {
+    webView.evaluateJavaScript(
+      "window.dispatchEvent(new CustomEvent('JWeb', { detail: { code: 'finishLoading' } }))",
+      false
+    );
+  };
+  
   const renderAppView = async (options) => {
     const {
       formItems = [],
@@ -340,59 +348,61 @@ async function main() {
         fragment.appendChild(label);
       }
       document.getElementById('form').appendChild(fragment);
-      document.getElementById('userClick').addEventListener('click', () => {
-        invoke('userClick', userClick);
-      });
-      document.getElementById("myName").addEventListener("click", () => {
-        console.log("95度茅台");
-        invoke('myName', myName);
-      });
-      document.getElementById("store").addEventListener("click", () => {
-        console.log("组件商店");
-        invoke('store', store);
-      });
-      document.getElementById("clearCache").addEventListener("click", (e) => {
-        console.log("清除缓存");
-        toggleLoading(e);
-        invoke('clearCache', clearCache);
-      });
       
-document.getElementById("login").addEventListener("click", (e) => {
-        console.log("用户登录");
-        toggleLoading(e);
-        invoke('login', login);
-      });
+      // 点击事件
+      const elements = [
+        'userClick',
+        'myName',
+        'store',
+        'clearCache',
+        'reset',
+        'login',
+        'preview'
+      ];
       
-document.getElementById("preview").addEventListener("click", (e) => {
-        console.log("组件预览");
-        toggleLoading(e);
-        invoke('preview', preview);
-      });
+      function addEventListeners() {
+        elements.forEach(id => {
+          const element = document.getElementById(id);
+          element.addEventListener('click', e => {
+            if (['clearCache', 'reset', 'login', 'preview'].includes(id)) {
+              toggleLoading(e);
+            }
+            invoke(id, window[id]);
+          });
+        });
+      }
+      addEventListeners();
       
       // loading Animations
       const toggleLoading = (e) => {
+        if (e.currentTarget.id !== 'preview') {
+          setTimeout(function() {
+            target.classList.remove('loading');
+            icon.className = className;
+          }, 1000);
+        }
+        
         const target = e.currentTarget;
         target.classList.add('loading');
-        const icon = e.currentTarget.querySelector('.iconfont');
+        const icon = target.querySelector('.iconfont');
         const className = icon.className;
         icon.className = 'iconfont icon-loading';
-        setTimeout(function() {
-          target.classList.remove('loading');
-          icon.className = className;
-          window.removeEventListener('JWeb', listener);
-        }, 600);
+        const listener = (event) => {
+          if (event.detail.code === 'finishLoading') {
+            target.classList.remove('loading')
+            icon.className = className;
+            window.removeEventListener('JWeb', listener);
+          }
+        };
+        window.addEventListener('JWeb', listener);
       };
-      
-document.getElementById('reset').addEventListener('click', (e) => {
-        toggleLoading(e);
-      });
       
       // Reset Data
       const reset = () => {
-        for (const item of formItems) {
+        for ( const item of formItems ) {
           const el = document.querySelector(\`.form-item__input[name="\${item.name}"]\`)
           formData[item.name] = item.default;
-          if (item.type === 'switch') {
+          if ( item.type === 'switch' ) {
             el.checked = item.default
           } else {
             el && (el.value = item.default);
@@ -522,12 +532,12 @@ document.getElementById('reset').addEventListener('click', (e) => {
           </div>
           <i class="iconfont icon-arrow_right"></i>
         </label>
-        <label id="location" class="form-item form-item--link">
+        <label id="ios" class="form-item form-item--link">
           <div class="form-label">
             <img class="form-label-img" src="${appleOS}"/>
             <div class="form-label-title">AppleOS</div>
           </div>
-          <input name="location" type="checkbox" role="switch" />
+          <input name="ios" type="checkbox" role="switch" />
         </label>
         <label id="login" class="form-item form-item--link">
           <div class="form-label">
@@ -535,7 +545,7 @@ document.getElementById('reset').addEventListener('click', (e) => {
             <div class="form-label-title">用户登录</div>
           </div>
           <div class="form-label">
-            <div id="refreshInterval" class="form-item-right-desc">已登录</div>
+            <div id="sign" class="form-item-right-desc">已登录</div>
             <i class="iconfont icon-arrow_right"></i>
           </div>
         </label>
@@ -605,7 +615,7 @@ document.getElementById('reset').addEventListener('click', (e) => {
       });
       
       const { code, data } = event;
-      if (code == 'clearCache') {
+      if (code == 'clearCache' && fm.fileExists(cache)) {
         fm.remove(cache);
       } else if (code == 'remove' || code === 'changeSettings') {
         const saveSet = { ...settings, ...data };
@@ -614,6 +624,7 @@ document.getElementById('reset').addEventListener('click', (e) => {
       switch (code) {
         case 'preview':
           await importModule(await webModule('12123.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/12123.js')).main();
+          dismissLoading(webView);
           break;
         case 'itemClick':
           onItemClick?.(data);
@@ -633,6 +644,7 @@ document.getElementById('reset').addEventListener('click', (e) => {
         case 'login':
           break;
       }
+      
       await injectListener();
     };
     
