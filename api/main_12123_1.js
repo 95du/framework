@@ -401,10 +401,10 @@ async function main() {
       "#99CCCC",
       "#BCBBBB"
     ]
-    const items = color[Math.floor(Math.random() * color.length)];
+    const randomColor = await getRandomItem(color);
     gradient.locations = [0, 1]
     gradient.colors = [
-      new Color(items, 0.5),
+      new Color(randomColor, 0.5),
       new Color('#00000000')
     ]
     widget.backgroundGradient = gradient;
