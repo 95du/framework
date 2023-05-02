@@ -357,14 +357,15 @@ async function main() {
         'clearCache',
         'reset',
         'login',
-        'preview'
+        'preview',
+        'form'
       ];
       
       function addEventListeners() {
         elements.forEach(id => {
           const element = document.getElementById(id);
           element.addEventListener('click', e => {
-            if (['clearCache', 'reset', 'login', 'preview'].includes(id)) {
+            if (['clearCache', 'reset', 'login', 'preview', 'form'].includes(id)) {
               toggleLoading(e);
             }
             invoke(id, window[id]);
@@ -375,7 +376,8 @@ async function main() {
       
       // loading Animations
       const toggleLoading = (e) => {
-        if (e.currentTarget.id !== 'preview') {
+        const { id } = e.currentTarget;
+        if (id === 'reset' || id === 'clearCache' || id === 'form') {
           setTimeout(function() {
             target.classList.remove('loading');
             icon.className = className;
@@ -563,12 +565,6 @@ async function main() {
         </label>
       </form>
     </div>
-    <!-- 颜色设置 -->
-    <div class="list">
-      <div class="list__header">通用</div>
-        <form id="form" class="list__body" action="javascript:void(0);">
-        </form>
-    </div>
     `
     
     /**
@@ -589,6 +585,12 @@ async function main() {
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
         ${body}
+        <!-- 颜色设置 -->
+        <div class="list">
+          <div class="list__header">通用</div>
+            <form id="form" class="list__body" action="javascript:void(0);">
+            </form>
+        </div>
         <script>${js}</script>
       </body>
     </html>`.trim();
@@ -615,6 +617,7 @@ async function main() {
       });
       
       const { code, data } = event;
+      console.log(data)
       if (code == 'clearCache' && fm.fileExists(cache)) {
         fm.remove(cache);
       } else if (code == 'remove' || code === 'changeSettings') {
@@ -642,9 +645,10 @@ async function main() {
           Safari.open(`scriptable:///run/${encodeURI(scriptName)}`);
           break;
         case 'login':
+          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
+          dismissLoading(webView);
           break;
       }
-      
       await injectListener();
     };
     
@@ -743,7 +747,8 @@ async function main() {
       // type: 'time' 添加时间弹窗选项
       const { name } = item;
       if (name === 'message') {
-        await importModule(await webModule()).main();
+        await importModule(await webModule('12123.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/12123.js')).main();
+        dismissLoading(webView);
       }
     }
   });
