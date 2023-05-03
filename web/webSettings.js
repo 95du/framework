@@ -44,7 +44,7 @@ async function main() {
    * @param { JSON } string
    */
   const writeSettings = async (saveSet) => {
-    typeof settings === 'object' ? fm.writeString(getSettingPath(), JSON.stringify(saveSet)) : null;
+    fm.writeString(getSettingPath(), JSON.stringify(saveSet, null, 2));
     console.log(JSON.stringify(
       settings, null, 2)
     )
@@ -236,6 +236,7 @@ async function main() {
   
   const renderAppView = async (options) => {
     const {
+      title,
       formItems = [],
       onItemClick,
       _ = 'http://boxjs.com'
@@ -254,6 +255,11 @@ async function main() {
     ${cssStyle}`;
     
     
+    /** 
+     * @param {image} cacheImage
+     * @param {string} scrips
+     * @param {string} themeColor
+     */
     for (let index = 0; index < formItems.length; index++) {
       const item = formItems[index];
       const icon = item.icon;
@@ -269,6 +275,229 @@ async function main() {
     
     const appleOS = await loadSF2B64('applelogo', '#E76EFF');
     
+    const avatarImg = await loadSF2B64('camera.fill', '#FF9300');
+    
+    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
+    
+    const authorAvatar = await toBase64(await getLogoImage("author.png", `${rootUrl}img/icon/4qiao.png`));
+
+    const appleHub = await toBase64(await getLogoImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`));
+    
+    const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
+    const scriptTags = await Promise.all(scripts.map(async (script) => {
+      const content = await getCacheString(script, `${rootUrl}web/${script}`);
+      return `<script>${content}</script>`;
+    }));
+    
+    const mainMenu = async () => {
+      // 旋转头像
+      const avatar = `  
+      <center>
+        <div class="hover-show relative">
+          <span class="avatar-img hh signin-loader">
+            <img src="${authorAvatar}" width="95" height="95" class="lazyload avatar avatar-id-0"/>
+          </span>
+        </div>
+        <br>
+          <img id="myName" src="${appleHub}" width="200" height="40">
+        <br>
+        <a class="display-name" id="store">组件商店</a>
+      </center>
+      `
+      
+      // 弹窗
+      const popup = `  
+      <div class="modal fade" id="u_sign" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="sign zib-widget blur-bg relative" style="border-radius: 27px;">
+            <div class="sign-logo box-body">
+              <img src="${appleHub}" class="lazyload">
+            </div>
+            <div class="tab-content">
+              <div class="box-body">
+                <div class="title-h-center fa-2x">
+                  <div class="title">${scriptName}</div>
+                </div>
+                <a class="muted-color px30" class="display-name">
+                  <div id="myName" class="update-content">Version ${version}</div>
+                </a>
+                <br />
+                <div class="form-label-title">  
+                  <li>${updateDate}&nbsp;🔥</li>
+                  <li>修复已知问题</li>
+                  <li>性能优化，改进用户体验</li>
+                </div>
+              </div>
+              <div class="box-body">
+                <div id="sign-in">
+                  <button id="install" type="button" class="but radius jb-pink padding-lg  btn-block">立即更新</button>
+                </div>
+              </div>
+              <p class="social-separator separator muted-5-color em12">95度茅台</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script type="text/javascript">
+        setTimeout(function() {
+          $('.signin-loader').click();
+        }, 51200);
+        window._win = {
+          uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
+          qj_loading: '1',
+        };
+      </script>
+      `
+      
+      // avatar menu
+      const menu = [
+        { 
+          id: 'avatar', 
+          imgSrc: avatarImg, 
+          title: '设置头像'
+        }, 
+        { 
+          id: 'telegram', 
+          imgSrc: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/NicegramLogo.png', 
+          title: 'Telegram' 
+        }
+      ];
+      
+      // switch menu
+      const toggle = [
+        {
+          id: "ios",
+          imgSrc: appleOS,
+          title: "AppleOS"
+        },
+        {
+          id: "update",
+          imgSrc: `${rootUrl}img/symbol/update.png`,
+          title: "自动更新"
+        },
+      ];
+      
+      // user menu
+      const menu2 = [
+        {
+          id: 'reset',
+          imgUrl: `${rootUrl}img/symbol/reset.png`,
+          title: '重置所有'
+        },
+        {
+          id: 'clearCache',
+          imgUrl: `${clearCache}`,
+          title: '清除缓存'
+        },
+        {
+          id: 'login',
+          imgUrl: `${userlogin}`,
+          title: '用户登录',
+          desc: '已登录'
+        }
+      ];
+  
+      const label = (item) => `
+        <label id="${item.id}" class="form-item form-item--link">
+          <div class="form-label">
+            <img class="form-label-img" src="${item.imgSrc || item.imgUrl}"/>
+            <div class="form-label-title">${item.title}</div>
+          </div>
+          ${item.desc ? `
+            <div class="form-label">
+              <div id="${item.id}-desc" class="form-item-right-desc">${item.desc}</div>
+              <i class="iconfont icon-arrow_right"></i>
+            </div>
+          ` : `
+            <i class="iconfont icon-arrow_right"></i>
+          `}
+        </label>
+      `
+      
+      return `
+        <!-- 旋转头像 -->
+        ${avatar}
+        <!-- 弹窗 -->
+        ${popup}
+        ${scriptTags.join('\n')}
+        <!-- 通用 -->    
+        <div class="list">
+          <form class="list__body" action="javascript:void(0);">
+            ${menu.map(item => label(item)).join('')}
+          </form>
+        </div>
+        <!-- 间隔 -->
+        <div class="list">
+          <form class="list__body">
+          </form>
+        </div>
+        <!-- 通用 toggle -->
+        <div class="list">
+          <form class="list__body" action="javascript:void(0);">
+            ${toggle.map(item => `
+              <label id="${item.id}" class="form-item form-item--link">
+                <div class="form-label">
+                  <img class="form-label-img" src="${item.imgSrc}"/>
+                  <div class="form-label-title">${item.title}</div>
+                </div>
+                <input name="${item.id}" type="checkbox" role="switch" />
+              </label>
+            `).join('')}
+          </form>
+        </div>
+        <!-- 间隔 -->
+        <div class="list">
+          <form class="list__body">
+          </form>
+        </div>
+        <!-- 通用 -->
+        <div class="list">  
+          <form class="list__body" action="javascript:void(0);">
+            ${menu2.map(item => label(item)).join('')}
+          </form>
+        </div>
+        <!-- 间隔 -->
+        <div class="list">
+          <form class="list__body">
+          </form>
+        </div>
+        <!-- 组件预览 -->  
+        <div class="list">
+          <form class="list__body" action="javascript:void(0);">
+            ${label({ id: 'preview', imgSrc: `${rootUrl}img/symbol/preview.png`, title: '预览组件' })}
+          </form>
+        </div>
+      `
+    };
+    
+    // 二级菜单
+    const secondMenu = async () => {
+      return body = `
+      <!-- 间隔 -->
+      <div class="list">
+        <form class="list__body">
+        </form>
+      </div>
+      <!-- 组件预览 -->  
+      <div class="list">
+        <form class="list__body" action="javascript:void(0);">
+          <label id='reset' class="form-item form-item--link">
+            <div class="form-label">
+              <img class="form-label-img" src="${rootUrl}img/symbol/reset.png"/>
+              <div class="form-label-title">重置所有</div>
+            </div>
+            <div class="form-label">
+              <i class="iconfont icon-arrow_right"></i>
+            </div>
+          </label>
+        </form>
+        <div class="list__header">
+          设置
+        </div>
+      </div>
+      `
+    };
+    
     const js =`
     (() => {
       const settings = ${JSON.stringify(settings)}
@@ -283,12 +512,20 @@ async function main() {
         )
       }
       
-      const update = document.querySelector('input[name="update"]')
-      update.checked = settings.update ?? true
-      update.addEventListener('change', (e) => {
-        formData['update'] = e.target.checked
-        invoke('changeSettings', formData)
-      });
+      const reset = () => {
+        for ( const item of formItems ) {
+          const el = document.querySelector(\`.form-item__input[name="\${item.name}"]\`)
+          formData[item.name] = item.default;
+          if ( item.type === 'switch' ) {
+            el.checked = item.default
+          } else {
+            el && (el.value = item.default);
+          }
+        }
+        invoke('remove', formData);
+      }
+      document.getElementById('reset').addEventListener('click', () => reset())
+      
       
       const formData = {};
       const fragment = document.createDocumentFragment()
@@ -349,46 +586,34 @@ async function main() {
       }
       document.getElementById('form').appendChild(fragment);
       
-      // 点击事件
-      const elements = [
-        'userClick',
-        'myName',
-        'store',
-        'clearCache',
-        'reset',
-        'login',
-        'preview',
-        'form'
-      ];
       
-      function addEventListeners() {
-        elements.forEach(id => {
-          const element = document.getElementById(id);
-          element.addEventListener('click', e => {
-            if (['clearCache', 'reset', 'login', 'preview', 'form'].includes(id)) {
-              toggleLoading(e);
-            }
-            invoke(id, window[id]);
-          });
+      const elements = ['install', 'myName', 'store', 'avatar', 'telegram', 'clearCache', 'reset', 'login', 'preview', 'form'];
+  
+      elements.forEach((id) => {
+        const element = document.getElementById(id);
+        element.addEventListener('click', (e) => {
+          if (['clearCache', 'reset', 'login', 'preview', 'avatar', 'telegram', 'form'].includes(id)) {
+            toggleLoading(e);
+          }
+          invoke(id, window[id]);
         });
-      }
-      addEventListeners();
+      });
       
-      // loading Animations
       const toggleLoading = (e) => {
-        const { id } = e.currentTarget;
-        if (id === 'reset' || id === 'clearCache' || id === 'form') {
-          setTimeout(function() {
-            target.classList.remove('loading');
-            icon.className = className;
-          }, 1000);
-        }
-        
         const target = e.currentTarget;
+        const { id } = target;
         target.classList.add('loading');
         const icon = target.querySelector('.iconfont');
         const className = icon.className;
         icon.className = 'iconfont icon-loading';
+        
+        if (['reset', 'clearCache', 'form', 'telegram'].includes(id)) {
+          setTimeout(() => {
+            target.classList.remove('loading');
+            icon.className = className;
+          }, 1000);
+        };
+        
         const listener = (event) => {
           if (event.detail.code === 'finishLoading') {
             target.classList.remove('loading')
@@ -399,173 +624,20 @@ async function main() {
         window.addEventListener('JWeb', listener);
       };
       
-      // Reset Data
-      const reset = () => {
-        for ( const item of formItems ) {
-          const el = document.querySelector(\`.form-item__input[name="\${item.name}"]\`)
-          formData[item.name] = item.default;
-          if ( item.type === 'switch' ) {
-            el.checked = item.default
-          } else {
-            el && (el.value = item.default);
-          }
-        }
-        invoke('remove', formData);
-      }
-      document.getElementById('reset').addEventListener('click', () => reset())
+      const update = document.querySelector('input[name="update"]')
+      update.checked = settings.update ?? true
+      update.addEventListener('change', (e) => {
+        formData['update'] = e.target.checked
+        invoke('changeSettings', formData)
+      });
+      
+      const ios = document.querySelector('input[name="ios"]')
+      ios.checked = settings.ios ?? true
+      ios.addEventListener('change', (e) => {
+        formData['ios'] = e.target.checked
+        invoke('changeSettings', formData)
+      })
     })()`;
-    
-    // 主题颜色
-    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
-    
-    const authorAvatar = await toBase64(await getLogoImage("author.png", `${rootUrl}img/icon/4qiao.png`));
-
-    const appleHub = await toBase64(await getLogoImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`));
-    
-    const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
-    const scriptTags = await Promise.all(scripts.map(async (script) => {
-      const content = await getCacheString(script, `${rootUrl}web/${script}`);
-      return `<script>${content}</script>`;
-    }));
-        
-    // 旋转头像
-    const avatar = `  
-    <center>
-      <div class="hover-show relative">
-        <span class="avatar-img hh signin-loader">
-          <img alt="头像" src="${authorAvatar}" width="95" height="95" class="lazyload avatar avatar-id-0"/>
-        </span>
-      </div>
-      <br>
-      <img id="myName" src="${appleHub}" width="200" height="40">
-      <br>
-      <a href="javascript:;" class="display-name" id="store">组件商店</a>
-    </center>
-    `
-    // 弹窗
-    const popup = `
-    <div class="modal fade" id="u_sign" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="sign zib-widget blur-bg relative" style="border-radius: 27px;">
-          <div class="text-center">
-            <div class="sign-logo box-body">
-              <img src="${appleHub}" class="lazyload">
-            </div>
-          </div>
-          <div class="tab-content">
-            <div class="box-body">
-              <div class="title-h-center fa-2x">
-                <div class="title">
-                  ${scriptName}
-                </div>
-              </div>
-              <a class="muted-color px30" class="display-name">
-                <div id="myName" class="update-content">Version ${version}</div>
-              </a>
-              <br />
-              <div class="form-label-title">  
-                <li>${updateDate}&nbsp;🔥</li>
-                <li>修复已知问题</li>
-                <li>性能优化，改进用户体验</li>
-              </div>
-            </div>
-            <div class="box-body">
-              <div id="sign-in">
-                <button id="userClick" type="button" class="but radius jb-pink padding-lg  btn-block">立即更新</button>
-              </div>
-            </div>
-            <p class="social-separator separator muted-5-color em12">95度茅台</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script type="text/javascript">
-      window.onload = function() {
-        setTimeout(function() {
-          $('.signin-loader').click()
-        }, 1200);
-      };
-    </script>
-    <script type="text/javascript">
-      window._win = {
-        uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
-        qj_loading: '1',
-      }
-    </script>
-    `
-    // body
-    const body = `
-    <!-- 旋转头像开始 -->
-    ${avatar}
-    <!-- 弹窗开始 -->
-    <div class="flex header-info relative hh signin-loader">
-    </div>
-    ${popup}
-    ${scriptTags.join('\n')}
-    <!-- 通用 -->  
-    <div class="list">
-      <form class="list__body" action="javascript:void(0);">
-        <label id="update" class="form-item form-item--link" >
-          <div class="form-label">
-            <img class="form-label-img" src="${rootUrl}img/symbol/update.png"/>
-            <div class="form-label-title">自动更新</div>
-          </div>
-          <input name="update" type="checkbox" role="switch" />
-        </label>
-        <label id='reset' class="form-item form-item--link">
-          <div class="form-label">
-            <img class="form-label-img" src="${rootUrl}img/symbol/reset.png"/>
-            <div class="form-label-title">重置所有</div>
-          </div>
-          <div class="form-label">
-            <i class="iconfont icon-arrow_right"></i>
-          </div>
-        </label>
-      </form>
-    </div>
-    <!-- 通用设置 -->  
-    <div class="list">
-      <div class="list__header">设置</div>
-      <form class="list__body" action="javascript:void(0);">
-        <label id="clearCache" class="form-item form-item--link">
-          <div class="form-label">
-            <img class="form-label-img" src="${clearCache}"/>
-            <div class="form-label-title">清除缓存</div>
-          </div>
-          <i class="iconfont icon-arrow_right"></i>
-        </label>
-        <label id="ios" class="form-item form-item--link">
-          <div class="form-label">
-            <img class="form-label-img" src="${appleOS}"/>
-            <div class="form-label-title">AppleOS</div>
-          </div>
-          <input name="ios" type="checkbox" role="switch" />
-        </label>
-        <label id="login" class="form-item form-item--link">
-          <div class="form-label">
-            <img class="form-label-img" src="${userlogin}"/>
-            <div class="form-label-title">用户登录</div>
-          </div>
-          <div class="form-label">
-            <div id="sign" class="form-item-right-desc">已登录</div>
-            <i class="iconfont icon-arrow_right"></i>
-          </div>
-        </label>
-      </form>
-    </div>
-    <!-- 组件预览 -->  
-    <div class="list">
-      <form class="list__body" action="javascript:void(0);">
-        <label id="preview" class="form-item form-item--link">
-          <div class="form-label">
-            <img class="form-label-img" src="${rootUrl}img/symbol/preview.png"/>
-            <div class="form-label-title">预览组件</div>
-          </div>
-          <i class="iconfont icon-arrow_right"></i>
-        </label>
-      </form>
-    </div>
-    `
     
     /**
      * @param {string} style
@@ -584,12 +656,11 @@ async function main() {
         <style>${style}</style>
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
-        ${body}
-        <!-- 颜色设置 -->
+        ${title === 'first' ? await mainMenu() : await secondMenu()}
+        <!-- 偏好设置 -->
         <div class="list">
-          <div class="list__header">通用</div>
-            <form id="form" class="list__body" action="javascript:void(0);">
-            </form>
+          <form id="form" class="list__body" action="javascript:void(0);">
+          </form>
         </div>
         <script>${js}</script>
       </body>
@@ -617,7 +688,6 @@ async function main() {
       });
       
       const { code, data } = event;
-      console.log(data)
       if (code == 'clearCache' && fm.fileExists(cache)) {
         fm.remove(cache);
       } else if (code == 'remove' || code === 'changeSettings') {
@@ -638,7 +708,7 @@ async function main() {
         case 'myName':
           Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
           break;
-        case 'userClick':
+        case 'install':
           const script = await new Request(scriptUrl).loadString();
           const fm = FileManager.iCloud()
           fm.writeString(fm.documentsDirectory() + `/${scriptName}.js`, script);
@@ -647,6 +717,9 @@ async function main() {
         case 'login':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
           dismissLoading(webView);
+          break;
+        case 'telegram':
+          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
           break;
       }
       await injectListener();
@@ -671,85 +744,93 @@ async function main() {
   };
 
   await renderAppView({
+    title: 'first',
     formItems: [
       {
-        name: "lightColor",
-        label: "文字颜色（白天）",
-        type: "color",
-        icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',
-        default: initColor.lightColor
-      },
-      {
-        name: "darkColor",
-        label: "文字颜色（夜间）",
-        type: "color",
-        icon: {
-          name: 'textformat',
-          color: '#938BF0'
-        },
-        default: initColor.darkColor
-      },
-      {
-        name: 'textColorLight',
-        label: "图标颜色（白天）",
-        type: 'color',
+        name: "preference",
+        label: "偏好设置",
+        type: "cell",
         icon: {
           name: 'gearshape.fill',
           color: '#FF3B2F'
-        },
-        default: initColor.textColorLight
-      },
-      {
-        name: "indexLightColor",
-        label: "标题颜色（白天）",
-        type: "color",
-        icon: {
-          name: 'externaldrive.fill',
-          color: '#F9A825'
-        },
-        default: initColor.indexLightColor
-      },
-      {
-        name: "indexDarkColor",
-        label: "标题颜色（夜间）",
-        type: "color",
-        icon: {
-          name: 'applelogo',
-          color: '#00BCD4'
-        },
-        default: initColor.indexDarkColor
-      },
-      {
-        name: "loopSwitch",
-        label: "渐变背景",
-        type: "color",
-        icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
-        default: initColor.gradient
-      },
-      {
-        name: "message",
-        label: "更新信息",
-        type: "cell",
-        icon: {
-          name: 'pin.fill',
-          color: '#F57C00'
         }
-      },
-      {
-        name: "randomSwitch",
-        label: "始终深色",
-        type: "switch",
-        icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
-        default: false
       }
     ],
     onItemClick: async (item) => {
-      // type: 'time' 添加时间弹窗选项
-      const { name } = item;
-      if (name === 'message') {
-        await importModule(await webModule('12123.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/12123.js')).main();
-        dismissLoading(webView);
-      }
+      await renderAppView({
+        formItems: [
+          {
+            name: "lightColor",
+            label: "文字颜色（白天）",
+            type: "color",
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',
+            default: initColor.lightColor
+          },
+          {
+            name: "darkColor",
+            label: "文字颜色（夜间）",
+            type: "color",
+            icon: {
+              name: 'textformat',
+              color: '#938BF0'
+            },
+            default: initColor.darkColor
+          },
+          {
+            name: 'textColorLight',
+            label: "图标颜色（白天）",
+            type: 'color',
+            icon: {
+              name: 'gearshape.fill',
+              color: '#FF3B2F'
+            },
+            default: initColor.textColorLight
+          },
+          {
+            name: "indexLightColor",
+            label: "标题颜色（白天）",
+            type: "color",
+            icon: {
+              name: 'externaldrive.fill',
+              color: '#F9A825'
+            },
+            default: initColor.indexLightColor
+          },
+          {
+            name: "indexDarkColor",
+            label: "标题颜色（夜间）",
+            type: "color",
+            icon: {
+              name: 'applelogo',
+              color: '#00BCD4'
+            },
+            default: initColor.indexDarkColor
+          },
+          {
+            name: "loopSwitch",
+            label: "渐变背景",
+            type: "color",
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
+            default: initColor.gradient
+          },
+          {
+            name: "message",
+            label: "更新信息",
+            type: "cell",
+            icon: {
+              name: 'pin.fill',
+              color: '#F57C00'
+            }
+          },
+          {
+            name: "randomSwitch",
+            label: "始终深色",
+            type: "switch",
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
+            default: false
+          }
+        ]
+      });
     }
   });
 }
