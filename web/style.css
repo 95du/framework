@@ -346,6 +346,14 @@ a:focus,a:hover {
 }
 
 /** 头像呼吸光环旋转放大开始 **/
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .avatar {
   border-radius: 50%;
   animation: light 4s ease-in-out infinite;
