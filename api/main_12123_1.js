@@ -590,7 +590,7 @@ async function main() {
     
     // jump show status
     barStack2.url = statusUrl;
-    plateText.url = 'tmri12123://'
+    text12123.url = 'tmri12123://'
     imageCar.url = detailsUrl;
     
     if ( !config.runsInWidget ) {  
