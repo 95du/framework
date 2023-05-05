@@ -13,10 +13,6 @@ print *:not(html):after,
   box-shadow: none!important;
 }
 
-* {
-  box-sizing: border-box;
-}
-
 *:after, *:before {
   box-sizing: border-box;
 }
