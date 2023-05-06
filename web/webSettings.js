@@ -10,14 +10,13 @@ async function main() {
   const updateDate = '2023年4月28日'
   
   
-  const fm = FileManager.local();
-  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
-  fm.createDirectory(mainPath, true);
-  
   /**
-   * 获取存储路径
+   * 创建，获取存储路径
    * @returns {string} - string
    */
+  const fm = FileManager.local();
+  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
+  
   const getSettingPath = () => {
     fm.createDirectory(
       mainPath, true
@@ -627,11 +626,11 @@ async function main() {
         const className = icon.className;
         icon.className = 'iconfont icon-loading';
           
-        if (['reset', 'clearCache', 'form', 'telegram'].includes(id)) {
+        if (['reset', 'clearCache', 'telegram'].includes(id)) {
           setTimeout(() => {
             target.classList.remove('loading');
             icon.className = className;
-          }, 1200);
+          }, 800);
         };
           
         const listener = (event) => {
@@ -647,13 +646,15 @@ async function main() {
       for (const btn of document.querySelectorAll('.form-item')) {
         btn.addEventListener('click', (e) => {
           toggleLoading(e);
-          const target = e.currentTarget
-          const { id } = target;
+          const { id } = e.currentTarget;
           invoke(id, window[id]);
         });
       }
-
-
+  
+      document.getElementById('store').addEventListener('click', () => {
+        invoke('store');
+      });
+      
       /** toggle button **/
       const handleInputChange = (element, property) => {
         element.checked = settings[property] ?? true
@@ -736,8 +737,8 @@ async function main() {
         case 'itemClick':
           if (data.menu === 'page') {
             const item = (() => {
-              const find = (items) => {
-                for (const el of items) {
+              const find = (i) => {
+                for (const el of i) {
                   if (el.name === data.name) return el;
                 }
                 return null;
@@ -767,7 +768,7 @@ async function main() {
           Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
           break;
       }
-      await injectListener();
+      injectListener();
     };
     
     injectListener().catch((e) => {
@@ -779,7 +780,7 @@ async function main() {
 
 
   // ======= Initial ========= //
-  const initColor = {
+  const init = {
     textColorLight: '#34C579',
     darkColor: '#FFFFFF',
     lightColor: "#333333",
@@ -795,18 +796,18 @@ async function main() {
         name: "preference",
         label: "偏好设置",
         type: 'cell',
-        menu: 'page',
         icon: {
           name: 'gearshape.fill',
           color: '#FF3B2F'
         },
+        menu: 'page',
         formItems: [
           {
             name: "lightColor",
             label: "文字颜色（白天）",
             type: "color",
             icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',
-            default: initColor.lightColor
+            default: init.lightColor
           },
           {
             name: "darkColor",
@@ -816,7 +817,7 @@ async function main() {
               name: 'textformat',
               color: '#938BF0'
             },
-            default: initColor.darkColor
+            default: init.darkColor
           },
           {
             name: 'textColorLight',
@@ -826,7 +827,7 @@ async function main() {
               name: 'gearshape.fill',
               color: '#FF3B2F'
             },
-            default: initColor.textColorLight
+            default: init.textColorLight
           },
           {
             name: "indexLightColor",
@@ -836,7 +837,7 @@ async function main() {
               name: 'externaldrive.fill',
               color: '#F9A825'
             },
-            default: initColor.indexLightColor
+            default: init.indexLightColor
           },
           {
             name: "indexDarkColor",
@@ -846,14 +847,14 @@ async function main() {
               name: 'applelogo',
               color: '#00BCD4'
             },
-            default: initColor.indexDarkColor
+            default: init.indexDarkColor
           },
           {
             name: "loopSwitch",
             label: "渐变背景",
             type: "color",
             icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
-            default: initColor.gradient
+            default: init.gradient
           },
           {
             name: "message",
