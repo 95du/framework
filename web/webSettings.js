@@ -22,7 +22,7 @@ async function main() {
     fm.createDirectory(
       mainPath, true
     );
-    return fm.joinPath(mainPath, 'setting.json', true);
+    return fm.joinPath(mainPath, 'setting.json');
   };
 
   /**
@@ -43,12 +43,29 @@ async function main() {
    * 存储当前设置
    * @param { JSON } string
    */
-  const writeSettings = async (saveSet) => {
-    fm.writeString(getSettingPath(), JSON.stringify(saveSet, null, 2));
+  const writeSettings = async (settings) => {
+    fm.writeString(getSettingPath(), JSON.stringify(settings, null, 2));
     console.log(JSON.stringify(
       settings, null, 2)
     )
   };
+  
+  /**  
+   * 弹出一个通知
+   * @param {string} title
+   * @param {string} body
+   * @param {string} url
+   * @param {string} sound
+   */
+  const notify = async (title, body, url, opts = {}) => {
+    let n = new Notification()
+    n = Object.assign(n, opts);
+    n.title = title
+    n.body = body
+    n.sound = 'alert'
+    if (url) {n.openURL = url}
+    return await n.schedule()
+  }
   
   /**
    * 跳转到安装页面
@@ -191,7 +208,7 @@ async function main() {
   };
   
   const getCacheString = async (cssFileName, cssFileUrl) => {
-    const cache = useFileManager({ cacheTime: 24 });
+    const cache = useFileManager({ cacheTime: 1024 });
     const cssString = cache.readString(cssFileName);
     if (cssString) {
       return cssString;
@@ -269,19 +286,34 @@ async function main() {
       }
     }
     
-    const clearCache = await loadSF2B64('arrow.triangle.2.circlepath', '#FF9500');
+    const icons = [  
+      {
+        name: 'arrow.triangle.2.circlepath',
+        color: '#FF9500'
+      },
+      {
+        name: 'person.crop.circle',
+        color: '#43CD80'
+      },
+      {
+        name: 'applelogo',
+        color: '#00BCD4'
+      },
+      {
+        name: 'camera.fill',
+        color: '#FF9300'
+      },
+    ];
+    const [clearCache, userlogin, appleOS, avatarImg] = await Promise.all(
+      icons.map(({ name, color }) => loadSF2B64(name, color))
+    );
     
-    const userlogin = await loadSF2B64('person.crop.circle', '#43CD80');
-    
-    const appleOS = await loadSF2B64('applelogo', '#E76EFF');
-    
-    const avatarImg = await loadSF2B64('camera.fill', '#FF9300');
-    
+    // themeColor
     const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
-    
-    const authorAvatar = await toBase64(await getLogoImage("author.png", `${rootUrl}img/icon/4qiao.png`));
 
     const appleHub = await toBase64(await getLogoImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`));
+    
+    const authorAvatar = await toBase64(await getLogoImage("author.png", `${rootUrl}img/icon/4qiao.png`));
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
@@ -289,8 +321,8 @@ async function main() {
       return `<script>${content}</script>`;
     }));
     
+    // 主菜单
     const mainMenu = async () => {
-      // 旋转头像
       const avatar = `  
       <center>
         <div class="hover-show relative">
@@ -341,7 +373,7 @@ async function main() {
       <script type="text/javascript">
         setTimeout(function() {
           $('.signin-loader').click();
-        }, 51200);
+        }, 1500);
         window._win = {
           uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
           qj_loading: '1',
@@ -386,12 +418,12 @@ async function main() {
         },
         {
           id: 'clearCache',
-          imgUrl: `${clearCache}`,
+          imgUrl: clearCache,
           title: '清除缓存'
         },
         {
           id: 'login',
-          imgUrl: `${userlogin}`,
+          imgUrl: userlogin,
           title: '用户登录',
           desc: '已登录'
         }
@@ -472,13 +504,13 @@ async function main() {
     
     // 二级菜单
     const secondMenu = async () => {
-      return body = `
+      return `
       <!-- 间隔 -->
       <div class="list">
         <form class="list__body">
         </form>
       </div>
-      <!-- 组件预览 -->  
+      <!-- 颜色设置 -->  
       <div class="list">
         <form class="list__body" action="javascript:void(0);">
           <label id='reset' class="form-item form-item--link">
@@ -586,19 +618,7 @@ async function main() {
       }
       document.getElementById('form').appendChild(fragment);
       
-      
-      const elements = ['install', 'myName', 'store', 'avatar', 'telegram', 'clearCache', 'reset', 'login', 'preview', 'form'];
-  
-      elements.forEach((id) => {
-        const element = document.getElementById(id);
-        element.addEventListener('click', (e) => {
-          if (['clearCache', 'reset', 'login', 'preview', 'avatar', 'telegram', 'form'].includes(id)) {
-            toggleLoading(e);
-          }
-          invoke(id, window[id]);
-        });
-      });
-      
+      /** 点击事件 loading **/  
       const toggleLoading = (e) => {
         const target = e.currentTarget;
         const { id } = target;
@@ -606,14 +626,14 @@ async function main() {
         const icon = target.querySelector('.iconfont');
         const className = icon.className;
         icon.className = 'iconfont icon-loading';
-        
+          
         if (['reset', 'clearCache', 'form', 'telegram'].includes(id)) {
           setTimeout(() => {
             target.classList.remove('loading');
             icon.className = className;
-          }, 1000);
+          }, 1200);
         };
-        
+          
         const listener = (event) => {
           if (event.detail.code === 'finishLoading') {
             target.classList.remove('loading')
@@ -624,19 +644,28 @@ async function main() {
         window.addEventListener('JWeb', listener);
       };
       
-      const update = document.querySelector('input[name="update"]')
-      update.checked = settings.update ?? true
-      update.addEventListener('change', (e) => {
-        formData['update'] = e.target.checked
-        invoke('changeSettings', formData)
-      });
-      
-      const ios = document.querySelector('input[name="ios"]')
-      ios.checked = settings.ios ?? true
-      ios.addEventListener('change', (e) => {
-        formData['ios'] = e.target.checked
-        invoke('changeSettings', formData)
-      })
+      for (const btn of document.querySelectorAll('.form-item')) {
+        btn.addEventListener('click', (e) => {
+          toggleLoading(e);
+          const target = e.currentTarget
+          const { id } = target;
+          invoke(id, window[id]);
+        });
+      }
+
+
+      /** toggle button **/
+      const handleInputChange = (element, property) => {
+        element.checked = settings[property] ?? true
+        element.addEventListener('change', (e) => {
+          formData[property] = e.target.checked
+          invoke('changeSettings', formData)
+        })
+      };
+      const inputs = {
+        update: handleInputChange(document.querySelector('input[name="update"]'), 'update'),
+        ios: handleInputChange(document.querySelector('input[name="ios"]'), 'ios')
+      };
     })()`;
     
     /**
@@ -656,7 +685,7 @@ async function main() {
         <style>${style}</style>
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
-        ${title === 'first' ? await mainMenu() : await secondMenu()}
+        ${title === 'main' ? await mainMenu() : await secondMenu()}
         <!-- 偏好设置 -->
         <div class="list">
           <form id="form" class="list__body" action="javascript:void(0);">
@@ -685,32 +714,48 @@ async function main() {
         true
       ).catch((err) => {
         console.error(err);
+        dismissLoading(webView);
       });
       
       const { code, data } = event;
       if (code == 'clearCache' && fm.fileExists(cache)) {
         fm.remove(cache);
-      } else if (code == 'remove' || code === 'changeSettings') {
-        const saveSet = { ...settings, ...data };
-        writeSettings(saveSet);
-      }
+      } else if (code == 'remove' && fm.fileExists(getSettingPath())) {
+        fm.remove(getSettingPath());
+      };
+      
       switch (code) {
+        case 'changeSettings':
+          Object.assign( settings, data );
+          writeSettings(settings);
+          break;
         case 'preview':
           await importModule(await webModule('12123.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/12123.js')).main();
           dismissLoading(webView);
           break;
         case 'itemClick':
-          onItemClick?.(data);
+          if (data.menu === 'page') {
+            const item = (() => {
+              const find = (items) => {
+                for (const el of items) {
+                  if (el.name === data.name) return el;
+                }
+                return null;
+              };
+              return find(formItems);
+            })();
+            await renderAppView(item, false, { settings });
+          } else {
+            await onItemClick?.(data, { settings });
+          }
+          dismissLoading(webView);
           break;
         case 'store':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
           break;
-        case 'myName':
-          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
-          break;
         case 'install':
           const script = await new Request(scriptUrl).loadString();
-          const fm = FileManager.iCloud()
+          const fm = FileManager.iCloud();
           fm.writeString(fm.documentsDirectory() + `/${scriptName}.js`, script);
           Safari.open(`scriptable:///run/${encodeURI(scriptName)}`);
           break;
@@ -744,20 +789,17 @@ async function main() {
   };
 
   await renderAppView({
-    title: 'first',
+    title: 'main',
     formItems: [
       {
         name: "preference",
         label: "偏好设置",
-        type: "cell",
+        type: 'cell',
+        menu: 'page',
         icon: {
           name: 'gearshape.fill',
           color: '#FF3B2F'
-        }
-      }
-    ],
-    onItemClick: async (item) => {
-      await renderAppView({
+        },
         formItems: [
           {
             name: "lightColor",
@@ -829,9 +871,17 @@ async function main() {
             icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
             default: false
           }
-        ]
-      });
-    }
+        ],
+        onItemClick: async (
+          item
+        ) => {
+          const { name } = item;
+          if (name === 'message') {
+            await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
+          }
+        }
+      }
+    ]
   });
 }
 module.exports = { main }
