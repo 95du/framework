@@ -6,7 +6,7 @@ async function main() {
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   const scriptName = '交管12123_2'
   const scriptUrl = `${rootUrl}mian/module12123.js`;
-  const version = '1.2.5'
+  const version = '1.2.7'
   const updateDate = '2023年4月28日'
   
   
@@ -25,20 +25,6 @@ async function main() {
   };
 
   /**
-   * 读取储存的设置
-   * @param {string} file - JSON
-   * @returns {object} - JSON
-   */
-  const getSettings = (file) => {
-    if (fm.fileExists(file)) {
-      const data = fm.readString(file);
-      return JSON.parse(data);
-    }
-    return {}
-  };
-  const settings = await getSettings(getSettingPath());
-
-  /**
    * 存储当前设置
    * @param { JSON } string
    */
@@ -47,6 +33,46 @@ async function main() {
     console.log(JSON.stringify(
       settings, null, 2)
     )
+  };
+  
+  /**
+   * 读取储存的设置
+   * @param {string} file - JSON
+   * @returns {object} - JSON
+   */
+  const DEFAULT_SETTINGS = {
+    version,
+    minute: '10',
+    picture: [],
+    imgArr: [],
+    transparency: '0.5',
+    masking: '0.3',
+    gradient: [],
+    update: 'true',
+    appleOS: "true",
+  };
+  
+  const getSettings = (file) => {
+    if (fm.fileExists(file)) {
+      return JSON.parse(fm.readString(file));
+    } else {
+      settings = DEFAULT_SETTINGS;
+      writeSettings();
+    }
+    return settings;
+  };
+  settings = await getSettings(getSettingPath());
+  
+  /**
+   * 获取背景图片存储目录路径
+   * @returns {string} - 目录路径
+   */
+  const getBgImagePath = () => {
+    const bgPath = fm.joinPath(fm.documentsDirectory(), '95duBackground');
+    if (!fm.fileExists(bgPath)) {
+      fm.createDirectory(bgPath);
+    }
+    return fm.joinPath(bgPath, Script.name() + '.jpg');
   };
   
   /**  
@@ -64,6 +90,19 @@ async function main() {
     n.sound = 'alert'
     if (url) {n.openURL = url}
     return await n.schedule()
+  }
+  
+  /**
+   * 版本更新时弹出窗口
+   * @returns {String} string
+   */
+  const updateVersion = () => {
+    const newVer = version !== settings.version ? '.signin-loader' : undefined;
+    if (newVer) {
+      settings.version = version;
+      writeSettings(settings);
+    }
+    return newVer;
   }
   
   /**
@@ -239,6 +278,38 @@ async function main() {
   const toBase64 = async (img) => {
     return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
   }
+    
+  /**
+   * 弹出输入框
+   * @param title 标题
+   * @param desc  描述
+   * @param opt   属性
+   * @returns { Promise<void> }
+   */
+  const generateInputAlert = async (options,confirm) => {  
+    const inputAlert = new Alert();
+    inputAlert.title = options.title;
+    inputAlert.message = options.message;
+    const fieldArr = options.options;
+    for (const option of fieldArr) {
+      inputAlert.addTextField(
+        option.hint,
+        option.value
+      );
+    }
+    inputAlert.addAction('取消');
+    inputAlert.addAction('确认');
+    let getIndex = await inputAlert.presentAlert();
+    if (getIndex == 1) {
+      const inputObj = [];
+      fieldArr.forEach((_, index) => {
+        let value = inputAlert.textFieldValue(index);
+        inputObj.push({index, value});
+      });
+      confirm(inputObj);
+    }
+    return getIndex;
+  }
   
   
   // ====== web start =======//
@@ -258,23 +329,23 @@ async function main() {
       _ = 'http://boxjs.com'
     } = options;
 
-    const cssStyle = await getCacheString('cssStyle.css', `${rootUrl}web/style.css`);
+    // themeColor
+    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
 
-    const style = `
-    :root {
-      --color-primary: #007aff;
-      --divider-color: rgba(60,60,67,0.36);
-      --card-background: #fff;
-      --card-radius: 10px;
-      --list-header-color: rgba(60,60,67,0.6);
-    }
-    ${cssStyle}`;
+    const appleHub = await toBase64(await getLogoImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`));
     
+    const authorAvatar = await toBase64(await getLogoImage("author.png", `${rootUrl}img/icon/4qiao.png`));
+    
+    const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
+    const scriptTags = await Promise.all(scripts.map(async (script) => {
+      const content = await getCacheString(script, `${rootUrl}web/${script}`);
+      return `<script>${content}</script>`;
+    }));
     
     /** 
      * @param {image} cacheImage
      * @param {string} scrips
-     * @param {string} themeColor
+     * @param {string} icons
      */
     for (let index = 0; index < formItems.length; index++) {
       const item = formItems[index];
@@ -307,20 +378,123 @@ async function main() {
       icons.map(({ name, color }) => loadSF2B64(name, color))
     );
     
-    // themeColor
-    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
-
-    const appleHub = await toBase64(await getLogoImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`));
+    /**  
+     * 用数组创建菜单
+     * @param {Object} item 
+     * @returns {string} string
+     */
+    const menu = [
+      {
+        id: 'avatar',
+        imgSrc: avatarImg,
+        title: '设置头像'
+      },
+      {
+        id: 'telegram',
+        imgSrc: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/NicegramLogo.png',
+        title: 'Telegram'
+      }
+    ];
     
-    const authorAvatar = await toBase64(await getLogoImage("author.png", `${rootUrl}img/icon/4qiao.png`));
+    // switch menu
+    const toggle = [
+      {
+        id: 'ios',
+        imgSrc: appleOS,
+        title: 'AppleOS'
+      },
+      {
+        id: 'update',
+        imgSrc: `${rootUrl}img/symbol/update.png`,
+        title: '自动更新'
+      },
+    ];
     
-    const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
-    const scriptTags = await Promise.all(scripts.map(async (script) => {
-      const content = await getCacheString(script, `${rootUrl}web/${script}`);
-      return `<script>${content}</script>`;
-    }));
+    // user menu
+    const menu2 = [
+      {
+        id: 'reset',
+        imgUrl: `${rootUrl}img/symbol/reset.png`,
+        title: '重置所有'
+      },
+      {
+        id: 'clearCache',
+        imgUrl: clearCache,
+        title: '清除缓存'
+      },
+      {
+        id: 'login',
+        imgUrl: userlogin,
+        title: '用户登录',
+        desc: '已登录'
+      }
+    ];
     
-    // 主菜单
+    // Bottom menu  
+    const menu3 = [
+      {
+        id: 'input',
+        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',
+        title: '刷新时间',
+        desc: settings.message
+      },
+      {
+        id: 'input',
+        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
+        title: '渐变背景',
+        val: 'gradient'
+      },
+      {
+        id: 'input',
+        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking.png',
+        title: '渐变透明',
+        desc: '测试',
+        val: 'transparency'
+      },
+      {
+        id: 'background',
+        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
+        type: 'background',
+        title: '透明背景'
+      },
+      {
+        id: 'input',
+        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking2.png',
+        title: '遮罩透明',
+        desc: '测试'
+      },
+      {
+        id: 'bgImage',
+        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/bgImage.png',
+        type: 'bgImage',
+        title: '图片背景',
+      },
+      {
+        id: 'clrar',
+        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/clearBg.png',
+        type: 'clear',
+        title: '清除背景'
+      }
+    ];
+    
+    const label = (item) => `
+      <label id="${item.id}" class="form-item form-item--link">
+        <div class="form-label">
+          <img class="form-label-img" src="${item.imgSrc || item.imgUrl}"/>
+          <div class="form-label-title">${item.title}</div>
+        </div>
+        ${
+          item.desc ? `
+            <div class="form-label">
+              <div id="${item.id}-desc" class="form-item-right-desc">${item.desc}</div>
+              <i class="iconfont icon-arrow_right"></i>
+            </div>
+          ` : `<i class="iconfont icon-arrow_right"></i>`
+        }
+      </label>
+    `
+    
+    /** 主菜单 **/
     const mainMenu = async () => {
       const avatar = `  
       <center>
@@ -336,7 +510,6 @@ async function main() {
       </center>
       `
       
-      // 弹窗
       const popup = `  
       <div class="modal fade" id="u_sign" role="dialog">
         <div class="modal-dialog" role="document">
@@ -371,78 +544,13 @@ async function main() {
       </div>
       <script type="text/javascript">
         setTimeout(function() {
-          $('.signin-loader').click();
+          $('${updateVersion()}').click();
         }, 1500);
         window._win = {
           uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
           qj_loading: '1',
         };
       </script>
-      `
-      
-      // avatar menu
-      const menu = [
-        { 
-          id: 'avatar', 
-          imgSrc: avatarImg, 
-          title: '设置头像'
-        }, 
-        { 
-          id: 'telegram', 
-          imgSrc: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/NicegramLogo.png', 
-          title: 'Telegram' 
-        }
-      ];
-      
-      // switch menu
-      const toggle = [
-        {
-          id: "ios",
-          imgSrc: appleOS,
-          title: "AppleOS"
-        },
-        {
-          id: "update",
-          imgSrc: `${rootUrl}img/symbol/update.png`,
-          title: "自动更新"
-        },
-      ];
-      
-      // user menu
-      const menu2 = [
-        {
-          id: 'reset',
-          imgUrl: `${rootUrl}img/symbol/reset.png`,
-          title: '重置所有'
-        },
-        {
-          id: 'clearCache',
-          imgUrl: clearCache,
-          title: '清除缓存'
-        },
-        {
-          id: 'login',
-          imgUrl: userlogin,
-          title: '用户登录',
-          desc: '已登录'
-        }
-      ];
-  
-      const label = (item) => `
-        <label id="${item.id}" class="form-item form-item--link">
-          <div class="form-label">
-            <img class="form-label-img" src="${item.imgSrc || item.imgUrl}"/>
-            <div class="form-label-title">${item.title}</div>
-          </div>
-          ${item.desc ? `
-            <div class="form-label">
-              <div id="${item.id}-desc" class="form-item-right-desc">${item.desc}</div>
-              <i class="iconfont icon-arrow_right"></i>
-            </div>
-          ` : `
-            <i class="iconfont icon-arrow_right"></i>
-          `}
-        </label>
       `
       
       return `
@@ -501,7 +609,7 @@ async function main() {
       `
     };
     
-    // 二级菜单
+    /** 二级菜单 **/
     const secondMenu = async () => {
       return `
       <!-- 间隔 -->
@@ -515,20 +623,38 @@ async function main() {
           <label id='reset' class="form-item form-item--link">
             <div class="form-label">
               <img class="form-label-img" src="${rootUrl}img/symbol/reset.png"/>
-              <div class="form-label-title">重置所有</div>
+              <div class="form-label-title">还原设置</div>
             </div>
             <div class="form-label">
               <i class="iconfont icon-arrow_right"></i>
             </div>
           </label>
         </form>
-        <div class="list__header">
-          设置
-        </div>
+      </div>
+      <!-- 间隔 -->
+      <div class="list">
+        <form class="list__body">
+        </form>
       </div>
       `
     };
     
+    /** 二级菜单底部 **/
+    const secondBut = async () => {
+      return `
+      <div class="list">
+        <form class="list__body">
+        </form>
+      </div>
+      <div class="list">
+        <form class="list__body" action="javascript:void(0);">
+          ${menu3.map(item => label(item)).join('')}
+        </form>
+      </div>
+      `
+    };
+    
+    /** 点击事件 loading **/
     const js =`
     (() => {
       const settings = ${JSON.stringify(settings)}
@@ -617,16 +743,15 @@ async function main() {
       }
       document.getElementById('form').appendChild(fragment);
       
-      /** 点击事件 loading **/  
+      /** 点击事件 loading **/
       const toggleLoading = (e) => {
         const target = e.currentTarget;
-        const { id } = target;
         target.classList.add('loading');
         const icon = target.querySelector('.iconfont');
         const className = icon.className;
         icon.className = 'iconfont icon-loading';
           
-        if (['reset', 'clearCache', 'telegram'].includes(id)) {
+        if (['reset', 'clearCache',  'telegram'].includes(target.id)) {
           setTimeout(() => {
             target.classList.remove('loading');
             icon.className = className;
@@ -678,6 +803,18 @@ async function main() {
      * @param {string} js
      * @returns {string} html
      */
+    const cssStyle = await getCacheString('cssStyle.css', `${rootUrl}web/style.css`);
+
+    const style = `
+    :root {
+      --color-primary: #007aff;
+      --divider-color: rgba(60,60,67,0.36);
+      --card-background: #fff;
+      --card-radius: 10px;
+      --list-header-color: rgba(60,60,67,0.6);
+    }
+    ${cssStyle}`;
+    
     const html = `
     <html>
       <head>
@@ -692,6 +829,7 @@ async function main() {
           <form id="form" class="list__body" action="javascript:void(0);">
           </form>
         </div>
+        ${title === 'second' ? await  secondBut() : ''}
         <script>${js}</script>
       </body>
     </html>`.trim();
@@ -715,7 +853,6 @@ async function main() {
         true
       ).catch((err) => {
         console.error(err);
-        dismissLoading(webView);
       });
       
       const { code, data } = event;
@@ -801,6 +938,7 @@ async function main() {
           color: '#FF3B2F'
         },
         menu: 'page',
+        title: 'second',
         formItems: [
           {
             name: "lightColor",
@@ -840,16 +978,6 @@ async function main() {
             default: init.indexLightColor
           },
           {
-            name: "indexDarkColor",
-            label: "标题颜色（夜间）",
-            type: "color",
-            icon: {
-              name: 'applelogo',
-              color: '#00BCD4'
-            },
-            default: init.indexDarkColor
-          },
-          {
             name: "loopSwitch",
             label: "渐变背景",
             type: "color",
@@ -859,7 +987,7 @@ async function main() {
           {
             name: "message",
             label: "更新信息",
-            type: "cell",
+            type: "number",
             icon: {
               name: 'pin.fill',
               color: '#F57C00'
