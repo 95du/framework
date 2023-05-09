@@ -299,7 +299,7 @@ async function main() {
         },
         type: 'input',
         title: '静态地图',
-        desc: '高德地图web服务类型Key\n用于获取静态地图推送到微信',
+        desc: '高德地图web服务API类型Key\n用于获取静态地图推送到微信',
         val: setting.aMapkey ? '已添加  >' : '未添加  >',
         key: 'aMapkey'
       },
