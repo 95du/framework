@@ -308,7 +308,7 @@ async function main() {
         type: 'push',
         title: '推送微信',
         desc: '创建企业微信中的应用，获取access_token的链接，touser成员ID，agentid企业应用的ID',
-        val: '>'
+        val: setting.tokenUrl && setting.touser && setting.agentid ? '已添加  >' : '未添加  >'
       },
       {
         icon: {
@@ -518,7 +518,7 @@ async function main() {
         const fontSize = !item.val ? 26 : 16;
         valText.widthWeight = 500;
         valText.rightAligned();
-        valText.titleColor = item.val === '>' || item.type === 'token' || item.key === 'aMapkey' ? new Color('#8E8E93', 0.8) : Color.blue();
+        valText.titleColor = item.val === '>' || item.type === 'token' || item.key === 'aMapkey' || item.type === 'push' ? new Color('#8E8E93', 0.8) : Color.blue();
         valText.titleFont = Font.mediumSystemFont(fontSize);
       } else if (item.interval) {
         row.height = item.interval;
