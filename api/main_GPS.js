@@ -693,9 +693,6 @@ async function main() {
             });
           } else if (type === 'but') {
             setting[val] = setting[val] === 'true' ? "false" : "true"
-            let n = new Notification();
-            n.sound = 'popup'
-            n.schedule();
           } else if (type == 'clear') {
             const clear = await generateAlert(title, desc, ['取消', '确认']);
             if (clear === 1) {
