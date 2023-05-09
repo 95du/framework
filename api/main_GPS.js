@@ -566,7 +566,7 @@ async function main() {
             message: item.desc,
             options: [{ 
               hint: '填入key',
-              value: setting[item.key]
+              value: setting['aMapkey']
             }]
           }, 
           async (inputArr) => {
