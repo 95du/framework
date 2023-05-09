@@ -50,9 +50,7 @@ async function main() {
     gradient: [],
     update: 'true',
     appleOS: "true",
-    imgArr: [],
-    imei: '',
-    password: ''
+    imgArr: []
   };
   
   const getSettings = (file) => {
@@ -301,16 +299,14 @@ async function main() {
         type: 'input',
         title: '静态地图',
         desc: '高德地图web服务类型Key\n用于获取静态地图推送到微信',
-        val: '>',
-        key: 'aMapkey'
+        val: '>'
       },
       {
         url: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/weChat.png',
-        type: 'input',
+        type: 'push',
         title: '推送微信',
-        desc: '创建企业微信中的应用，获取access_token的链接',
-        val: '>',
-        key: 'weiChat'
+        desc: '创建企业微信中的应用，获取access_token的链接，touser成员ID，agentid企业应用的ID',
+        val: '>'
       },
       {
         icon: {
@@ -568,12 +564,12 @@ async function main() {
             title: item.title,
             message: item.desc,
             options: [{ 
-              hint: '填入所需内容',
+              hint: '填入key',
               value: setting[item.key]
             }]
           }, 
           async (inputArr) => {
-            setting[item.key] = inputArr[0].value;
+            setting['aMapkey'] = inputArr[0].value;
             await saveSettings();
             notify('设置成功', '桌面组件稍后将自动刷新');
           });
@@ -589,10 +585,27 @@ async function main() {
             async (inputArr) => {
               setting.imei = Number(inputArr[0].value);
               setting.password = Number(inputArr[1].value);
+              await saveSettings();
+              importModule(await downloadModule()).main();
             }
           );
-          await saveSettings();
-          importModule(await downloadModule()).main();
+        } else if (type == 'push') {
+          await generateInputAlert ({
+            title: item.title,
+            message: item.desc,
+            options: [
+              { hint: 'access_token', value: String(setting['tokenUrl']) },
+              { hint: 'touser成员id', value: String(setting['touser']) },  
+              { hint: 'agentid应用id', value: String(setting['agentid']) }]
+            }, 
+            async (inputArr) => {
+              setting.tokenUrl = Number(inputArr[0].value);
+              setting.touser = Number(inputArr[1].value);
+              setting.agentid = Number(inputArr[2].value);
+              await saveSettings();
+              importModule(await downloadModule()).main();
+            }
+          );
         };
       }
     }
