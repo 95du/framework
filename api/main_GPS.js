@@ -300,7 +300,8 @@ async function main() {
         type: 'input',
         title: '静态地图',
         desc: '高德地图web服务类型Key\n用于获取静态地图推送到微信',
-        val: '>'
+        val: setting.aMapkey ? '已添加  >' : '未添加  >',
+        key: 'aMapkey'
       },
       {
         url: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/weChat.png',
@@ -517,7 +518,7 @@ async function main() {
         const fontSize = !item.val ? 26 : 16;
         valText.widthWeight = 500;
         valText.rightAligned();
-        valText.titleColor = item.val === '>' || item.type === 'token' ? new Color('#8E8E93', 0.8) : Color.blue();
+        valText.titleColor = item.val === '>' || item.type === 'token' || item.key === 'aMapkey' ? new Color('#8E8E93', 0.8) : Color.blue();
         valText.titleFont = Font.mediumSystemFont(fontSize);
       } else if (item.interval) {
         row.height = item.interval;
