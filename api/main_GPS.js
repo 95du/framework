@@ -594,13 +594,13 @@ async function main() {
             title: item.title,
             message: item.desc,
             options: [
-              { hint: 'access_token', value: String(setting['tokenUrl']) },
-              { hint: 'touser成员id', value: String(setting['touser']) },  
+              { hint: 'access_token', value: setting['tokenUrl'] },
+              { hint: 'touser成员id', value: setting['touser'] },  
               { hint: 'agentid应用id', value: String(setting['agentid']) }]
             }, 
             async (inputArr) => {
-              setting.tokenUrl = Number(inputArr[0].value);
-              setting.touser = Number(inputArr[1].value);
+              setting.tokenUrl = inputArr[0].value;
+              setting.touser = inputArr[1].value;
               setting.agentid = Number(inputArr[2].value);
               await saveSettings();
               importModule(await downloadModule()).main();
