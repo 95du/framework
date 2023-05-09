@@ -39,7 +39,7 @@ async function main() {
   const phone = Device.screenSize().height  
   if (phone < 926) {
     layout = {
-      leftStackWidth: 100,
+      leftStackWidth: 105,
       carStackWidth: 200,
       carWidth: 200,
       carHeight: 100,
