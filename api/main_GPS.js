@@ -587,6 +587,7 @@ async function main() {
               setting.imei = Number(inputArr[0].value);
               setting.password = Number(inputArr[1].value);
               await saveSettings();
+              notify('设置成功', '桌面组件稍后将自动刷新');
               importModule(await downloadModule()).main();
             }
           );
@@ -604,7 +605,7 @@ async function main() {
               setting.touser = inputArr[1].value;
               setting.agentid = Number(inputArr[2].value);
               await saveSettings();
-              importModule(await downloadModule()).main();
+              notify('设置成功', '桌面组件稍后将自动刷新');
             }
           );
         };
@@ -920,7 +921,6 @@ async function main() {
     n = Object.assign(n, opts);
     n.title = title
     n.body = body
-    n.sound = 'piano_success'
     if (url) n.openURL = url
     return await n.schedule()
   }
