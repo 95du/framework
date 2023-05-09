@@ -40,10 +40,10 @@ async function main() {
   if (phone < 926) {
     layout = {
       leftStackWidth: 100,
-      carStackWidth: 208,
-      carWidth: 208,
+      carStackWidth: 200,
+      carWidth: 200,
       carHeight: 100,
-      bottomSize: 208
+      bottomSize: 200
     }
   } else {
     layout = {
