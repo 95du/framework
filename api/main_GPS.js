@@ -344,7 +344,7 @@ async function main() {
               title: '更换图标',
               desc: '组件右上角图标',
               val: 'logo',
-              logo: '输入png图片URL'
+              tips: '输入png图片URL'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/layout.png',
