@@ -410,7 +410,7 @@ a:focus,a:hover {
 }
 
 body {
-  margin: 10px 0;
+  margin: 60px 0;
   -webkit-font-smoothing: antialiased;
   font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
   accent-color: var(--color-primary);
@@ -444,7 +444,7 @@ button .iconfont {
 
 .list__header {
   margin: 0 20px;
-  padding: 0 0 5px 0;
+  padding: 30 0 5px 0;
   font-size: 33px;
   font-weight: bold;
 }
@@ -570,7 +570,7 @@ input[type='checkbox'][role='switch'] {
   width: 46.6px;
   height: 28px;
   border-radius: 28px;
-  background: ${!Device.isUsingDarkAppearance() ? '#ddd' : '#454545'};
+  background: !Device.isUsingDarkAppearance() ? '#ddd' : '#454545';
   transition: 0.3s ease-in-out;
 }
 
