@@ -89,7 +89,7 @@ button, input, select, textarea {
   position: relative;
   width: auto;
   margin: 55px;
-  top: -6%;
+  top: -4.5%;
 }
 
 .modal-backdrop {
@@ -409,7 +409,7 @@ a:focus,a:hover {
 }
 
 body {
-  margin: 60px 0;
+  margin: 65px 0;
   -webkit-font-smoothing: antialiased;
   font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
   accent-color: var(--color-primary);
