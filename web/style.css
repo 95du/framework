@@ -1,11 +1,13 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: cannabis;
+
 td, th {
   padding: 0;
 }
 
 print *:not(html):after, 
+
   print *:not(html):before {
   color: #000 !important;
   text-shadow: none!important;
@@ -342,6 +344,7 @@ a:focus,a:hover {
 }
 
 /** 头像呼吸光环旋转放大开始 **/
+
 .avatar {
   border-radius: 50%;
   animation: light 4s ease-in-out infinite;
@@ -374,9 +377,11 @@ a:focus,a:hover {
     box-shadow: 0 0 4px #f00;
   }
 }
+
 /** 头像呼吸光环旋转放大结束 **/
 
 /** 彩色昵称开始 **/
+
 .display-name {
   background-image: -webkit-linear-gradient(90deg, #07c160, #fb6bea 25%, #3aedff 50%, #fb6bea 75%, #28d079);
   -webkit-text-fill-color: transparent;
@@ -405,7 +410,7 @@ a:focus,a:hover {
 }
 
 body {
-  margin: 63px 0;
+  margin: 10px 0;
   -webkit-font-smoothing: antialiased;
   font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
   accent-color: var(--color-primary);
@@ -439,8 +444,9 @@ button .iconfont {
 
 .list__header {
   margin: 0 20px;
-  color: var(--list-header-color);
-  font-size: 13px;
+  padding: 0 0 5px 0;
+  font-size: 33px;
+  font-weight: bold;
 }
 
 .list__body {
@@ -469,9 +475,63 @@ button .iconfont {
   align-items: center;
   justify-content: space-between;
   font-size: 16px;
-  min-height: 2em;
-  padding: 0.5em 20px;
+  min-height: 2.3em;
+  padding: 0.3em 20px;
   position: relative;
+}
+
+.form-item + .form-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 0;
+  border-top: 0.5px solid var(--divider-color);
+}
+
+.form-item .iconfont {
+  margin-right: 0px;
+}
+
+.form-item input,
+
+    .form-item select {
+  font-size: 16px;
+  text-align: right;
+}
+
+.form-item input[type="checkbox"] {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.form-item input select,
+
+    .form-item select {
+  outline: none;
+  text-align: right;
+  padding: 0 10px 0 0;
+  padding-right: 4px;
+  border: none;
+  font-size: 16px;
+  background-color: transparent;
+}
+
+.icon-arrow_right {
+  color: #86868b;
+  font-size: 16px;
+}
+
+.form-item-right-desc {
+  font-size: 16px;
+  color: #86868b;
+  margin: 0 6px 0 auto;
+  max-width: 100px;
+  max-height: 23.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  justify-content: center;
 }
 
 .form-label {
@@ -487,43 +547,16 @@ button .iconfont {
   margin-left: 12px;
 }
 
-.form-item--link .icon-arrow_right {
-  color: #86868b;
-}
-
-.form-item-right-desc {
-  font-size: 16px;
-  color: #86868b;
-  margin-right: 5px;
-}
-
-.form-item + .form-item::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 20px;
-  right: 0;
-  border-top: 0.5px solid var(--divider-color);
-}
-
-.form-item .iconfont {
-  margin-right: 4px;
-}
-
-.form-item input,
-
-    .form-item select {
-  font-size: 14px;
+input[type='number'] {
+  outline: none;
   text-align: right;
-}
-
-.form-item input[type="checkbox"] {
-  width: 1.25em;
-  height: 1.25em;
-}
-
-input[type="number"] {
-  width: 3em;
+  padding: 0 10px 0 0;
+  padding-right: 4px;
+  border: none;
+  font-size: 17px;
+  max-width: 80px;
+  color: #3F86FF;
+  background-color: transparent;
 }
 
 input[type="date"] {
@@ -534,10 +567,10 @@ input[type='checkbox'][role='switch'] {
   position: relative;
   display: inline-block;
   appearance: none;
-  width: 40px;
-  height: 24px;
-  border-radius: 24px;
-  background: #ccc;
+  width: 46.6px;
+  height: 28px;
+  border-radius: 28px;
+  background: ${!Device.isUsingDarkAppearance() ? '#ddd' : '#454545'};
   transition: 0.3s ease-in-out;
 }
 
@@ -546,19 +579,19 @@ input[type='checkbox'][role='switch']::before {
   position: absolute;
   left: 2px;
   top: 2px;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: #fff;
   transition: 0.3s ease-in-out;
 }
 
 input[type='checkbox'][role='switch']:checked {
-  background: var(--color-primary);
+  background: #34C759;
 }
 
 input[type='checkbox'][role='switch']:checked::before {
-  transform: translateX(16px);
+  transform: translateX(18.6px);
 }
 
 .actions {
@@ -567,6 +600,7 @@ input[type='checkbox'][role='switch']:checked::before {
 
 .copyright {
   margin: 15px;
+  margin-inline: 18px;
   font-size: 12px;
   color: #86868b;
 }
