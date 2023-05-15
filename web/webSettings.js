@@ -143,7 +143,7 @@ async function main() {
     cornerWidth = 39
   ) => {
     const sfSymbolImg = await drawTableIcon(icon, color, cornerWidth);
-    return `data:image/png;base64,${Data.fromPNG(sfSymbolImg).toBase64String()}`;
+    return toBase64(sfSymbolImg);
   };
   
   const drawTableIcon = async (
@@ -332,9 +332,15 @@ async function main() {
     // themeColor
     const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
 
-    const appleHub = await toBase64(await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`));
+    const appleHub = await toBase64(await getCacheImage(
+      `${logoColor}.png`,
+      `${rootUrl}img/picture/appleHub_${logoColor}.png`
+    ));
     
-    const authorAvatar = await toBase64(await getCacheImage("author.png", `${rootUrl}img/icon/4qiao.png`));
+    const authorAvatar = await toBase64(await getCacheImage(
+      'author.png', 
+      `${rootUrl}img/icon/4qiao.png`
+    ));
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
@@ -348,7 +354,7 @@ async function main() {
         if (icon.name) {
           const {name, color} = icon;
           item.icon = await loadSF2B64(name, color);
-        } else if (icon.startsWith('https')) {
+        } else if (icon.startsWith('http')) {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
           const image = await getCacheImage(name, icon);
           item.icon = await toBase64(image);
@@ -555,26 +561,17 @@ async function main() {
     const fragment = createList(formItems);
     document.getElementById('settings').appendChild(fragment);
     
-    
-document.getElementById('store').addEventListener('click', () => {
-      invoke('store');
-    });
-      
-document.getElementById('install').addEventListener('click', () => {
-      invoke('install');
-    });
-    
     /** loading **/
     const toggleLoading = (e) => {
       const target = e.currentTarget;
-      target.classList.add('loading');
+      target.classList.add('loading')
       const icon = target.querySelector('.iconfont');
       const className = icon.className;
       icon.className = 'iconfont icon-loading';
           
       const listener = (event) => {
-        if (event.detail.code === 'finishLoading') {
-          target.classList.remove('loading')
+        if (event.detail.code) {
+          target.classList.remove('loading');
           icon.className = className;
           window.removeEventListener('JWeb', listener);
         }
@@ -585,10 +582,17 @@ document.getElementById('install').addEventListener('click', () => {
     document.querySelectorAll('.form-item').forEach((btn) => {
       btn.addEventListener('click', (e) => { toggleLoading(e) });
     });
-    })()`;
+    document.getElementById('store').addEventListener('click', () => {
+      invoke('store');
+    });
+      
+document.getElementById('install').addEventListener('click', () => {
+      invoke('install');
+    });
+  })()`;
   
   
-    /** 主菜单头像 **/
+    /** 主菜单头像弹窗 **/
     const mainMenuTop = async () => {
       const avatar = `  
       <center>
@@ -598,7 +602,7 @@ document.getElementById('install').addEventListener('click', () => {
           </span>
         </div>
         <br>
-          <img id="myName" src="${appleHub}" width="200" height="40">
+          <img id="hub" src="${appleHub}" width="200" height="40">
         <br>
         <a class="display-name" id="store">组件商店</a>
       </center>
@@ -613,17 +617,13 @@ document.getElementById('install').addEventListener('click', () => {
             </div>
             <div class="tab-content">
               <div class="box-body">
-                <div class="title-h-center fa-2x">
-                  <div class="title">${scriptName}</div>
+                <div class="title-h-center fa-2x hh title">
+                  ${scriptName}
                 </div>
                 <a class="muted-color px30" class="display-name">
-                  <div id="myName" class="update-content">Version ${version}</div>
-                </a>
+                  <div id="myName" class="update-content">Version ${version}</div></a>
                 <br />
-                <div class="form-label-title">  
-                  <li>${updateDate}&nbsp;🔥</li>
-                  <li>修复已知问题</li>
-                  <li>性能优化，改进用户体验</li>
+                <div class="form-label-title"><li>${updateDate}&nbsp;🔥</li><li>修复已知问题</li><li>性能优化，改进用户体验</li>
                 </div>
               </div>
               <div class="box-body">
@@ -655,9 +655,8 @@ document.getElementById('install').addEventListener('click', () => {
       `
     };
     
-    
     const html =`
-    <html>  
+    <html>
       <head>
         <meta name='viewport' content='width=device-width, user-scalable=no, viewport-fit=cover'>
         <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
@@ -774,7 +773,7 @@ document.getElementById('install').addEventListener('click', () => {
             name: "textLightColor",
             label: "文字颜色（白天）",
             type: "color",
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png'
+            icon: `${rootUrl}img/symbol/title.png`
           },
           {
             name: "textDarkColor",
@@ -798,7 +797,7 @@ document.getElementById('install').addEventListener('click', () => {
             name: "titleDarkColor",
             label: "标题颜色（夜间）",
             type: "color",
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png'
+            icon: `${rootUrl}img/symbol/abc.png`
           }
         ]
       },
@@ -809,7 +808,7 @@ document.getElementById('install').addEventListener('click', () => {
             label: '刷新时间',
             name: 'refresh',
             type: 'number',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',  
+            icon: `${rootUrl}img/symbol/refresh.png`,
             val: 'refresh'
           },
           {
@@ -817,7 +816,7 @@ document.getElementById('install').addEventListener('click', () => {
             name: 'gradient',
             type: 'cell',
             id: 'input',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
+            icon: `${rootUrl}img/symbol/gradientBackground.png`,
             val: 'gradient'
           },
           {
@@ -825,7 +824,7 @@ document.getElementById('install').addEventListener('click', () => {
             name: 'transparency',
             type: 'number',
             id: 'input',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking.png',
+            icon: `${rootUrl}img/symbol/masking.png`,
             desc: '测试',
             val: 'transparency'
           },
@@ -833,27 +832,27 @@ document.getElementById('install').addEventListener('click', () => {
             label: '透明背景',
             name: 'background',
             type: 'cell',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png'
+            icon: `${rootUrl}img/symbol/transparent.png`
           },
           {
             label: '遮罩透明',
             name: 'masking',
             type: 'number',
             id: 'input',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking2.png',
+            icon: `${rootUrl}img/symbol/photo_9D64FF.png`,
             val: 'masking'
           },
           {
             label: '图片背景',
             name: 'chooseBgImg',
             type: 'cell',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/bgImage.png'
+            icon: `${rootUrl}img/symbol/bgImage.png`
           },
           {
             label: '清除背景',
             name: 'clear',
             type: 'cell',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/clearBg.png'
+            icon: `${rootUrl}img/symbol/clearBg.png`
           }
         ]
       },
@@ -900,7 +899,7 @@ document.getElementById('install').addEventListener('click', () => {
             label: '选择编号',
             name: 'choose',
             type: 'select',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/bgImage.png',
+            icon: `${rootUrl}img/symbol/bgImage.png`,
             options: [
               { 
                 label: '编号 1',
@@ -938,7 +937,7 @@ document.getElementById('install').addEventListener('click', () => {
             label: '设置头像',
             name: 'setAvatar',
             type: 'cell',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/icon/camera.png'
+            icon: `${rootUrl}img/icon/camera.png`
           },
           {
             label: 'Telegram',
@@ -1008,7 +1007,7 @@ document.getElementById('install').addEventListener('click', () => {
             label: "当前版本",
             type: "cell",
             icon: {
-              name: 'externaldrive.fill',
+              name: 'externaldrive.fill', 
               color: '#F9A825'
             },
             desc: version
@@ -1016,7 +1015,7 @@ document.getElementById('install').addEventListener('click', () => {
           {
             name: "updateCode",
             label: "更新代码",
-            type: "cell",
+            type: "switch",
             icon: `${rootUrl}img/symbol/update.png`
           },
         ]
@@ -1025,7 +1024,7 @@ document.getElementById('install').addEventListener('click', () => {
     onItemClick: (item) => {
       const { name } = item;
       if (name === 'clearCache') {
-        Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
+        //Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
       }
     }
   }, true);
