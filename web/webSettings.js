@@ -1,12 +1,12 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: deep-purple; icon-glyph: cog;
-
+// icon-color: teal; icon-glyph: snowflake;
+main()
 async function main() {
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   const scriptName = '交管12123_2'
   const scriptUrl = `${rootUrl}mian/module12123.js`;
-  const version = '1.2.7'
+  const version = '1.2.8'
   const updateDate = '2023年4月28日'
   
   
@@ -42,14 +42,17 @@ async function main() {
    */
   const DEFAULT_SETTINGS = {
     version,
-    minute: '10',
-    picture: [],
-    imgArr: [],
-    transparency: '0.5',
-    masking: '0.3',
+    refresh: 20,
+    transparency: 0.5,
+    masking: 0.3,
     gradient: [],
-    update: 'true',
-    appleOS: "true",
+    picture: [],
+    update: true,
+    textLightColor: '#34C759',
+    textDarkColor: '#FF9500',
+    titleLightColor: '#000000',
+    titleDarkColor: '#FFFFFF',
+    choose: 'a'
   };
   
   const getSettings = (file) => {
@@ -81,16 +84,12 @@ async function main() {
    * @param {string} body
    * @param {string} url
    * @param {string} sound
-   */
+   */  
   const notify = async (title, body, url, opts = {}) => {
-    let n = new Notification()
-    n = Object.assign(n, opts);
-    n.title = title
-    n.body = body
-    n.sound = 'alert'
-    if (url) {n.openURL = url}
-    return await n.schedule()
-  }
+    const n = Object.assign(new Notification(), { title, body, sound: 'piano_success', ...opts });
+    if (url) n.openURL = url;
+    return await n.schedule();
+  };
   
   /**
    * 版本更新时弹出窗口
@@ -264,7 +263,7 @@ async function main() {
     return await new Request(url).loadImage();
   };
   
-  const getLogoImage = async (name, url) => {
+  const getCacheImage = async (name, url) => {
     const cache = useFileManager();
     const image = cache.readImage(name);
     if (image) {
@@ -277,7 +276,7 @@ async function main() {
   
   const toBase64 = async (img) => {
     return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
-  }
+  };
     
   /**
    * 弹出输入框
@@ -310,9 +309,8 @@ async function main() {
     }
     return getIndex;
   }
-  
-  
-  // ====== web start =======//
+
+  // ====== web start ======= //
   
   dismissLoading = (webView) => {
     webView.evaluateJavaScript(
@@ -323,18 +321,20 @@ async function main() {
   
   const renderAppView = async (options) => {
     const {
-      title,
       formItems = [],
       onItemClick,
-      _ = 'http://boxjs.com'
+      head,
+      $ = 'https://www.imarkr.com',
+      avatarInfo
     } = options;
-
+    
+    
     // themeColor
     const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
 
-    const appleHub = await toBase64(await getLogoImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`));
+    const appleHub = await toBase64(await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`));
     
-    const authorAvatar = await toBase64(await getLogoImage("author.png", `${rootUrl}img/icon/4qiao.png`));
+    const authorAvatar = await toBase64(await getCacheImage("author.png", `${rootUrl}img/icon/4qiao.png`));
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
@@ -342,160 +342,254 @@ async function main() {
       return `<script>${content}</script>`;
     }));
     
-    /** 
-     * @param {image} cacheImage
-     * @param {string} scrips
-     * @param {string} icons
-     */
-    for (let index = 0; index < formItems.length; index++) {
-      const item = formItems[index];
-      const icon = item.icon;
-      if (typeof icon == 'object') {
-        const { name, color } = icon;
-        item.icon = await loadSF2B64(name, color);
+    for (const i of formItems) {
+      for (const item of i.items) {
+        const { icon } = item;
+        if (icon.name) {
+          const {name, color} = icon;
+          item.icon = await loadSF2B64(name, color);
+        } else if (icon.startsWith('https')) {
+          const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
+          const image = await getCacheImage(name, icon);
+          item.icon = await toBase64(image);
+        }
       }
+    };
+    
+    /**
+     * @param {string} style
+     * @param {string} themeColor
+     * @param {string} avatar
+     * @param {string} popup
+     * @param {string[]} jsPaths
+     * @param {string} js
+     * @returns {string} html
+     */
+    const cssStyle = await getCacheString('cssStyle.css', `${rootUrl}web/style.css`);  
+    
+    const style =`  
+    :root {
+      --color-primary: #007aff;
+      --divider-color: rgba(60,60,67,0.36);
+      --card-background: #fff;
+      --card-radius: 10px;
+      --list-header-color: rgba(60,60,67,0.6);
+    }
+    ${cssStyle.replace('®️', !Device.isUsingDarkAppearance() ? '#ddd' : '#454545')}
+    `;
+  
+    const js =`
+    (() => {
+    const settings = ${JSON.stringify({
+      ...settings
+    })}
+    const formItems = ${JSON.stringify(formItems)}
+  
+    window.invoke = (code, data) => {
+      window.dispatchEvent(
+        new CustomEvent(
+          'JBridge',
+          { detail: { code, data } }
+        )
+      )
     }
     
-    const icons = [  
-      {
-        name: 'arrow.triangle.2.circlepath',
-        color: '#FF9500'
-      },
-      {
-        name: 'person.crop.circle',
-        color: '#43CD80'
-      },
-      {
-        name: 'applelogo',
-        color: '#00BCD4'
-      },
-      {
-        name: 'camera.fill',
-        color: '#FF9300'
-      },
-    ];
-    const [clearCache, userlogin, appleOS, avatarImg] = await Promise.all(
-      icons.map(({ name, color }) => loadSF2B64(name, color))
-    );
-    
-    /**  
-     * 用数组创建菜单
-     * @param {Object} item 
-     * @returns {string} string
-     */
-    const menu = [
-      {
-        id: 'avatar',
-        imgSrc: avatarImg,
-        title: '设置头像'
-      },
-      {
-        id: 'telegram',
-        imgSrc: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/NicegramLogo.png',
-        title: 'Telegram'
+    const formData = {};
+    const createFormItem = (item) => {
+      const value = settings[item.name] ?? item.default ?? null
+      formData[item.name] = value;
+      const label = document.createElement("label");
+      label.className = "form-item";
+          
+      const div = document.createElement("div");
+      div.className = 'form-label';
+      label.appendChild(div);
+          
+      if ( item.icon ) {
+        const img = document.createElement("img");
+        img.src = item.icon;
+        img.className = 'form-label-img';
+        div.appendChild(img);
       }
-    ];
-    
-    // switch menu
-    const toggle = [
-      {
-        id: 'ios',
-        imgSrc: appleOS,
-        title: 'AppleOS'
-      },
-      {
-        id: 'update',
-        imgSrc: `${rootUrl}img/symbol/update.png`,
-        title: '自动更新'
-      },
-    ];
-    
-    // user menu
-    const menu2 = [
-      {
-        id: 'reset',
-        imgUrl: `${rootUrl}img/symbol/reset.png`,
-        title: '重置所有'
-      },
-      {
-        id: 'clearCache',
-        imgUrl: clearCache,
-        title: '清除缓存'
-      },
-      {
-        id: 'login',
-        imgUrl: userlogin,
-        title: '用户登录',
-        desc: '已登录'
+          
+      const divTitle = document.createElement("div");
+      if ( item.icon ) {
+        divTitle.className = 'form-label-title';
       }
-    ];
-    
-    // Bottom menu  
-    const menu3 = [
-      {
-        id: 'input',
-        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',
-        title: '刷新时间',
-        desc: settings.message
-      },
-      {
-        id: 'input',
-        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
-        title: '渐变背景',
-        val: 'gradient'
-      },
-      {
-        id: 'input',
-        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking.png',
-        title: '渐变透明',
-        desc: '测试',
-        val: 'transparency'
-      },
-      {
-        id: 'background',
-        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
-        type: 'background',
-        title: '透明背景'
-      },
-      {
-        id: 'input',
-        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking2.png',
-        title: '遮罩透明',
-        desc: '测试'
-      },
-      {
-        id: 'bgImage',
-        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/bgImage.png',
-        type: 'bgImage',
-        title: '图片背景',
-      },
-      {
-        id: 'clrar',
-        imgUrl: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/clearBg.png',
-        type: 'clear',
-        title: '清除背景'
-      }
-    ];
-    
-    const label = (item) => `
-      <label id="${item.id}" class="form-item form-item--link">
-        <div class="form-label">
-          <img class="form-label-img" src="${item.imgSrc || item.imgUrl}"/>
-          <div class="form-label-title">${item.title}</div>
-        </div>
-        ${
-          item.desc ? `
-            <div class="form-label">
-              <div id="${item.id}-desc" class="form-item-right-desc">${item.desc}</div>
-              <i class="iconfont icon-arrow_right"></i>
-            </div>
-          ` : `<i class="iconfont icon-arrow_right"></i>`
+      divTitle.innerText = item.label;
+      div.appendChild(divTitle);
+      
+      if (item.type === 'select') {
+        const select = document.createElement('div');
+        select.classList.add('form-item__input__select');
+        const selectInput = document.createElement('select');
+        selectInput.name = item.name;
+        selectInput.value = value;
+        selectInput.classList.add('select-input');
+        
+        for (const opt of (item.options || [])) {
+          const option = document.createElement('option');
+          option.value = opt.value;
+          option.innerText = opt.label;
+          option.selected = value === opt.value;
+          selectInput.appendChild(option);
         }
-      </label>
-    `
+        selectInput.addEventListener('change', (e) => {
+          formData[item.name] = e.target.value;
+          invoke('changeSettings', formData);
+        })
+        
+        const icon = document.createElement('i');
+        icon.className = 'iconfont icon-arrow_right form-item__icon';
+        select.appendChild(selectInput);
+        select.appendChild(icon);
+        label.appendChild(select);
+      
+      } else if (
+        item.type === 'cell' || 
+        item.type === 'page'
+      ) {
+        if ( item.desc ) {
+          const desc = document.createElement("div");
+          desc.className = 'form-item-right-desc';
+          desc.innerText = item.desc;
+          label.appendChild(desc);
+        } 
+        
+        label.classList.add('form-item--link');
+        const icon = document.createElement('i');
+        icon.className = 'iconfont icon-arrow_right'
+        label.appendChild(icon);
+        label.addEventListener('click', (e) => {
+          const { name } = item
+          switch (name) {
+            case 'chooseBgImg':
+              invoke('chooseBgImg')
+              break
+            case 'clearBgImg':
+              invoke('clearBgImg')
+              break
+            case 'reset':
+              reset()
+              break
+            case 'setAvatar':
+              invoke('setAvatar')
+              break;
+            case 'telegram':
+              invoke('telegram')
+              break;
+            default:
+              invoke('itemClick', item);
+          }
+        });
+      } else if (item.type === 'number') {
+        const inputCntr = document.createElement("div");
+        inputCntr.className = 'form-item__input-container'
+  
+        const input = document.createElement("input");
+        input.className = 'form-item__input'
+        input.name = item.name
+        input.type = 'number'
+        input.value = Number(value)
+        input.addEventListener("change", (e) => {
+          formData[item.name] = Number(e.target.value);
+          invoke('changeSettings', formData);
+        });
+        inputCntr.appendChild(input);
+  
+        const icon = document.createElement('i');
+        icon.className = 'iconfont icon-arrow_right form-item__icon'
+        inputCntr.appendChild(icon);
+        label.appendChild(inputCntr);
+      } else {
+        const input = document.createElement("input")
+        input.className = 'form-item__input'
+        input.name = item.name
+        input.type = item.type
+        input.enterKeyHint = 'done'
+        input.value = value
+        // Switch
+        if (item.type === 'switch') {
+          input.type = 'checkbox'
+          input.role = 'switch'
+          input.checked = value
+        }
+        input.addEventListener("change", (e) => {
+          formData[item.name] =
+            item.type === 'switch'
+            ? e.target.checked
+            : e.target.value;
+          invoke('changeSettings', formData)
+        });
+        label.appendChild(input);
+      }
+      return label
+    };
+  
+    const createList = (list, title) => {
+      const fragment = document.createDocumentFragment()
+  
+      let elBody;
+      for (const item of list) {
+        if (item.type === 'group') {
+          const grouped = createList(item.items, item.label)
+          fragment.appendChild(grouped)
+        } else {
+          if (!elBody) {
+            const groupDiv = fragment.appendChild(document.createElement('div'))
+            groupDiv.className = 'list'
+            if (title) {
+              const elTitle = groupDiv.appendChild(document.createElement('div'))
+              elTitle.className = 'list__header'
+              elTitle.textContent = title
+            }
+            elBody = groupDiv.appendChild(document.createElement('div'))
+            elBody.className = 'list__body'
+          }
+          const label = createFormItem(item)
+          elBody.appendChild(label)
+        }
+      }
+      return fragment
+    };
+    const fragment = createList(formItems);
+    document.getElementById('settings').appendChild(fragment);
     
-    /** 主菜单 **/
-    const mainMenu = async () => {
+    
+document.getElementById('store').addEventListener('click', () => {
+      invoke('store');
+    });
+      
+document.getElementById('install').addEventListener('click', () => {
+      invoke('install');
+    });
+    
+    /** loading **/
+    const toggleLoading = (e) => {
+      const target = e.currentTarget;
+      target.classList.add('loading');
+      const icon = target.querySelector('.iconfont');
+      const className = icon.className;
+      icon.className = 'iconfont icon-loading';
+          
+      const listener = (event) => {
+        if (event.detail.code === 'finishLoading') {
+          target.classList.remove('loading')
+          icon.className = className;
+          window.removeEventListener('JWeb', listener);
+        }
+      };
+      window.addEventListener('JWeb', listener);
+    };
+    
+    document.querySelectorAll('.form-item').forEach((btn) => {
+      btn.addEventListener('click', (e) => { toggleLoading(e) });
+    });
+    })()`;
+  
+  
+    /** 主菜单头像 **/
+    const mainMenuTop = async () => {
       const avatar = `  
       <center>
         <div class="hover-show relative">
@@ -552,290 +646,43 @@ async function main() {
         };
       </script>
       `
-      
       return `
         <!-- 旋转头像 -->
         ${avatar}
         <!-- 弹窗 -->
         ${popup}
         ${scriptTags.join('\n')}
-        <!-- 通用 -->    
-        <div class="list">
-          <form class="list__body" action="javascript:void(0);">
-            ${menu.map(item => label(item)).join('')}
-          </form>
-        </div>
-        <!-- 间隔 -->
-        <div class="list">
-          <form class="list__body">
-          </form>
-        </div>
-        <!-- 通用 toggle -->
-        <div class="list">
-          <form class="list__body" action="javascript:void(0);">
-            ${toggle.map(item => `
-              <label id="${item.id}" class="form-item form-item--link">
-                <div class="form-label">
-                  <img class="form-label-img" src="${item.imgSrc}"/>
-                  <div class="form-label-title">${item.title}</div>
-                </div>
-                <input name="${item.id}" type="checkbox" role="switch" />
-              </label>
-            `).join('')}
-          </form>
-        </div>
-        <!-- 间隔 -->
-        <div class="list">
-          <form class="list__body">
-          </form>
-        </div>
-        <!-- 通用 -->
-        <div class="list">  
-          <form class="list__body" action="javascript:void(0);">
-            ${menu2.map(item => label(item)).join('')}
-          </form>
-        </div>
-        <!-- 间隔 -->
-        <div class="list">
-          <form class="list__body">
-          </form>
-        </div>
-        <!-- 组件预览 -->  
-        <div class="list">
-          <form class="list__body" action="javascript:void(0);">
-            ${label({ id: 'preview', imgSrc: `${rootUrl}img/symbol/preview.png`, title: '预览组件' })}
-          </form>
-        </div>
       `
     };
     
-    /** 二级菜单 **/
-    const secondMenu = async () => {
-      return `
-      <!-- 间隔 -->
-      <div class="list">
-        <form class="list__body">
-        </form>
-      </div>
-      <!-- 颜色设置 -->  
-      <div class="list">
-        <form class="list__body" action="javascript:void(0);">
-          <label id='reset' class="form-item form-item--link">
-            <div class="form-label">
-              <img class="form-label-img" src="${rootUrl}img/symbol/reset.png"/>
-              <div class="form-label-title">还原设置</div>
-            </div>
-            <div class="form-label">
-              <i class="iconfont icon-arrow_right"></i>
-            </div>
-          </label>
-        </form>
-      </div>
-      <!-- 间隔 -->
-      <div class="list">
-        <form class="list__body">
-        </form>
-      </div>
-      `
-    };
     
-    /** 二级菜单底部 **/
-    const secondBut = async () => {
-      return `
-      <div class="list">
-        <form class="list__body">
-        </form>
-      </div>
-      <div class="list">
-        <form class="list__body" action="javascript:void(0);">
-          ${menu3.map(item => label(item)).join('')}
-        </form>
-      </div>
-      `
-    };
-    
-    /** 点击事件 loading **/
-    const js =`
-    (() => {
-      const settings = ${JSON.stringify(settings)}
-      const formItems = ${JSON.stringify(formItems)}
-      
-      window.invoke = (code, data) => {
-        window.dispatchEvent(
-          new CustomEvent(
-            'JBridge',
-            { detail: { code, data } }
-          )
-        )
-      }
-      
-      const reset = () => {
-        for ( const item of formItems ) {
-          const el = document.querySelector(\`.form-item__input[name="\${item.name}"]\`)
-          formData[item.name] = item.default;
-          if ( item.type === 'switch' ) {
-            el.checked = item.default
-          } else {
-            el && (el.value = item.default);
-          }
-        }
-        invoke('remove', formData);
-      }
-      document.getElementById('reset').addEventListener('click', () => reset())
-      
-      
-      const formData = {};
-      const fragment = document.createDocumentFragment()
-      for (const item of formItems) {
-        const value = settings[item.name] ?? item.default ?? null
-        formData[item.name] = value;
-        const label = document.createElement("label");
-        label.className = "form-item";
-        
-        const div = document.createElement("div");
-        div.className = 'form-label';
-        label.appendChild(div);
-        
-        if (item.icon) {
-          const img = document.createElement("img");
-          img.src = item.icon;
-          img.className = 'form-label-img';
-          div.appendChild(img);
-        }
-        
-        const divTitle = document.createElement("div");
-        if (item.icon) {
-          divTitle.className = 'form-label-title';
-        }
-        divTitle.innerText = item.label;
-        div.appendChild(divTitle);
-        
-        if (item.type === 'cell') {
-          label.classList.add('form-item--link');
-          const icon = document.createElement('i');
-          icon.className = 'iconfont icon-arrow_right';
-          label.appendChild(icon);
-          label.addEventListener('click', () => {
-            invoke('itemClick', item)
-          })
-        } else {
-          const input = document.createElement("input");
-          input.className = 'form-item__input';
-          input.name = item.name;
-          input.type = item.type;
-          input.value = value;
-          // Switch
-          if (item.type === 'switch') {
-            input.type = 'checkbox';
-            input.role = 'switch';
-            input.checked = value;
-          }
-          input.addEventListener("change", (e) => {
-            formData[item.name] =
-              item.type === 'switch'
-              ? e.target.checked
-              : e.target.value;
-            invoke('changeSettings', formData)
-          });
-          label.appendChild(input);
-        }
-        fragment.appendChild(label);
-      }
-      document.getElementById('form').appendChild(fragment);
-      
-      /** 点击事件 loading **/
-      const toggleLoading = (e) => {
-        const target = e.currentTarget;
-        target.classList.add('loading');
-        const icon = target.querySelector('.iconfont');
-        const className = icon.className;
-        icon.className = 'iconfont icon-loading';
-          
-        if (['reset', 'clearCache',  'telegram'].includes(target.id)) {
-          setTimeout(() => {
-            target.classList.remove('loading');
-            icon.className = className;
-          }, 800);
-        };
-          
-        const listener = (event) => {
-          if (event.detail.code === 'finishLoading') {
-            target.classList.remove('loading')
-            icon.className = className;
-            window.removeEventListener('JWeb', listener);
-          }
-        };
-        window.addEventListener('JWeb', listener);
-      };
-      
-      for (const btn of document.querySelectorAll('.form-item')) {
-        btn.addEventListener('click', (e) => {
-          toggleLoading(e);
-          const { id } = e.currentTarget;
-          invoke(id, window[id]);
-        });
-      }
-  
-      document.getElementById('store').addEventListener('click', () => {
-        invoke('store');
-      });
-      
-      /** toggle button **/
-      const handleInputChange = (element, property) => {
-        element.checked = settings[property] ?? true
-        element.addEventListener('change', (e) => {
-          formData[property] = e.target.checked
-          invoke('changeSettings', formData)
-        })
-      };
-      const inputs = {
-        update: handleInputChange(document.querySelector('input[name="update"]'), 'update'),
-        ios: handleInputChange(document.querySelector('input[name="ios"]'), 'ios')
-      };
-    })()`;
-    
-    /**
-     * @param {string} style
-     * @param {string} themeColor
-     * @param {string} avatar
-     * @param {string} popup
-     * @param {string[]} jsPaths
-     * @param {string} js
-     * @returns {string} html
-     */
-    const cssStyle = await getCacheString('cssStyle.css', `${rootUrl}web/style.css`);
-
-    const style = `
-    :root {
-      --color-primary: #007aff;
-      --divider-color: rgba(60,60,67,0.36);
-      --card-background: #fff;
-      --card-radius: 10px;
-      --list-header-color: rgba(60,60,67,0.6);
-    }
-    ${cssStyle}`;
-    
-    const html = `
-    <html>
+    const html =`
+    <html>  
       <head>
         <meta name='viewport' content='width=device-width, user-scalable=no, viewport-fit=cover'>
-        <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
         <style>${style}</style>
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
-        ${title === 'main' ? await mainMenu() : await secondMenu()}
-        <!-- 偏好设置 -->
-        <div class="list">
-          <form id="form" class="list__body" action="javascript:void(0);">
-          </form>
-        </div>
-        ${title === 'second' ? await  secondBut() : ''}
+        ${avatarInfo ? await mainMenuTop() : ''}
+        ${head || ''}
+        <section id="settings">
+        </section>
         <script>${js}</script>
       </body>
-    </html>`.trim();
-
+    </html>`;
+  
     const webView = new WebView();
-    await webView.loadHTML(html, _);
+    await webView.loadHTML(html, $);
+  
+    const clearBgImg = () => {
+      // 清除背景
+    };
+  
+    const chooseBgImg = async () => {
+      const image = await Photos.fromLibrary();
+    };
+  
     const injectListener = async () => {
       const event = await webView.evaluateJavaScript(
         `(() => {
@@ -856,38 +703,26 @@ async function main() {
       });
       
       const { code, data } = event;
-      if (code == 'clearCache' && fm.fileExists(cache)) {
-        fm.remove(cache);
-      } else if (code == 'remove' && fm.fileExists(getSettingPath())) {
-        fm.remove(getSettingPath());
-      };
-      
       switch (code) {
+        case 'setAvatar':
+          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
+          dismissLoading(webView);
+          break
         case 'changeSettings':
-          Object.assign( settings, data );
+          Object.assign(settings, data);
           writeSettings(settings);
-          break;
-        case 'preview':
-          await importModule(await webModule('12123.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/12123.js')).main();
           dismissLoading(webView);
-          break;
-        case 'itemClick':
-          if (data.menu === 'page') {
-            const item = (() => {
-              const find = (i) => {
-                for (const el of i) {
-                  if (el.name === data.name) return el;
-                }
-                return null;
-              };
-              return find(formItems);
-            })();
-            await renderAppView(item, false, { settings });
-          } else {
-            await onItemClick?.(data, { settings });
-          }
+          break
+        case 'telegram':
+          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
           dismissLoading(webView);
-          break;
+          break
+        case 'chooseBgImg':
+          chooseBgImg();
+          break
+        case 'clearBgImg':
+          clearBgImg();
+          break
         case 'store':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
           break;
@@ -897,120 +732,302 @@ async function main() {
           fm.writeString(fm.documentsDirectory() + `/${scriptName}.js`, script);
           Safari.open(`scriptable:///run/${encodeURI(scriptName)}`);
           break;
-        case 'login':
-          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
+        case 'itemClick':
+          if (data.type === 'page') {
+            const item = (() => {
+              const find = (i) => {
+                for (const el of i) {
+                  if (el.name === data.name) return el
+                  if (el.type === 'group') {
+                    const r = find(el.items);
+                    if (r) return r
+                  }
+                }
+                return null
+              };
+              return find(formItems)
+            })();
+            await renderAppView(item, false, { settings });
+          } else {
+            await onItemClick?.(data, { settings });
+          }
           dismissLoading(webView);
           break;
-        case 'telegram':
-          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
-          break;
       }
-      injectListener();
+      await injectListener();
     };
-    
+  
     injectListener().catch((e) => {
       console.error(e);
-      throw e
     });
     await webView.present();
-  }
-
-
-  // ======= Initial ========= //
-  const init = {
-    textColorLight: '#34C579',
-    darkColor: '#FFFFFF',
-    lightColor: "#333333",
-    indexLightColor: '#3F8BFF',
-    indexDarkColor: '#FF9500',
-    gradient: '#BE7DFF'
   };
-
-  await renderAppView({
-    title: 'main',
-    formItems: [
+  
+  
+  const secondMenu = (() => {
+    const formItems = [
       {
-        name: "preference",
-        label: "偏好设置",
-        type: 'cell',
-        icon: {
-          name: 'gearshape.fill',
-          color: '#FF3B2F'
-        },
-        menu: 'page',
-        title: 'second',
-        formItems: [
+        label: '设置',
+        type: 'group',
+        items: [
           {
-            name: "lightColor",
+            name: "textLightColor",
             label: "文字颜色（白天）",
             type: "color",
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',
-            default: init.lightColor
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png'
           },
           {
-            name: "darkColor",
+            name: "textDarkColor",
             label: "文字颜色（夜间）",
             type: "color",
             icon: {
               name: 'textformat',
               color: '#938BF0'
-            },
-            default: init.darkColor
+            }
           },
           {
-            name: 'textColorLight',
-            label: "图标颜色（白天）",
-            type: 'color',
-            icon: {
-              name: 'gearshape.fill',
-              color: '#FF3B2F'
-            },
-            default: init.textColorLight
-          },
-          {
-            name: "indexLightColor",
+            name: "titleLightColor",
             label: "标题颜色（白天）",
             type: "color",
             icon: {
               name: 'externaldrive.fill',
               color: '#F9A825'
-            },
-            default: init.indexLightColor
-          },
-          {
-            name: "loopSwitch",
-            label: "渐变背景",
-            type: "color",
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
-            default: init.gradient
-          },
-          {
-            name: "message",
-            label: "更新信息",
-            type: "number",
-            icon: {
-              name: 'pin.fill',
-              color: '#F57C00'
             }
           },
           {
-            name: "randomSwitch",
-            label: "始终深色",
-            type: "switch",
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
+            name: "titleDarkColor",
+            label: "标题颜色（夜间）",
+            type: "color",
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png'
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '刷新时间',
+            name: 'refresh',
+            type: 'number',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',  
+            val: 'refresh'
+          },
+          {
+            label: '渐变背景',
+            name: 'gradient',
+            type: 'cell',
+            id: 'input',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
+            val: 'gradient'
+          },
+          {
+            label: '渐变透明',
+            name: 'transparency',
+            type: 'number',
+            id: 'input',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking.png',
+            desc: '测试',
+            val: 'transparency'
+          },
+          {
+            label: '透明背景',
+            name: 'background',
+            type: 'cell',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png'
+          },
+          {
+            label: '遮罩透明',
+            name: 'masking',
+            type: 'number',
+            id: 'input',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking2.png',
+            val: 'masking'
+          },
+          {
+            label: '图片背景',
+            name: 'chooseBgImg',
+            type: 'cell',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/bgImage.png'
+          },
+          {
+            label: '清除背景',
+            name: 'clear',
+            type: 'cell',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/clearBg.png'
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '自动更新',
+            name: 'update',
+            type: 'switch',
+            icon: `${rootUrl}img/symbol/update.png`,
+            default: true
+          },
+          {
+            label: '更换仓库',
+            name: 'github',
+            type: 'switch',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',  
             default: false
           }
-        ],
-        onItemClick: async (
-          item
-        ) => {
-          const { name } = item;
-          if (name === 'message') {
-            await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
+        ]
+      }
+    ];
+    return formItems;
+  })();
+  
+  // 菜单
+  const thirdMenu = (() => {
+    const formItems = [
+      {
+        type: 'group',
+        items: [
+          {
+            label: '颜色测试',
+            name: 'showPrompt',
+            type: 'switch',
+            icon: {
+              name: 'textformat',
+              color: '#938BF0'
+            },
+            default: false
+          },
+          {
+            label: '选择编号',
+            name: 'choose',
+            type: 'select',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/bgImage.png',
+            options: [
+              { 
+                label: '编号 1',
+                value: 'a'
+              },
+              {
+                label: '编号 2',
+                value: 'b'
+              },
+              { 
+                label: '编号 3',
+                value: 'c'
+              },
+              {
+                label: '编号 4',
+                value: 'd'
+              }
+            ],
+            default: settings.choose
           }
-        }
+        ]
       }
     ]
-  });
+    return formItems;
+  })();
+  
+  
+  await renderAppView({
+    avatarInfo: true,
+    formItems: [
+      {
+        type: 'group',
+        items: [
+          {
+            label: '设置头像',
+            name: 'setAvatar',
+            type: 'cell',
+            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/icon/camera.png'
+          },
+          {
+            label: 'Telegram',
+            name: 'telegram',
+            type: 'cell',
+            icon: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/NicegramLogo.png'
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '重置所有',
+            name: 'reset',
+            type: 'cell',
+            icon: `${rootUrl}img/symbol/reset.png`
+          },
+          {
+            label: '清除缓存',
+            name: 'clearCache',
+            type: 'cell',
+            icon: {
+              name: 'arrow.triangle.2.circlepath',
+              color: '#FF9500'
+            }
+          },
+          {
+            label: '用户登录',
+            name: 'login',
+            type: 'cell',
+            icon: {
+              name: 'person.crop.circle',
+              color: '#43CD80'
+            },
+            desc: settings.update == true ? '已登录' : '未登录'
+          },
+          {
+            label: '偏好设置',
+            name: 'preference',
+            type: 'page',
+            icon: {
+              name: 'gearshape.fill',
+              color: '#FF3B2F'
+            },
+            formItems: secondMenu
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '预览组件',
+            name: 'preview',
+            type: 'page',
+            icon: `${rootUrl}img/symbol/preview.png`,
+            formItems: thirdMenu
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            name: "version",
+            label: "当前版本",
+            type: "cell",
+            icon: {
+              name: 'externaldrive.fill',
+              color: '#F9A825'
+            },
+            desc: version
+          },
+          {
+            name: "updateCode",
+            label: "更新代码",
+            type: "cell",
+            icon: `${rootUrl}img/symbol/update.png`
+          },
+        ]
+      }
+    ],
+    onItemClick: (item) => {
+      const { name } = item;
+      if (name === 'clearCache') {
+        Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
+      }
+    }
+  }, true);
 }
 module.exports = { main }
