@@ -6,7 +6,7 @@ async function main() {
   const uri = Script.name();
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   const scriptName = '澳门六合彩'
-  const scriptUrl = `${rootUrl}mian/module12123.js`;
+  const scriptUrl = `${rootUrl}mian/module_macaujc.js`;
   const version = '1.0.0'
   const updateDate = '2023年05月17日'
   
