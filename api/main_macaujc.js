@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: snowflake;
-
+main()
 async function main() {
   const uri = Script.name();
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
@@ -156,7 +156,7 @@ async function main() {
       options = ['取消', '确认']
     );
     if (index === 0) return;
-    const modulePath = fm.joinPath(mainPath, srcName);
+    const modulePath = fm.joinPath(mainPath, scrName);
     const reqUpdate = new Request(scrUrl);
     const codeString = await reqUpdate.loadString();
     if (codeString.indexOf('95度茅台') == -1) {
