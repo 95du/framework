@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: snowflake;
-main()
+
 async function main() {
   const uri = Script.name();
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
@@ -18,7 +18,7 @@ async function main() {
    * @returns {string} - string
    */
   const fm = FileManager.local();
-  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
+  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
   
   const getSettingPath = () => {
     fm.createDirectory(
