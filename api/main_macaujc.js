@@ -155,7 +155,7 @@ async function main() {
       message = '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复',
       options = ['取消', '确认']
     );
-    if (index === 0) return;
+    if (index == 0) return;
     const modulePath = fm.joinPath(mainPath, scrName);
     const reqUpdate = new Request(scrUrl);
     const codeString = await reqUpdate.loadString();
@@ -750,7 +750,7 @@ document.getElementById('install').addEventListener('click', () => {
       delAlert.addDestructiveAction('重置');
       delAlert.addCancelAction('取消')
       const action = await delAlert.presentAlert();
-      if ( action === 0 ) {
+      if ( action == 0 ) {
         fm.remove(mainPath);
         Safari.open('scriptable:///run/' + encodeURIComponent(uri));
       }
