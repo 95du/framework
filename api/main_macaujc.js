@@ -51,6 +51,7 @@ async function main() {
     gradient: [],
     picture: [],
     update: true,
+    updateTime: 10,
     textLightColor: '#34C759',
     textDarkColor: '#FF9500',
     titleLightColor: '#000000',
@@ -119,14 +120,14 @@ async function main() {
    * @param { string } color
    * @param { string } module
    */
-  const webModule = async (scriptName, url) => {
+  const webModule = async (scriptNameIn, url) => {
     function getDuration( timer ) {
       const timeAgo = new Date(Date.now() - timer);
       const minutes = timeAgo.getUTCMinutes();
       return minutes;
     }
     const duration = getDuration(settings.updateTime);
-    const modulePath = fm.joinPath(mainPath, scriptName);
+    const modulePath = fm.joinPath(mainPath, scriptNameIn);
     if ( duration <= 10 && await fm.fileExists(modulePath) || settings.update === false ) {
       return modulePath;
     } else {
