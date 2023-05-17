@@ -4,7 +4,7 @@
 /**
  * 组件名称: 澳门六合彩开奖结果
  * 小组件作者: 95度茅台
- * Version 1.0.0
+ * Version 1.0.1
  * 2023-05-17
  * Telegram 交流群 https://t.me/+ViT7uEUrIUV0B_iy
  */
