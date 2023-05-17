@@ -7,7 +7,7 @@ async function main() {
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   const scriptName = '澳门六合彩'
   const scriptUrl = `${rootUrl}mian/module_macaujc.js`;
-  const version = '1.0.0'
+  const version = '1.0.2'
   const updateDate = '2023年05月17日'
   
   const [scrName, scrUrl] = ['macaujc.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/macaujc.js'];
@@ -106,12 +106,14 @@ async function main() {
    * @returns {String} string
    */
   const updateVersionNotice = () => {
-    const newVer = version !== settings.version ? '.signin-loader' : undefined;
-    if (newVer) {
-      settings.version = version;
-      writeSettings(settings);
+    if (config.runsInApp) {
+      const newVer = version !== settings.version ? '.signin-loader' : undefined;
+      if (newVer) {
+        settings.version = version;
+        writeSettings(settings);
+      }
+      return newVer;
     }
-    return newVer;
   };
   
   /**
@@ -143,6 +145,12 @@ async function main() {
   };
   
   if (config.runsInWidget) {
+    // Version Update Notice  
+    if ( version != settings.version && settings.update === false ) {
+      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
+      settings.version = version;
+      writeSettings(settings);
+    };
     await importModule(await webModule(scrName, scrUrl)).main();
   };
   
@@ -166,12 +174,6 @@ async function main() {
       fm.writeString(modulePath, codeString);
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
-  }
-  // Version Update Notice  
-  if ( version != settings.version && settings.update === false ) {
-    notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
-    settings.version = version;
-    writeSettings(settings);
   };
   
   /**
