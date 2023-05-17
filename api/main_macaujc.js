@@ -141,7 +141,7 @@ async function main() {
     }
   };
   
-  if (config.runsInWidget) {
+  if (config.runsInWidget || settings.update === true) {
     await importModule(await webModule(scrName, scrUrl)).main();
   };
   
