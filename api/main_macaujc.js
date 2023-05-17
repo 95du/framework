@@ -127,7 +127,7 @@ async function main() {
     }
     const duration = getDuration(settings.updateTime);
     const modulePath = fm.joinPath(mainPath, scriptName);
-    if ( duration <= 10 && await fm.fileExists(modulePath) ) {
+    if ( duration <= 10 && await fm.fileExists(modulePath) || settings.update === false ) {
       return modulePath;
     } else {
       const req = new Request(url);
@@ -141,7 +141,7 @@ async function main() {
     }
   };
   
-  if (config.runsInWidget || settings.update === true) {
+  if (config.runsInWidget) {
     await importModule(await webModule(scrName, scrUrl)).main();
   };
   
