@@ -177,6 +177,14 @@
             "name": "随机组件"
         },
         {
+            "version": "1.0.0",
+            "title": "澳门六合彩",
+            "scriptIRL": "https://gitcode.net/4qiao/framework/raw/master/mian/module_macaujc.js",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/macaujc.png",
+            "name": "澳门六合彩",
+            "description": "新旧版澳门六合彩开奖结果"
+        },
+        {
             "depend": {
                 "name": "DmYY",
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
