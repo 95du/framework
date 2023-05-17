@@ -1,13 +1,13 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: light-brown; icon-glyph: tags;
+// icon-color: pink; icon-glyph: bowling-ball;
 /**
- * 脚本名称: JD_京东小金库
- * 小组件作者：95度茅台
- * 版本: Version 1.0.0
- * 2023-03-19 11:00
+ * 组件名称: 澳门六合彩开奖结果
+ * 小组件作者: 95度茅台
+ * Version 1.0.0
+ * 2023-05-17
  * Telegram 交流群 https://t.me/+ViT7uEUrIUV0B_iy
-*/
+ */
 
 const scriptName = '95du_macaujc';
 const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbl9tYWNhdWpjLmpz');
