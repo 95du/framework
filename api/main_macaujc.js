@@ -6,8 +6,7 @@ async function main() {
   const uri = Script.name();
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   const scriptName = '澳门六合彩'
-  const scriptUrl = `${rootUrl}mian/module_macaujc.js`;
-  const version = '1.0.2'
+  const version = '1.0.1'
   const updateDate = '2023年05月17日'
   
   const [scrName, scrUrl] = ['macaujc.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/macaujc.js'];
@@ -145,13 +144,13 @@ async function main() {
   };
   
   if (config.runsInWidget) {
-    // Version Update Notice  
     if ( version != settings.version && settings.update === false ) {
       notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
       settings.version = version;
       writeSettings(settings);
     };
-    await importModule(await webModule(scrName, scrUrl)).main();
+    await importModule(await webModule(scrName, scrUrl)).main();  
+    return null;
   };
   
   /**
@@ -165,6 +164,10 @@ async function main() {
       options = ['取消', '确认']
     );
     if (index == 0) return;
+    await updateString();
+  };
+  
+  const updateString = async () => {
     const modulePath = fm.joinPath(mainPath, scrName);
     const reqUpdate = new Request(scrUrl);
     const codeString = await reqUpdate.loadString();
@@ -174,7 +177,7 @@ async function main() {
       fm.writeString(modulePath, codeString);
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
-  };
+  }
   
   /**
    * Setting drawTableIcon
@@ -839,10 +842,7 @@ document.getElementById('install').addEventListener('click', () => {
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
           break;
         case 'install':
-          const script = await new Request(scriptUrl).loadString();
-          const fm = FileManager.iCloud();
-          fm.writeString(fm.documentsDirectory() + `/${scriptName}.js`, script);
-          Safari.open(`scriptable:///run/${encodeURI(scriptName)}`);
+          await updateString();
           break;
         case 'itemClick':
           if (data.type === 'page') {
