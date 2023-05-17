@@ -63,7 +63,7 @@ async function main() {
       return JSON.parse(fm.readString(file));
     } else {
       settings = DEFAULT_SETTINGS;
-      writeSettings();
+      writeSettings(settings);
     }
     return settings;
   };
@@ -246,6 +246,28 @@ async function main() {
     const x = (size.width - iw) / 2;
     ctx.drawImageInRect(iconImage, new Rect(x, x, iw, iw));
     return ctx.getImage();
+  };
+  
+  /**
+   * 制作透明背景
+   * 获取截图中的组件剪裁图
+   * @param { image } 储存 Png
+   * @param { string } title 
+   */
+  const backgroundModule = async () => {
+    const modulePath = fm.joinPath(mainPath, 'image.js');
+    if (fm.fileExists(modulePath)) {
+      return modulePath;
+    } else {
+      const req = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdmlwL21haW5UYWJsZUJhY2tncm91bmQuanM='));
+      const moduleJs = await req.load().catch(() => {
+        return null;
+      });
+      if (moduleJs) {
+        fm.write(modulePath, moduleJs);
+        return modulePath;
+      }
+    }
   };
   
   /**
@@ -530,6 +552,9 @@ async function main() {
             case 'clearBgImg':
               invoke('clearBgImg')
               break
+            case 'background':
+              invoke('background')
+              break;
             case 'reset':
               invoke('reset')
               break
@@ -538,9 +563,6 @@ async function main() {
               break;
             case 'setAvatar':
               invoke('setAvatar')
-              break;
-            case 'telegram':
-              invoke('telegram')
               break;
             case 'preview':
               invoke('preview')
@@ -783,6 +805,7 @@ document.getElementById('install').addEventListener('click', () => {
         await removeData();
       } else if (code === 'updateCode') {
         await updateVersion();
+        dismissLoading(webView);
       }
       
       switch (code) {
@@ -799,16 +822,16 @@ document.getElementById('install').addEventListener('click', () => {
           await importModule(await webModule(scrName, scrUrl)).main();
           dismissLoading(webView);
           break;
-        case 'telegram':
-          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
-          dismissLoading(webView);
-          break
         case 'chooseBgImg':
           chooseBgImg();
           break
         case 'clearBgImg':
           clearBgImg();
           break
+        case 'background':
+          await importModule(await backgroundModule()).main();
+          dismissLoading(webView);
+          break;
         case 'store':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
           break;
@@ -1109,6 +1132,9 @@ document.getElementById('install').addEventListener('click', () => {
     ],
     onItemClick: (item) => {
       const { name } = item;
+      if (name === 'telegram') {
+        Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
+      }
     }
   }, true);
 }
