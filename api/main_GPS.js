@@ -94,7 +94,12 @@ async function main() {
   }
   
   if (config.runsInWidget) {
-    importModule(await downloadModule()).main();
+    if ( version != setting.version && setting.update === 'false' ) {
+      notify('车辆GPS定位', `新版本更新 Version ${version}  ( 可开启自动更新 )`);
+      setting.version = version;
+      await saveSettings();
+    }
+    importModule(await downloadModule()).main(); return;
   }
   
   async function downloadModule() {
@@ -613,7 +618,7 @@ async function main() {
       }
     }
     table.reload();
-  }
+  };
   
   
   /**
@@ -756,7 +761,7 @@ async function main() {
       table.reload();
     }
     await loadAllRows();
-  }
+  };
   
   
   /**
@@ -766,7 +771,7 @@ async function main() {
   async function saveSettings() {
     typeof setting === 'object' ?  F_MGR.writeString(getSettingPath(), JSON.stringify(setting)) : null
     console.log(JSON.stringify(setting, null, 2))
-  }
+  };
   
   
   /**
@@ -784,7 +789,7 @@ async function main() {
         await saveSettings();
       }
     }
-  }
+  };
   
   
   /**
@@ -807,13 +812,7 @@ async function main() {
       F_MGR.writeString(modulePath, codeString);
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
-  }
-  // Version Update Notice  
-  if ( version != setting.version && setting.update === 'false' ) {
-    notify('车辆GPS定位', `新版本更新 Version ${version}  ( 可开启自动更新 )`);
-    setting.version = version;
-    await saveSettings();
-  }
+  };
     
   /**
    * Setting drawTableIcon
