@@ -4,11 +4,12 @@
 
 async function main() {
   const uri = Script.name();
-  const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   const scriptName = '澳门六合彩'
   const version = '1.0.1'
   const updateDate = '2023年05月17日'
   
+  const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
+
   const [scrName, scrUrl] = ['macaujc.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/macaujc.js'];
 
 
@@ -101,21 +102,6 @@ async function main() {
   };
   
   /**
-   * 版本更新时弹出窗口
-   * @returns {String} string
-   */
-  const updateVersionNotice = () => {
-    if (config.runsInApp) {
-      const newVer = version !== settings.version ? '.signin-loader' : undefined;
-      if (newVer) {
-        settings.version = version;
-        writeSettings(settings);
-      }
-      return newVer;
-    }
-  };
-  
-  /**
    * 跳转到安装页面
    * @param { string } time
    * @param { string } color
@@ -154,6 +140,19 @@ async function main() {
   };
   
   /**
+   * 版本更新时弹出窗口
+   * @returns {String} string
+   */
+  const updateVersionNotice = () => {
+    const newVer = version !== settings.version ? '.signin-loader' : undefined;
+    if (newVer) {
+      settings.version = version;
+      writeSettings(settings);
+    }
+    return newVer;
+  };
+  
+  /**
    * Download Script
    * @param { string } string
    */
@@ -177,7 +176,7 @@ async function main() {
       fm.writeString(modulePath, codeString);
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
-  }
+  };
   
   /**
    * Setting drawTableIcon
