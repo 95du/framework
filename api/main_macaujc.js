@@ -268,6 +268,53 @@ async function main() {
   };
   
   /**
+   * 弹出输入框
+   * @param title 标题
+   * @param desc  描述
+   * @param opt   属性
+   * @returns { Promise<void> }
+   */
+  const generateInputAlert = async (options,confirm) => {  
+    const inputAlert = new Alert();
+    inputAlert.title = options.title;
+    inputAlert.message = options.message;
+    const fieldArr = options.options;
+    for (const option of fieldArr) {
+      inputAlert.addTextField(
+        option.hint,
+        option.value
+      );
+    }
+    inputAlert.addAction('取消');
+    inputAlert.addAction('确认');
+    let getIndex = await inputAlert.presentAlert();
+    if (getIndex == 1) {
+      const inputObj = [];
+      fieldArr.forEach((_, index) => {
+        let value = inputAlert.textFieldValue(index);
+        inputObj.push({index, value});
+      });
+      confirm(inputObj);
+    }
+    return getIndex;
+  }
+  
+  /**
+   * @param message 内容
+   * @param options 按键
+   * @returns { Promise<number> }
+   */
+  const generateAlert = async (title, message, options) => {
+    let alert = new Alert();
+    alert.title = title
+    alert.message = message
+    for (const option of options) {
+      alert.addAction(option)
+    }
+    return await alert.presentAlert();
+  };
+  
+  /**
    * 获取css及js字符串和图片并使用缓存
    * @param {string} File Extension
    * @param {Image} Basr64 
@@ -336,53 +383,6 @@ async function main() {
   
   const toBase64 = async (img) => {
     return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
-  };
-    
-  /**
-   * 弹出输入框
-   * @param title 标题
-   * @param desc  描述
-   * @param opt   属性
-   * @returns { Promise<void> }
-   */
-  const generateInputAlert = async (options,confirm) => {  
-    const inputAlert = new Alert();
-    inputAlert.title = options.title;
-    inputAlert.message = options.message;
-    const fieldArr = options.options;
-    for (const option of fieldArr) {
-      inputAlert.addTextField(
-        option.hint,
-        option.value
-      );
-    }
-    inputAlert.addAction('取消');
-    inputAlert.addAction('确认');
-    let getIndex = await inputAlert.presentAlert();
-    if (getIndex == 1) {
-      const inputObj = [];
-      fieldArr.forEach((_, index) => {
-        let value = inputAlert.textFieldValue(index);
-        inputObj.push({index, value});
-      });
-      confirm(inputObj);
-    }
-    return getIndex;
-  }
-  
-  /**
-   * @param message 内容
-   * @param options 按键
-   * @returns { Promise<number> }
-   */
-  const generateAlert = async (title, message, options) => {
-    let alert = new Alert();
-    alert.title = title
-    alert.message = message
-    for (const option of options) {
-      alert.addAction(option)
-    }
-    return await alert.presentAlert();
   };
   
   
