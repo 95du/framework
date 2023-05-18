@@ -5,8 +5,8 @@
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
-  const version = '1.0.1'
-  const updateDate = '2023年05月17日'
+  const version = '1.0.2'
+  const updateDate = '2023年05月18日'
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
 
@@ -51,12 +51,10 @@ async function main() {
     gradient: [],
     picture: [],
     update: true,
-    updateTime: 10,
     textLightColor: '#34C759',
     textDarkColor: '#FF9500',
     titleLightColor: '#000000',
-    titleDarkColor: '#FFFFFF',
-    choose: 'a'
+    titleDarkColor: '#FFFFFF'
   };
   
   const getSettings = (file) => {
@@ -108,14 +106,8 @@ async function main() {
    * @param { string } module
    */
   const webModule = async (scriptNameIn, url) => {
-    function getDuration( timer ) {
-      const timeAgo = new Date(Date.now() - timer);
-      const minutes = timeAgo.getUTCMinutes();
-      return minutes;
-    }
-    const duration = getDuration(settings.updateTime);
     const modulePath = fm.joinPath(mainPath, scriptNameIn);
-    if ( duration <= 10 && await fm.fileExists(modulePath) || settings.update === false ) {
+    if ( settings.update === false && await fm.fileExists(modulePath) ) {
       return modulePath;
     } else {
       const req = new Request(url);
@@ -511,26 +503,26 @@ async function main() {
       if (item.type === 'select') {
         const select = document.createElement('div');
         select.classList.add('form-item__input__select');
-        const selectInput = document.createElement('select');
-        selectInput.name = item.name;
-        selectInput.value = value;
-        selectInput.classList.add('select-input');
+        const input = document.createElement('select');
+        input.name = item.name;
+        input.value = value;
+        input.classList.add('select-input');
         
         for (const opt of (item.options || [])) {
           const option = document.createElement('option');
           option.value = opt.value;
           option.innerText = opt.label;
           option.selected = value === opt.value;
-          selectInput.appendChild(option);
+          input.appendChild(option);
         }
-        selectInput.addEventListener('change', (e) => {
+        input.addEventListener('change', (e) => {
           formData[item.name] = e.target.value;
           invoke('changeSettings', formData);
         })
         
         const icon = document.createElement('i');
         icon.className = 'iconfont icon-arrow_right form-item__icon';
-        select.appendChild(selectInput);
+        select.appendChild(input);
         select.appendChild(icon);
         label.appendChild(select);
       } else if (
@@ -548,36 +540,21 @@ async function main() {
         const icon = document.createElement('i');
         icon.className = 'iconfont icon-arrow_right'
         label.appendChild(icon);
+        
+        const itemMap = new Map([
+          ['chooseBgImg', 'chooseBgImg'],
+          ['clearBgImg', 'clearBgImg'],
+          ['reset', 'reset'],
+          ['clearCache', 'clearCache'],
+          ['setAvatar', 'setAvatar'],
+          ['preview', 'preview'],
+          ['updateCode', 'updateCode'],
+          ['version', 'version']
+        ]);
         label.addEventListener('click', (e) => {
-          const { name } = item
-          switch (name) {
-            case 'chooseBgImg':
-              invoke('chooseBgImg')
-              break
-            case 'clearBgImg':
-              invoke('clearBgImg')
-              break
-            case 'background':
-              invoke('background')
-              break;
-            case 'reset':
-              invoke('reset')
-              break
-            case 'clearCache':
-              invoke('clearCache')
-              break;
-            case 'setAvatar':
-              invoke('setAvatar')
-              break;
-            case 'preview':
-              invoke('preview')
-              break;
-            case 'updateCode':
-              invoke('updateCode')
-              break;
-            default:
-              invoke('itemClick', item);
-          }
+          const { name } = item;
+          const methodName = itemMap.get(name) || 'itemClick';
+          invoke(methodName, item);
         });
       } else if (item.type === 'number') {
         const inputCntr = document.createElement("div");
@@ -810,22 +787,18 @@ document.getElementById('install').addEventListener('click', () => {
         await removeData();
       } else if (code === 'updateCode') {
         await updateVersion();
-        dismissLoading(webView);
-      }
+      };
       
       switch (code) {
         case 'setAvatar':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
-          dismissLoading(webView);
           break
         case 'changeSettings':
           Object.assign(settings, data);
           writeSettings(settings);
-          dismissLoading(webView);
           break
         case 'preview':
           await importModule(await webModule(scrName, scrUrl)).main();
-          dismissLoading(webView);
           break;
         case 'chooseBgImg':
           chooseBgImg();
@@ -835,7 +808,6 @@ document.getElementById('install').addEventListener('click', () => {
           break
         case 'background':
           await importModule(await backgroundModule()).main();
-          dismissLoading(webView);
           break;
         case 'store':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
@@ -862,8 +834,11 @@ document.getElementById('install').addEventListener('click', () => {
           } else {
             await onItemClick?.(data, { settings });
           }
-          dismissLoading(webView);
           break;
+      };
+      
+      if ( event ) {
+        dismissLoading(webView);
       }
       await injectListener();
     };
@@ -990,54 +965,6 @@ document.getElementById('install').addEventListener('click', () => {
     ];
     return formItems;
   })();
-  
-  // 菜单
-  const thirdMenu = (() => {
-    const formItems = [
-      {
-        type: 'group',
-        items: [
-          {
-            label: '颜色测试',
-            name: 'showPrompt',
-            type: 'switch',
-            icon: {
-              name: 'textformat',
-              color: '#938BF0'
-            },
-            default: false
-          },
-          {
-            label: '选择编号',
-            name: 'choose',
-            type: 'select',
-            icon: `${rootUrl}img/symbol/bgImage.png`,
-            options: [
-              { 
-                label: '编号 1',
-                value: 'a'
-              },
-              {
-                label: '编号 2',
-                value: 'b'
-              },
-              { 
-                label: '编号 3',
-                value: 'c'
-              },
-              {
-                label: '编号 4',
-                value: 'd'
-              }
-            ],
-            default: settings.choose
-          }
-        ]
-      }
-    ]
-    return formItems;
-  })();
-  
   
   await renderAppView({
     avatarInfo: true,
