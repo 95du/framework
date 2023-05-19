@@ -166,11 +166,11 @@
         },
         {
             "version": "1.0.2",
-            "title": "澳门六合彩",
+            "title": "测试",
             "scriptIRL": "https://gitcode.net/4qiao/framework/raw/master/mian/module_macaujc.js",
             "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/macaujc.png",
-            "name": "澳门六合彩",
-            "description": "新旧版开奖结果"
+            "name": "测试",
+            "description": "测试"
         },
         {
             "depend": {
