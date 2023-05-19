@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: snowflake;
-
+main()
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -18,7 +18,7 @@ async function main() {
    * @returns {string} - string
    */
   const fm = FileManager.local();
-  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
+  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
   
   const getSettingPath = () => {
     fm.createDirectory(
@@ -380,7 +380,7 @@ async function main() {
       head,
       $ = 'https://www.imarkr.com',
       avatarInfo,
-      carImage
+      previewImage
     } = options;
     
     
@@ -704,7 +704,7 @@ document.getElementById('install').addEventListener('click', () => {
     const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
     const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
     const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
-    const carImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
+    const previewImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
     
     const html =`
     <html>
@@ -714,7 +714,7 @@ document.getElementById('install').addEventListener('click', () => {
         <style>${style}</style>
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
-        ${avatarInfo ? await mainMenuTop() : carImage ? carImgHtml : ''}
+        ${avatarInfo ? await mainMenuTop() : previewImage ? previewImgHtml : ''}
         ${head || ''}
         <section id="settings">
         </section>
@@ -847,7 +847,7 @@ document.getElementById('install').addEventListener('click', () => {
   };
   
   
-  // 
+  // 用户菜单
   const userMenu = (() => {
     const formItems = [
       {
@@ -907,7 +907,7 @@ document.getElementById('install').addEventListener('click', () => {
     return formItems;
   })();
   
-  
+  // 设置菜单
   const settingMenu = (() => {
     const formItems = [
       {
@@ -1032,7 +1032,7 @@ document.getElementById('install').addEventListener('click', () => {
     return formItems;
   })();
   
-  
+  // 主菜单
   await renderAppView({
     avatarInfo: true,
     formItems: [
@@ -1080,7 +1080,7 @@ document.getElementById('install').addEventListener('click', () => {
               color: '#43CD80'
             },
             formItems: userMenu,
-            carImage: true,
+            previewImage: true,
             desc: settings.update == true ? '已登录' : '未登录'
           },
           {
