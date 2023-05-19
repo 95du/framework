@@ -170,7 +170,7 @@
             "scriptIRL": "https://gitcode.net/4qiao/framework/raw/master/mian/module_macaujc.js",
             "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/macaujc.png",
             "name": "澳门六合彩",
-            "description": "新旧版澳门六合彩开奖结果"
+            "description": "新旧版开奖结果"
         },
         {
             "depend": {
@@ -207,6 +207,14 @@
             "description": "一键清空Scriptable回收站",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/cleanTrash.js",
             "name": "清空回收站"
+        },
+        {
+            "version": "1.0.2",
+            "title": "澳门六合彩2",
+            "scriptIRL": "https://gitcode.net/4qiao/framework/raw/master/mian/module_macaujc.js",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/macaujc.png",
+            "name": "澳门六合彩2",
+            "description": "新旧版澳门六合彩开奖"
         }
     ]
 }
