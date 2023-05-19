@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: snowflake;
-
+main()
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -9,7 +9,7 @@ async function main() {
   const updateDate = '2023年05月18日'
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
-
+  
   const [scrName, scrUrl] = ['macaujc.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/macaujc.js'];
 
 
@@ -18,7 +18,7 @@ async function main() {
    * @returns {string} - string
    */
   const fm = FileManager.local();
-  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
+  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
   
   const getSettingPath = () => {
     fm.createDirectory(
@@ -48,13 +48,13 @@ async function main() {
     refresh: 20,
     transparency: 0.5,
     masking: 0.3,
-    gradient: [],
     picture: [],
     update: true,
     textLightColor: '#34C759',
     textDarkColor: '#FF9500',
     titleLightColor: '#000000',
-    titleDarkColor: '#FFFFFF'
+    gradient: '#BCBBBB',
+    angle: 'topBottom'
   };
   
   const getSettings = (file) => {
@@ -78,7 +78,7 @@ async function main() {
    * 获取背景图片存储目录路径
    * @returns {string} - 目录路径
    */
-  const getBgImagePath = () => {
+  const getBgImage = () => {
     const bgPath = fm.joinPath(fm.documentsDirectory(), '95duBackground');
     if (!fm.fileExists(bgPath)) {
       fm.createDirectory(bgPath);
@@ -105,9 +105,9 @@ async function main() {
    * @param { string } color
    * @param { string } module
    */
-  const webModule = async (scriptNameIn, url) => {
-    const modulePath = fm.joinPath(mainPath, scriptNameIn);
-    if ( settings.update === false && await fm.fileExists(modulePath) ) {
+  const webModule = async (scriptName, url) => {
+    const modulePath = fm.joinPath(mainPath, scriptName);
+    if (settings.update === false && await fm.fileExists(modulePath)) {
       return modulePath;
     } else {
       const req = new Request(url);
@@ -145,7 +145,7 @@ async function main() {
   };
   
   /**
-   * Download Script
+   * Download update Script
    * @param { string } string
    */
   const updateVersion = async () => {
@@ -243,28 +243,6 @@ async function main() {
     const x = (size.width - iw) / 2;
     ctx.drawImageInRect(iconImage, new Rect(x, x, iw, iw));
     return ctx.getImage();
-  };
-  
-  /**
-   * 制作透明背景
-   * 获取截图中的组件剪裁图
-   * @param { image } 储存 Png
-   * @param { string } title 
-   */
-  const backgroundModule = async () => {
-    const modulePath = fm.joinPath(mainPath, 'image.js');
-    if (fm.fileExists(modulePath)) {
-      return modulePath;
-    } else {
-      const req = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdmlwL21haW5UYWJsZUJhY2tncm91bmQuanM='));
-      const moduleJs = await req.load().catch(() => {
-        return null;
-      });
-      if (moduleJs) {
-        fm.write(modulePath, moduleJs);
-        return modulePath;
-      }
-    }
   };
   
   /**
@@ -401,7 +379,8 @@ async function main() {
       onItemClick,
       head,
       $ = 'https://www.imarkr.com',
-      avatarInfo
+      avatarInfo,
+      carImage
     } = options;
     
     
@@ -456,6 +435,13 @@ async function main() {
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
     }
+    .preview-img {
+      display: block;
+      padding: 10px 0 5px 0;
+      margin: 0 auto;
+      width: 355px;
+      height: auto;
+    }
     ${cssStyle.replace('®️', !Device.isUsingDarkAppearance() ? '#ddd' : '#454545')}
     `;
   
@@ -485,7 +471,7 @@ async function main() {
       const div = document.createElement("div");
       div.className = 'form-label';
       label.appendChild(div);
-          
+      
       if ( item.icon ) {
         const img = document.createElement("img");
         img.src = item.icon;
@@ -540,20 +526,9 @@ async function main() {
         const icon = document.createElement('i');
         icon.className = 'iconfont icon-arrow_right'
         label.appendChild(icon);
-        
-        const itemMap = new Map([
-          ['chooseBgImg', 'chooseBgImg'],
-          ['clearBgImg', 'clearBgImg'],
-          ['reset', 'reset'],
-          ['clearCache', 'clearCache'],
-          ['setAvatar', 'setAvatar'],
-          ['preview', 'preview'],
-          ['updateCode', 'updateCode'],
-          ['version', 'version']
-        ]);
         label.addEventListener('click', (e) => {
           const { name } = item;
-          const methodName = itemMap.get(name) || 'itemClick';
+          const methodName = name === 'preference' || name === 'setCar' ? 'itemClick' : name;
           invoke(methodName, item);
         });
       } else if (item.type === 'number') {
@@ -641,7 +616,9 @@ async function main() {
         if (event.detail.code) {
           target.classList.remove('loading');
           icon.className = className;
-          window.removeEventListener('JWeb', listener);
+          window.removeEventListener(
+            'JWeb', listener
+          );
         }
       };
       window.addEventListener('JWeb', listener);
@@ -660,7 +637,7 @@ document.getElementById('install').addEventListener('click', () => {
   })()`;
   
   
-    /** 主菜单头像弹窗 **/
+    /** 主菜单头像 | 弹窗 **/
     const mainMenuTop = async () => {
       const avatar = `  
       <center>
@@ -670,7 +647,7 @@ document.getElementById('install').addEventListener('click', () => {
           </span>
         </div>
         <br>
-          <img id="hub" src="${appleHub}" width="200" height="40">
+          <img id="hubImg" src="${appleHub}" width="200" height="40">
         <br>
         <a class="display-name" id="store">组件商店</a>
       </center>
@@ -720,6 +697,15 @@ document.getElementById('install').addEventListener('click', () => {
       `
     };
     
+    // 随机预览图
+    const previewImgUrl = [
+      'http://mtw.so/5Tn2ms',
+      'http://mtw.so/5wOsB3'];
+    const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
+    const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
+    const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
+    const carImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
+    
     const html =`
     <html>
       <head>
@@ -728,7 +714,7 @@ document.getElementById('install').addEventListener('click', () => {
         <style>${style}</style>
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
-        ${avatarInfo ? await mainMenuTop() : ''}
+        ${avatarInfo ? await mainMenuTop() : carImage ? carImgHtml : ''}
         ${head || ''}
         <section id="settings">
         </section>
@@ -738,14 +724,6 @@ document.getElementById('install').addEventListener('click', () => {
   
     const webView = new WebView();
     await webView.loadHTML(html, $);
-  
-    const clearBgImg = () => {
-      // 清除背景
-    };
-  
-    const chooseBgImg = async () => {
-      const image = await Photos.fromLibrary();
-    };
     
     const removeData = async () => {
       const delAlert = new Alert();
@@ -758,7 +736,12 @@ document.getElementById('install').addEventListener('click', () => {
         fm.remove(mainPath);
         Safari.open('scriptable:///run/' + encodeURIComponent(uri));
       }
-      dismissLoading(webView);
+    };
+  
+    const chooseBgImg = async () => {
+      const image = await Photos.fromLibrary();
+      await fm.writeImage(getBgImage(), image);
+      notify('设置成功', '桌面组件稍后将自动刷新');
     };
     
     const injectListener = async () => {
@@ -788,11 +771,14 @@ document.getElementById('install').addEventListener('click', () => {
       } else if (code === 'updateCode') {
         await updateVersion();
       };
-      
+      console.log(code)
       switch (code) {
         case 'setAvatar':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
           break
+        case 'telegram':
+          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);  
+          break;
         case 'changeSettings':
           Object.assign(settings, data);
           writeSettings(settings);
@@ -801,19 +787,30 @@ document.getElementById('install').addEventListener('click', () => {
           await importModule(await webModule(scrName, scrUrl)).main();
           break;
         case 'chooseBgImg':
-          chooseBgImg();
+          await chooseBgImg();
           break
         case 'clearBgImg':
-          clearBgImg();
-          break
+          const bgImagePath = fm.fileExists(getBgImage());
+          if ( bgImagePath ) {
+            fm.remove(getBgImage());
+            notify('删除成功', '桌面组件稍后将自动刷新');
+          }
+          break;
         case 'background':
-          await importModule(await backgroundModule()).main();
+          await importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
           break;
         case 'store':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
           break;
         case 'install':
           await updateString();
+          break;
+        case 'version':
+          await generateAlert(
+            title = '点击头像查看',
+            message = code.msg,
+            options = ['完成']
+          );
           break;
         case 'itemClick':
           if (data.type === 'page') {
@@ -836,7 +833,7 @@ document.getElementById('install').addEventListener('click', () => {
           }
           break;
       };
-      
+      // remove Event Listener
       if ( event ) {
         dismissLoading(webView);
       }
@@ -850,7 +847,68 @@ document.getElementById('install').addEventListener('click', () => {
   };
   
   
-  const secondMenu = (() => {
+  // 
+  const userMenu = (() => {
+    const formItems = [
+      {
+        type: 'group',
+        items: [
+          {
+            label: '顶部风格',
+            name: 'topStyle',
+            type: 'switch',
+            icon: {
+              name: 'arrow.triangle.2.circlepath',
+              color: '#FF9500'
+            },
+            default: false
+          },
+          {
+            label: '选择编号',
+            name: 'choose',
+            type: 'select',
+            icon: {
+              name: 'textformat',
+              color: '#938BF0'
+            },
+            options: [
+              { 
+                label: '编号 1',
+                value: 'a'
+              },
+              {
+                label: '编号 2',
+                value: 'b'
+              },
+              { 
+                label: '编号 3',
+                value: 'c'
+              },
+              {
+                label: '编号 4',
+                value: 'd'
+              }
+            ],
+            default: settings.choose
+          },
+          {
+            label: '用户登录',
+            name: 'login',
+            type: 'cell',
+            icon: {
+              name: 'person.crop.circle',
+              color: '#43CD80'
+            },
+            desc: settings.update == true ? '已登录' : '未登录'
+          }
+        ]
+      }
+    ];
+    return formItems;
+  })();
+  
+  
+  const settingMenu = (() => {
     const formItems = [
       {
         label: '设置',
@@ -858,13 +916,13 @@ document.getElementById('install').addEventListener('click', () => {
         items: [
           {
             name: "textLightColor",
-            label: "文字颜色（白天）",
+            label: "文字白天",
             type: "color",
             icon: `${rootUrl}img/symbol/title.png`
           },
           {
             name: "textDarkColor",
-            label: "文字颜色（夜间）",
+            label: "文字夜间",
             type: "color",
             icon: {
               name: 'textformat',
@@ -873,18 +931,18 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             name: "titleLightColor",
-            label: "标题颜色（白天）",
+            label: "标题白天",
             type: "color",
             icon: {
-              name: 'externaldrive.fill',
+              name: 'checklist',
               color: '#F9A825'
             }
           },
           {
-            name: "titleDarkColor",
-            label: "标题颜色（夜间）",
+            name: "gradient",
+            label: "渐变颜色",
             type: "color",
-            icon: `${rootUrl}img/symbol/abc.png`
+            icon: `${rootUrl}img/symbol/gradient.png`
           }
         ]
       },
@@ -900,11 +958,20 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             label: '渐变背景',
-            name: 'gradient',
-            type: 'cell',
-            id: 'input',
+            name: 'angle',
+            type: 'select',
             icon: `${rootUrl}img/symbol/gradientBackground.png`,
-            val: 'gradient'
+            options: [
+              { 
+                label: '由上往下 - 1',
+                value: 'topBottom'
+              },
+              {
+                label: '由下往上 - 2',
+                value: 'bottomTop'
+              }
+            ],
+            default: settings.angle
           },
           {
             label: '渐变透明',
@@ -912,7 +979,6 @@ document.getElementById('install').addEventListener('click', () => {
             type: 'number',
             id: 'input',
             icon: `${rootUrl}img/symbol/masking.png`,
-            desc: '测试',
             val: 'transparency'
           },
           {
@@ -966,6 +1032,7 @@ document.getElementById('install').addEventListener('click', () => {
     return formItems;
   })();
   
+  
   await renderAppView({
     avatarInfo: true,
     formItems: [
@@ -1006,12 +1073,14 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             label: '用户登录',
-            name: 'login',
-            type: 'cell',
+            name: 'setCar',
+            type: 'page',
             icon: {
               name: 'person.crop.circle',
               color: '#43CD80'
             },
+            formItems: userMenu,
+            carImage: true,
             desc: settings.update == true ? '已登录' : '未登录'
           },
           {
@@ -1022,7 +1091,7 @@ document.getElementById('install').addEventListener('click', () => {
               name: 'gearshape.fill',
               color: '#0096FF'
             },
-            formItems: secondMenu
+            formItems: settingMenu
           }
         ]
       },
@@ -1058,13 +1127,7 @@ document.getElementById('install').addEventListener('click', () => {
           },
         ]
       }
-    ],
-    onItemClick: (item) => {
-      const { name } = item;
-      if (name === 'telegram') {
-        Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
-      }
-    }
+    ]
   }, true);
 }
 module.exports = { main }
