@@ -514,6 +514,7 @@ button .iconfont {
   padding-right: 4px;
   border: none;
   font-size: 16px;
+  max-width: 100px;
   background-color: transparent;
 }
 
