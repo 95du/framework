@@ -165,6 +165,14 @@
             "name": "南网在线_2"
         },
         {
+            "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/module_macaujc.js",
+            "title": "澳门六合彩",
+            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/macaujc.png",
+            "name": "澳门六合彩",
+            "description": "新旧版澳门六合彩",
+            "version": "1.0.2"
+        },
+        {
             "depend": {
                 "name": "DmYY",
                 "scriptURL": "https://raw.githubusercontent.com/dompling/Scriptable/master/Scripts/DmYY.js"
@@ -199,14 +207,6 @@
             "description": "一键清空Scriptable回收站",
             "scriptURL": "https://gitcode.net/4qiao/scriptable/raw/master/api/cleanTrash.js",
             "name": "清空回收站"
-        },
-        {
-            "scriptURL": "https://gitcode.net/4qiao/framework/raw/master/mian/module_macaujc.js",
-            "title": "澳门六合彩",
-            "thumb": "https://gitcode.net/4qiao/framework/raw/master/img/icon/macaujc.png",
-            "name": "澳门六合彩",
-            "description": "新旧版澳门六合彩",
-            "version": "1.0.2"
         }
     ]
 }
