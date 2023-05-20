@@ -3,13 +3,16 @@
 // icon-color: teal; icon-glyph: snowflake;
 main()
 async function main() {
+  const uri = Script.name();
+  const scriptName = '澳门六合彩'
+  const version = '1.0.2'
+  const updateDate = '2023年05月18日'
+  
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
-  const scriptName = '交管12123_2'
-  const scriptUrl = `${rootUrl}mian/module12123.js`;
-  const version = '1.2.8'
-  const updateDate = '2023年4月28日'
   
-  
+  const [scrName, scrUrl] = ['macaujc.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/macaujc.js'];
+
+
   /**
    * 创建，获取存储路径
    * @returns {string} - string
@@ -45,14 +48,13 @@ async function main() {
     refresh: 20,
     transparency: 0.5,
     masking: 0.3,
-    gradient: [],
     picture: [],
     update: true,
     textLightColor: '#34C759',
     textDarkColor: '#FF9500',
     titleLightColor: '#000000',
-    titleDarkColor: '#FFFFFF',
-    choose: 'a'
+    gradient: '#BCBBBB',
+    minute: 20
   };
   
   const getSettings = (file) => {
@@ -60,17 +62,23 @@ async function main() {
       return JSON.parse(fm.readString(file));
     } else {
       settings = DEFAULT_SETTINGS;
-      writeSettings();
+      writeSettings(settings);
     }
     return settings;
   };
   settings = await getSettings(getSettingPath());
   
+  // refresh time
+  if (settings.refresh) {  
+    const widget = new ListWidget();
+    widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(settings.refresh));
+  }
+  
   /**
    * 获取背景图片存储目录路径
    * @returns {string} - 目录路径
    */
-  const getBgImagePath = () => {
+  const getBgImage = () => {
     const bgPath = fm.joinPath(fm.documentsDirectory(), '95duBackground');
     if (!fm.fileExists(bgPath)) {
       fm.createDirectory(bgPath);
@@ -92,33 +100,14 @@ async function main() {
   };
   
   /**
-   * 版本更新时弹出窗口
-   * @returns {String} string
-   */
-  const updateVersion = () => {
-    const newVer = version !== settings.version ? '.signin-loader' : undefined;
-    if (newVer) {
-      settings.version = version;
-      writeSettings(settings);
-    }
-    return newVer;
-  }
-  
-  /**
    * 跳转到安装页面
    * @param { string } time
    * @param { string } color
    * @param { string } module
    */
   const webModule = async (scriptName, url) => {
-    function getDuration( timer ) {
-      const timeAgo = new Date(Date.now() - timer);
-      const minutes = timeAgo.getUTCMinutes();
-      return minutes;
-    }
-    const duration = getDuration(settings.updateTime);
     const modulePath = fm.joinPath(mainPath, scriptName);
-    if ( duration <= 10 && await fm.fileExists(modulePath) ) {
+    if (settings.update === false && await fm.fileExists(modulePath)) {
       return modulePath;
     } else {
       const req = new Request(url);
@@ -129,6 +118,55 @@ async function main() {
         fm.write(modulePath, moduleJs);
         return modulePath;
       }
+    }
+  };
+  
+  if (config.runsInWidget) {
+    if ( version != settings.version && settings.update === false ) {
+      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
+      settings.version = version;
+      writeSettings(settings);
+    };
+    await importModule(await webModule(scrName, scrUrl)).main();  
+    return null;
+  };
+  
+  /**
+   * 版本更新时弹出窗口
+   * @returns {String} string
+   */
+  const updateVersionNotice = () => {
+    const newVer = version !== settings.version ? '.signin-loader' : undefined;
+    if (newVer) {
+      settings.version = version;
+      writeSettings(settings);
+    }
+    return newVer;
+  };
+  
+  /**
+   * Download update Script
+   * @param { string } string
+   */
+  const updateVersion = async () => {
+    const index = await generateAlert(
+      title = '更新代码',
+      message = '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复',
+      options = ['取消', '确认']
+    );
+    if (index == 0) return;
+    await updateString();
+  };
+  
+  const updateString = async () => {
+    const modulePath = fm.joinPath(mainPath, scrName);
+    const reqUpdate = new Request(scrUrl);
+    const codeString = await reqUpdate.loadString();
+    if (codeString.indexOf('95度茅台') == -1) {
+      notify('更新失败 ⚠️', '请检查网络或稍后再试');
+    } else {
+      fm.writeString(modulePath, codeString);
+      Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
   };
   
@@ -208,6 +246,53 @@ async function main() {
   };
   
   /**
+   * 弹出输入框
+   * @param title 标题
+   * @param desc  描述
+   * @param opt   属性
+   * @returns { Promise<void> }
+   */
+  const generateInputAlert = async (options,confirm) => {  
+    const inputAlert = new Alert();
+    inputAlert.title = options.title;
+    inputAlert.message = options.message;
+    const fieldArr = options.options;
+    for (const option of fieldArr) {
+      inputAlert.addTextField(
+        option.hint,
+        option.value
+      );
+    }
+    inputAlert.addAction('取消');
+    inputAlert.addAction('确认');
+    let getIndex = await inputAlert.presentAlert();
+    if (getIndex == 1) {
+      const inputObj = [];
+      fieldArr.forEach((_, index) => {
+        let value = inputAlert.textFieldValue(index);
+        inputObj.push({index, value});
+      });
+      confirm(inputObj);
+    }
+    return getIndex;
+  }
+  
+  /**
+   * @param message 内容
+   * @param options 按键
+   * @returns { Promise<number> }
+   */
+  const generateAlert = async (title, message, options) => {
+    let alert = new Alert();
+    alert.title = title
+    alert.message = message
+    for (const option of options) {
+      alert.addAction(option)
+    }
+    return await alert.presentAlert();
+  };
+  
+  /**
    * 获取css及js字符串和图片并使用缓存
    * @param {string} File Extension
    * @param {Image} Basr64 
@@ -277,39 +362,41 @@ async function main() {
   const toBase64 = async (img) => {
     return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
   };
+  
+  
+  
+  const getCookie = async () => {  
+    const webView = new WebView();  
+    await webView.loadURL('https://plogin.m.jd.com/login/login?appid=300&returnurl=https%3A%2F%2Fwqs.jd.com%2Fmy%2Faccountv2.shtml%3Fsceneval%3D2%26jxsid%3D16323729562173504755%26ptag%3D7155.1.2&source=wq_passport');
+    await webView.present(false);
+    const req = new Request('https://ms.jr.jd.com/gw/generic/bt/h5/m/firstScreenNew',);
+    req.method = 'POST';
+    req.body = `{ clientType: ios }`
+    await req.loadJSON();
+    const cookies = req.response.cookies;
+    const cookie = [];
+    cookies.forEach((item) => {
+      const value = `${item.name}=${item.value}`;
+      if (item.name === 'pt_key')
+        cookie.push(value);
+      if (item.name === 'pt_pin')
+        cookie.push(value);
+    });
     
-  /**
-   * 弹出输入框
-   * @param title 标题
-   * @param desc  描述
-   * @param opt   属性
-   * @returns { Promise<void> }
-   */
-  const generateInputAlert = async (options,confirm) => {  
-    const inputAlert = new Alert();
-    inputAlert.title = options.title;
-    inputAlert.message = options.message;
-    const fieldArr = options.options;
-    for (const option of fieldArr) {
-      inputAlert.addTextField(
-        option.hint,
-        option.value
-      );
+    const sign = new Request('https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld');
+    sign.method = 'POST'
+    sign.headers = { Referer: 'https://h5.m.jd.com/' }
+    const { code } = await sign.loadJSON();
+    if (code === '0') {
+      settings.cookie = cookie.join(';');
+      settings.login = '已登录'
+      notify('Cookie获取/更新成功', settings.cookie);
+      await writeSettings(settings)
     }
-    inputAlert.addAction('取消');
-    inputAlert.addAction('确认');
-    let getIndex = await inputAlert.presentAlert();
-    if (getIndex == 1) {
-      const inputObj = [];
-      fieldArr.forEach((_, index) => {
-        let value = inputAlert.textFieldValue(index);
-        inputObj.push({index, value});
-      });
-      confirm(inputObj);
-    }
-    return getIndex;
-  }
-
+  };
+  
+  
+  
   // ====== web start ======= //
   
   dismissLoading = (webView) => {
@@ -325,7 +412,8 @@ async function main() {
       onItemClick,
       head,
       $ = 'https://www.imarkr.com',
-      avatarInfo
+      avatarInfo,
+      previewImage
     } = options;
     
     
@@ -367,7 +455,6 @@ async function main() {
      * @param {string} themeColor
      * @param {string} avatar
      * @param {string} popup
-     * @param {string[]} jsPaths
      * @param {string} js
      * @returns {string} html
      */
@@ -380,6 +467,13 @@ async function main() {
       --card-background: #fff;
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
+    }
+    .preview-img {
+      display: block;
+      padding: 10px 0 5px 0;
+      margin: 0 auto;
+      width: 355px;
+      height: auto;
     }
     ${cssStyle.replace('®️', !Device.isUsingDarkAppearance() ? '#ddd' : '#454545')}
     `;
@@ -410,7 +504,7 @@ async function main() {
       const div = document.createElement("div");
       div.className = 'form-label';
       label.appendChild(div);
-          
+      
       if ( item.icon ) {
         const img = document.createElement("img");
         img.src = item.icon;
@@ -428,29 +522,28 @@ async function main() {
       if (item.type === 'select') {
         const select = document.createElement('div');
         select.classList.add('form-item__input__select');
-        const selectInput = document.createElement('select');
-        selectInput.name = item.name;
-        selectInput.value = value;
-        selectInput.classList.add('select-input');
+        const input = document.createElement('select');
+        input.name = item.name;
+        input.value = value;
+        input.classList.add('select-input');
         
         for (const opt of (item.options || [])) {
           const option = document.createElement('option');
           option.value = opt.value;
           option.innerText = opt.label;
           option.selected = value === opt.value;
-          selectInput.appendChild(option);
+          input.appendChild(option);
         }
-        selectInput.addEventListener('change', (e) => {
+        input.addEventListener('change', (e) => {
           formData[item.name] = e.target.value;
           invoke('changeSettings', formData);
         })
         
         const icon = document.createElement('i');
         icon.className = 'iconfont icon-arrow_right form-item__icon';
-        select.appendChild(selectInput);
+        select.appendChild(input);
         select.appendChild(icon);
         label.appendChild(select);
-      
       } else if (
         item.type === 'cell' || 
         item.type === 'page'
@@ -467,26 +560,9 @@ async function main() {
         icon.className = 'iconfont icon-arrow_right'
         label.appendChild(icon);
         label.addEventListener('click', (e) => {
-          const { name } = item
-          switch (name) {
-            case 'chooseBgImg':
-              invoke('chooseBgImg')
-              break
-            case 'clearBgImg':
-              invoke('clearBgImg')
-              break
-            case 'reset':
-              reset()
-              break
-            case 'setAvatar':
-              invoke('setAvatar')
-              break;
-            case 'telegram':
-              invoke('telegram')
-              break;
-            default:
-              invoke('itemClick', item);
-          }
+          const { name } = item;
+          const methodName = name === 'preference' || name === 'infoPage' ? 'itemClick' : name;
+          invoke(methodName, item);
         });
       } else if (item.type === 'number') {
         const inputCntr = document.createElement("div");
@@ -514,7 +590,7 @@ async function main() {
         input.type = item.type
         input.enterKeyHint = 'done'
         input.value = value
-        // Switch
+        
         if (item.type === 'switch') {
           input.type = 'checkbox'
           input.role = 'switch'
@@ -573,7 +649,9 @@ async function main() {
         if (event.detail.code) {
           target.classList.remove('loading');
           icon.className = className;
-          window.removeEventListener('JWeb', listener);
+          window.removeEventListener(
+            'JWeb', listener
+          );
         }
       };
       window.addEventListener('JWeb', listener);
@@ -592,7 +670,7 @@ document.getElementById('install').addEventListener('click', () => {
   })()`;
   
   
-    /** 主菜单头像弹窗 **/
+    /** 主菜单头像 | 弹窗 **/
     const mainMenuTop = async () => {
       const avatar = `  
       <center>
@@ -602,7 +680,7 @@ document.getElementById('install').addEventListener('click', () => {
           </span>
         </div>
         <br>
-          <img id="hub" src="${appleHub}" width="200" height="40">
+          <img id="hubImg" src="${appleHub}" width="200" height="40">
         <br>
         <a class="display-name" id="store">组件商店</a>
       </center>
@@ -638,12 +716,9 @@ document.getElementById('install').addEventListener('click', () => {
       </div>
       <script type="text/javascript">
         setTimeout(function() {
-          $('${updateVersion()}').click();
+          $('${updateVersionNotice()}').click();
         }, 1500);
-        window._win = {
-          uri: 'https://bbs.applehub.cn/wp-content/themes/zibll',
-          qj_loading: '1',
-        };
+        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll', qj_loading: '1' };
       </script>
       `
       return `
@@ -655,6 +730,16 @@ document.getElementById('install').addEventListener('click', () => {
       `
     };
     
+    // 随机预览图
+    const previewImgUrl = [
+      'http://mtw.so/5Tn2ms',
+      'http://mtw.so/5wOsB3'
+    ];
+    const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
+    const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
+    const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
+    const previewImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
+    
     const html =`
     <html>
       <head>
@@ -663,7 +748,7 @@ document.getElementById('install').addEventListener('click', () => {
         <style>${style}</style>
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
-        ${avatarInfo ? await mainMenuTop() : ''}
+        ${avatarInfo ? await mainMenuTop() : previewImage ? previewImgHtml : ''}
         ${head || ''}
         <section id="settings">
         </section>
@@ -673,15 +758,54 @@ document.getElementById('install').addEventListener('click', () => {
   
     const webView = new WebView();
     await webView.loadHTML(html, $);
-  
-    const clearBgImg = () => {
-      // 清除背景
+    
+    // 重置所有
+    const removeData = async () => {
+      const delAlert = new Alert();
+      delAlert.title = '清空所有数据';
+      delAlert.message = '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据';
+      delAlert.addDestructiveAction('重置');
+      delAlert.addCancelAction('取消')
+      const action = await delAlert.presentAlert();
+      if ( action == 0 ) {
+        fm.remove(mainPath);
+        Safari.open('scriptable:///run/' + encodeURIComponent(uri));
+      }
     };
-  
-    const chooseBgImg = async () => {
-      const image = await Photos.fromLibrary();
+    
+    // 清除缓存
+    const clearCache = async () => {
+      const index = await generateAlert(
+        title = '清除缓存',
+        message = '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
+        options = ['取消', '清除']
+      );
+      if (index == 1) {
+        fm.remove(cache);
+        notify('清除成功', '重新获取数据需等待5秒');
+      }
     };
-  
+    
+    // Input window
+    const input = async (data) => {
+      const { label, message, name } = data;
+      await generateInputAlert({
+        title: label,
+        message: message,
+        options: [
+          { 
+            hint: String(settings[name]),
+            value: String(settings[name])
+          }
+        ]
+      }, 
+      async ([{value}]) => {
+        value.match(/^\d+$/)[0] ? settings[name] = Number(value) : settings[name];
+        writeSettings(settings);
+      })
+    };
+    
+    // 注入监听器
     const injectListener = async () => {
       const event = await webView.evaluateJavaScript(
         `(() => {
@@ -702,34 +826,59 @@ document.getElementById('install').addEventListener('click', () => {
       });
       
       const { code, data } = event;
+      if (code === 'clearCache' && fm.fileExists(cache)) {
+        await clearCache();
+      } else if (code === 'reset' && fm.fileExists(mainPath)) {
+        await removeData();
+      } else if (code === 'updateCode') {
+        await updateVersion();
+      } else if (code === 'login') {
+        await getCookie();
+      } else if (code === 'minute') {
+        await input(data);
+      };
+      
       switch (code) {
         case 'setAvatar':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
-          dismissLoading(webView);
           break
+        case 'telegram':
+          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);  
+          break;
         case 'changeSettings':
           Object.assign(settings, data);
           writeSettings(settings);
-          dismissLoading(webView);
           break
-        case 'telegram':
-          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
-          dismissLoading(webView);
-          break
+        case 'preview':
+          await importModule(await webModule(scrName, scrUrl)).main();
+          break;
         case 'chooseBgImg':
-          chooseBgImg();
+          const image = await Photos.fromLibrary();
+          await fm.writeImage(getBgImage(), image);
+          notify('设置成功', '桌面组件稍后将自动刷新');
           break
         case 'clearBgImg':
-          clearBgImg();
-          break
+          const bgImagePath = fm.fileExists(getBgImage());
+          if ( bgImagePath ) {
+            fm.remove(getBgImage());
+            notify('删除成功', '桌面组件稍后将自动刷新');
+          }
+          break;
+        case 'background':
+          await importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
+          break;
         case 'store':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
           break;
         case 'install':
-          const script = await new Request(scriptUrl).loadString();
-          const fm = FileManager.iCloud();
-          fm.writeString(fm.documentsDirectory() + `/${scriptName}.js`, script);
-          Safari.open(`scriptable:///run/${encodeURI(scriptName)}`);
+          await updateString();
+          break;
+        case 'version':
+          await generateAlert(
+            title = '点击头像查看',
+            message = code.message,
+            options = ['完成']
+          );
           break;
         case 'itemClick':
           if (data.type === 'page') {
@@ -750,8 +899,11 @@ document.getElementById('install').addEventListener('click', () => {
           } else {
             await onItemClick?.(data, { settings });
           }
-          dismissLoading(webView);
           break;
+      };
+      // Remove Event Listener
+      if ( event ) {
+        dismissLoading(webView);
       }
       await injectListener();
     };
@@ -763,7 +915,78 @@ document.getElementById('install').addEventListener('click', () => {
   };
   
   
-  const secondMenu = (() => {
+  // 用户菜单
+  const userMenu = (() => {
+    const formItems = [
+      {
+        type: 'group',
+        items: [
+          {
+            label: '顶部风格',
+            name: 'topStyle',
+            type: 'switch',
+            icon: {
+              name: 'arrow.triangle.2.circlepath',
+              color: '#FF9500'
+            },
+            default: false
+          },
+          {
+            label: '选择编号',
+            name: 'choose',
+            type: 'select',
+            icon: {
+              name: 'textformat',
+              color: '#938BF0'
+            },
+            options: [
+              { 
+                label: '编号 1',
+                value: 'a'
+              },
+              {
+                label: '编号 2',
+                value: 'b'
+              },
+              { 
+                label: '编号 3',
+                value: 'c'
+              },
+              {
+                label: '编号 4',
+                value: 'd'
+              }
+            ]
+          },
+          {
+            label: '用户登录',
+            name: 'login',
+            type: 'cell',
+            icon: {
+              name: 'person.crop.circle',
+              color: '#43CD80'
+            },
+            desc: settings.cookie ? '已登录' : '未登录'
+          },
+          {
+            label: '刷新时间',
+            name: 'minute',
+            type: 'cell',
+            icon: {
+              name: 'gearshape.fill',
+              color: '#0096FF'
+            },
+            message: '尝试改变刷新组件时间\n具体时间由系统判断，单位: 分钟',
+            desc: settings.minute
+          }
+        ]
+      }
+    ];
+    return formItems;
+  })();
+  
+  // 设置菜单
+  const settingMenu = (() => {
     const formItems = [
       {
         label: '设置',
@@ -771,13 +994,13 @@ document.getElementById('install').addEventListener('click', () => {
         items: [
           {
             name: "textLightColor",
-            label: "文字颜色（白天）",
+            label: "文字白天",
             type: "color",
             icon: `${rootUrl}img/symbol/title.png`
           },
           {
             name: "textDarkColor",
-            label: "文字颜色（夜间）",
+            label: "文字夜间",
             type: "color",
             icon: {
               name: 'textformat',
@@ -786,18 +1009,18 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             name: "titleLightColor",
-            label: "标题颜色（白天）",
+            label: "标题颜色",
             type: "color",
             icon: {
-              name: 'externaldrive.fill',
+              name: 'checklist',
               color: '#F9A825'
             }
           },
           {
-            name: "titleDarkColor",
-            label: "标题颜色（夜间）",
+            name: "gradient",
+            label: "渐变背景",
             type: "color",
-            icon: `${rootUrl}img/symbol/abc.png`
+            icon: `${rootUrl}img/symbol/gradient.png`
           }
         ]
       },
@@ -812,12 +1035,20 @@ document.getElementById('install').addEventListener('click', () => {
             val: 'refresh'
           },
           {
-            label: '渐变背景',
-            name: 'gradient',
-            type: 'cell',
-            id: 'input',
+            label: '渐变方向',
+            name: 'angle',
+            type: 'select',
             icon: `${rootUrl}img/symbol/gradientBackground.png`,
-            val: 'gradient'
+            options: [
+              { 
+                label: '由上往下',
+                value: 'topBottom'
+              },
+              {
+                label: '由下往上',
+                value: 'bottomTop'
+              }
+            ]
           },
           {
             label: '渐变透明',
@@ -825,7 +1056,6 @@ document.getElementById('install').addEventListener('click', () => {
             type: 'number',
             id: 'input',
             icon: `${rootUrl}img/symbol/masking.png`,
-            desc: '测试',
             val: 'transparency'
           },
           {
@@ -850,7 +1080,7 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             label: '清除背景',
-            name: 'clear',
+            name: 'clearBgImg',
             type: 'cell',
             icon: `${rootUrl}img/symbol/clearBg.png`
           }
@@ -867,8 +1097,8 @@ document.getElementById('install').addEventListener('click', () => {
             default: true
           },
           {
-            label: '更换仓库',
-            name: 'github',
+            label: '顶部风格',
+            name: 'topStyle',
             type: 'switch',
             icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',  
             default: false
@@ -879,54 +1109,7 @@ document.getElementById('install').addEventListener('click', () => {
     return formItems;
   })();
   
-  // 菜单
-  const thirdMenu = (() => {
-    const formItems = [
-      {
-        type: 'group',
-        items: [
-          {
-            label: '颜色测试',
-            name: 'showPrompt',
-            type: 'switch',
-            icon: {
-              name: 'textformat',
-              color: '#938BF0'
-            },
-            default: false
-          },
-          {
-            label: '选择编号',
-            name: 'choose',
-            type: 'select',
-            icon: `${rootUrl}img/symbol/bgImage.png`,
-            options: [
-              { 
-                label: '编号 1',
-                value: 'a'
-              },
-              {
-                label: '编号 2',
-                value: 'b'
-              },
-              { 
-                label: '编号 3',
-                value: 'c'
-              },
-              {
-                label: '编号 4',
-                value: 'd'
-              }
-            ],
-            default: settings.choose
-          }
-        ]
-      }
-    ]
-    return formItems;
-  })();
-  
-  
+  // 主菜单
   await renderAppView({
     avatarInfo: true,
     formItems: [
@@ -966,14 +1149,16 @@ document.getElementById('install').addEventListener('click', () => {
             }
           },
           {
-            label: '用户登录',
-            name: 'login',
-            type: 'cell',
+            label: '用户信息',
+            name: 'infoPage',
+            type: 'page',
             icon: {
               name: 'person.crop.circle',
               color: '#43CD80'
             },
-            desc: settings.update == true ? '已登录' : '未登录'
+            formItems: userMenu,
+            previewImage: true,
+            desc: settings.cookie ? '已登录' : '未登录'
           },
           {
             label: '偏好设置',
@@ -981,9 +1166,9 @@ document.getElementById('install').addEventListener('click', () => {
             type: 'page',
             icon: {
               name: 'gearshape.fill',
-              color: '#FF3B2F'
+              color: '#0096FF'
             },
-            formItems: secondMenu
+            formItems: settingMenu
           }
         ]
       },
@@ -993,9 +1178,8 @@ document.getElementById('install').addEventListener('click', () => {
           {
             label: '预览组件',
             name: 'preview',
-            type: 'page',
-            icon: `${rootUrl}img/symbol/preview.png`,
-            formItems: thirdMenu
+            type: 'cell',
+            icon: `${rootUrl}img/symbol/preview.png`
           }
         ]
       },
@@ -1015,18 +1199,12 @@ document.getElementById('install').addEventListener('click', () => {
           {
             name: "updateCode",
             label: "更新代码",
-            type: "switch",
+            type: "cell",
             icon: `${rootUrl}img/symbol/update.png`
-          },
+          }
         ]
       }
-    ],
-    onItemClick: (item) => {
-      const { name } = item;
-      if (name === 'clearCache') {
-        //Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
-      }
-    }
+    ]
   }, true);
 }
 module.exports = { main }
