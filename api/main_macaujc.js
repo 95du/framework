@@ -18,7 +18,7 @@ async function main() {
    * @returns {string} - string
    */
   const fm = FileManager.local();
-  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
+  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
   
   const getSettingPath = () => {
     fm.createDirectory(
@@ -54,7 +54,7 @@ async function main() {
     textDarkColor: '#FF9500',
     titleLightColor: '#000000',
     gradient: '#BCBBBB',
-    angle: 'topBottom'
+    minute: 20
   };
   
   const getSettings = (file) => {
@@ -364,6 +364,39 @@ async function main() {
   };
   
   
+  
+  const getCookie = async () => {  
+    const webView = new WebView();  
+    await webView.loadURL('https://plogin.m.jd.com/login/login?appid=300&returnurl=https%3A%2F%2Fwqs.jd.com%2Fmy%2Faccountv2.shtml%3Fsceneval%3D2%26jxsid%3D16323729562173504755%26ptag%3D7155.1.2&source=wq_passport');
+    await webView.present(false);
+    const req = new Request('https://ms.jr.jd.com/gw/generic/bt/h5/m/firstScreenNew',);
+    req.method = 'POST';
+    req.body = `{ clientType: ios }`
+    await req.loadJSON();
+    const cookies = req.response.cookies;
+    const cookie = [];
+    cookies.forEach((item) => {
+      const value = `${item.name}=${item.value}`;
+      if (item.name === 'pt_key')
+        cookie.push(value);
+      if (item.name === 'pt_pin')
+        cookie.push(value);
+    });
+    
+    const sign = new Request('https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld');
+    sign.method = 'POST'
+    sign.headers = { Referer: 'https://h5.m.jd.com/' }
+    const { code } = await sign.loadJSON();
+    if (code === '0') {
+      settings.cookie = cookie.join(';');
+      settings.login = '已登录'
+      notify('Cookie获取/更新成功', settings.cookie);
+      await writeSettings(settings)
+    }
+  };
+  
+  
+  
   // ====== web start ======= //
   
   dismissLoading = (webView) => {
@@ -528,7 +561,7 @@ async function main() {
         label.appendChild(icon);
         label.addEventListener('click', (e) => {
           const { name } = item;
-          const methodName = name === 'preference' || name === 'setCar' ? 'itemClick' : name;
+          const methodName = name === 'preference' || name === 'infoPage' ? 'itemClick' : name;
           invoke(methodName, item);
         });
       } else if (item.type === 'number') {
@@ -700,7 +733,8 @@ document.getElementById('install').addEventListener('click', () => {
     // 随机预览图
     const previewImgUrl = [
       'http://mtw.so/5Tn2ms',
-      'http://mtw.so/5wOsB3'];
+      'http://mtw.so/5wOsB3'
+    ];
     const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
     const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
     const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
@@ -725,6 +759,7 @@ document.getElementById('install').addEventListener('click', () => {
     const webView = new WebView();
     await webView.loadHTML(html, $);
     
+    // 重置所有
     const removeData = async () => {
       const delAlert = new Alert();
       delAlert.title = '清空所有数据';
@@ -737,13 +772,40 @@ document.getElementById('install').addEventListener('click', () => {
         Safari.open('scriptable:///run/' + encodeURIComponent(uri));
       }
     };
-  
-    const chooseBgImg = async () => {
-      const image = await Photos.fromLibrary();
-      await fm.writeImage(getBgImage(), image);
-      notify('设置成功', '桌面组件稍后将自动刷新');
+    
+    // 清除缓存
+    const clearCache = async () => {
+      const index = await generateAlert(
+        title = '清除缓存',
+        message = '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
+        options = ['取消', '清除']
+      );
+      if (index == 1) {
+        fm.remove(cache);
+        notify('清除成功', '重新获取数据需等待5秒');
+      }
     };
     
+    // Input window
+    const input = async (data) => {
+      const { label, message, name } = data;
+      await generateInputAlert({
+        title: label,
+        message: message,
+        options: [
+          { 
+            hint: String(settings[name]),
+            value: String(settings[name])
+          }
+        ]
+      }, 
+      async ([{value}]) => {
+        value.match(/^\d+$/)[0] ? settings[name] = Number(value) : settings[name];
+        writeSettings(settings);
+      })
+    };
+    
+    // 注入监听器
     const injectListener = async () => {
       const event = await webView.evaluateJavaScript(
         `(() => {
@@ -765,13 +827,17 @@ document.getElementById('install').addEventListener('click', () => {
       
       const { code, data } = event;
       if (code === 'clearCache' && fm.fileExists(cache)) {
-        fm.remove(cache);
+        await clearCache();
       } else if (code === 'reset' && fm.fileExists(mainPath)) {
         await removeData();
       } else if (code === 'updateCode') {
         await updateVersion();
+      } else if (code === 'login') {
+        await getCookie();
+      } else if (code === 'minute') {
+        await input(data);
       };
-      console.log(code)
+      
       switch (code) {
         case 'setAvatar':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
@@ -787,7 +853,9 @@ document.getElementById('install').addEventListener('click', () => {
           await importModule(await webModule(scrName, scrUrl)).main();
           break;
         case 'chooseBgImg':
-          await chooseBgImg();
+          const image = await Photos.fromLibrary();
+          await fm.writeImage(getBgImage(), image);
+          notify('设置成功', '桌面组件稍后将自动刷新');
           break
         case 'clearBgImg':
           const bgImagePath = fm.fileExists(getBgImage());
@@ -808,7 +876,7 @@ document.getElementById('install').addEventListener('click', () => {
         case 'version':
           await generateAlert(
             title = '点击头像查看',
-            message = code.msg,
+            message = code.message,
             options = ['完成']
           );
           break;
@@ -833,7 +901,7 @@ document.getElementById('install').addEventListener('click', () => {
           }
           break;
       };
-      // remove Event Listener
+      // Remove Event Listener
       if ( event ) {
         dismissLoading(webView);
       }
@@ -888,8 +956,7 @@ document.getElementById('install').addEventListener('click', () => {
                 label: '编号 4',
                 value: 'd'
               }
-            ],
-            default: settings.choose
+            ]
           },
           {
             label: '用户登录',
@@ -899,7 +966,18 @@ document.getElementById('install').addEventListener('click', () => {
               name: 'person.crop.circle',
               color: '#43CD80'
             },
-            desc: settings.update == true ? '已登录' : '未登录'
+            desc: settings.cookie ? '已登录' : '未登录'
+          },
+          {
+            label: '刷新时间',
+            name: 'minute',
+            type: 'cell',
+            icon: {
+              name: 'gearshape.fill',
+              color: '#0096FF'
+            },
+            message: '尝试改变刷新组件时间\n具体时间由系统判断，单位: 分钟',
+            desc: settings.minute
           }
         ]
       }
@@ -931,7 +1009,7 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             name: "titleLightColor",
-            label: "标题白天",
+            label: "标题颜色",
             type: "color",
             icon: {
               name: 'checklist',
@@ -940,7 +1018,7 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             name: "gradient",
-            label: "渐变颜色",
+            label: "渐变背景",
             type: "color",
             icon: `${rootUrl}img/symbol/gradient.png`
           }
@@ -957,21 +1035,20 @@ document.getElementById('install').addEventListener('click', () => {
             val: 'refresh'
           },
           {
-            label: '渐变背景',
+            label: '渐变方向',
             name: 'angle',
             type: 'select',
             icon: `${rootUrl}img/symbol/gradientBackground.png`,
             options: [
               { 
-                label: '由上往下 - 1',
+                label: '由上往下',
                 value: 'topBottom'
               },
               {
-                label: '由下往上 - 2',
+                label: '由下往上',
                 value: 'bottomTop'
               }
-            ],
-            default: settings.angle
+            ]
           },
           {
             label: '渐变透明',
@@ -1072,8 +1149,8 @@ document.getElementById('install').addEventListener('click', () => {
             }
           },
           {
-            label: '用户登录',
-            name: 'setCar',
+            label: '用户信息',
+            name: 'infoPage',
             type: 'page',
             icon: {
               name: 'person.crop.circle',
@@ -1081,7 +1158,7 @@ document.getElementById('install').addEventListener('click', () => {
             },
             formItems: userMenu,
             previewImage: true,
-            desc: settings.update == true ? '已登录' : '未登录'
+            desc: settings.cookie ? '已登录' : '未登录'
           },
           {
             label: '偏好设置',
@@ -1124,7 +1201,7 @@ document.getElementById('install').addEventListener('click', () => {
             label: "更新代码",
             type: "cell",
             icon: `${rootUrl}img/symbol/update.png`
-          },
+          }
         ]
       }
     ]
