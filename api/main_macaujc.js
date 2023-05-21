@@ -18,12 +18,12 @@ async function main() {
    * @returns {string} - string
    */
   const fm = FileManager.local();
-  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
+  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
   
   const getSettingPath = () => {
-    fm.createDirectory(
-      mainPath, true
-    );
+    if (!fm.fileExists(mainPath)) {
+      fm.createDirectory(mainPath);
+    }
     return fm.joinPath(mainPath, 'setting.json');
   };
 
@@ -54,7 +54,7 @@ async function main() {
     textDarkColor: '#FF9500',
     titleLightColor: '#000000',
     gradient: '#BCBBBB',
-    minute: 20
+    bufferTime: 240
   };
   
   const getSettings = (file) => {
@@ -80,9 +80,6 @@ async function main() {
    */
   const getBgImage = () => {
     const bgPath = fm.joinPath(fm.documentsDirectory(), '95duBackground');
-    if (!fm.fileExists(bgPath)) {
-      fm.createDirectory(bgPath);
-    }
     return fm.joinPath(bgPath, Script.name() + '.jpg');
   };
   
@@ -136,12 +133,12 @@ async function main() {
    * @returns {String} string
    */
   const updateVersionNotice = () => {
-    const newVer = version !== settings.version ? '.signin-loader' : undefined;
-    if (newVer) {
+    const newVersion = version !== settings.version ? '.signin-loader' : undefined;
+    if (newVersion) {
       settings.version = version;
       writeSettings(settings);
     }
-    return newVer;
+    return newVersion;
   };
   
   /**
@@ -200,16 +197,16 @@ async function main() {
       <canvas id="mainCanvas" />`;
       
     const js = `
-      var canvas = document.createElement("canvas");
-      var sourceImg = document.getElementById("sourceImg");
-      var silhouetteImg = document.getElementById("silhouetteImg");
-      var ctx = canvas.getContext('2d');
-      var size = sourceImg.width > sourceImg.height ? sourceImg.width : sourceImg.height;
+      const canvas = document.createElement("canvas");
+      const sourceImg = document.getElementById("sourceImg");
+      const silhouetteImg = document.getElementById("silhouetteImg");
+      const ctx = canvas.getContext('2d');
+      const size = sourceImg.width > sourceImg.height ? sourceImg.width : sourceImg.height;
       canvas.width = size;
       canvas.height = size;
       ctx.drawImage(sourceImg, (canvas.width - sourceImg.width) / 2, (canvas.height - sourceImg.height) / 2);
-      var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      var pix = imgData.data;
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pix = imgData.data;
       for (var i=0, n = pix.length; i < n; i+= 4){
         pix[i] = 255;
         pix[i+1] = 255;
@@ -330,7 +327,7 @@ async function main() {
   };
   
   const getCacheString = async (cssFileName, cssFileUrl) => {
-    const cache = useFileManager({ cacheTime: 1024 });
+    const cache = useFileManager({ cacheTime: settings.bufferTime });
     const cssString = cache.readString(cssFileName);
     if (cssString) {
       return cssString;
@@ -398,13 +395,6 @@ async function main() {
   
   
   // ====== web start ======= //
-  
-  dismissLoading = (webView) => {
-    webView.evaluateJavaScript(
-      "window.dispatchEvent(new CustomEvent('JWeb', { detail: { code: 'finishLoading' } }))",
-      false
-    );
-  };
   
   const renderAppView = async (options) => {
     const {
@@ -782,7 +772,7 @@ document.getElementById('install').addEventListener('click', () => {
       );
       if (index == 1) {
         fm.remove(cache);
-        notify('清除成功', '重新获取数据需等待5秒');
+        notify('清除成功', '重新获取数据需等待5秒。');
       }
     };
     
@@ -834,7 +824,7 @@ document.getElementById('install').addEventListener('click', () => {
         await updateVersion();
       } else if (code === 'login') {
         await getCookie();
-      } else if (code === 'minute') {
+      } else if (code === 'bufferTime') {
         await input(data);
       };
       
@@ -903,8 +893,11 @@ document.getElementById('install').addEventListener('click', () => {
       };
       // Remove Event Listener
       if ( event ) {
-        dismissLoading(webView);
-      }
+        webView.evaluateJavaScript(
+          "window.dispatchEvent(new CustomEvent('JWeb', { detail: { code: 'finishLoading' } }))",
+          false
+        );
+      };
       await injectListener();
     };
   
@@ -929,7 +922,7 @@ document.getElementById('install').addEventListener('click', () => {
               name: 'arrow.triangle.2.circlepath',
               color: '#FF9500'
             },
-            default: false
+            default: true
           },
           {
             label: '选择编号',
@@ -969,15 +962,15 @@ document.getElementById('install').addEventListener('click', () => {
             desc: settings.cookie ? '已登录' : '未登录'
           },
           {
-            label: '刷新时间',
-            name: 'minute',
+            label: '缓存时间',
+            name: 'bufferTime',
             type: 'cell',
             icon: {
-              name: 'gearshape.fill',
+              name: 'clock',
               color: '#0096FF'
             },
-            message: '尝试改变刷新组件时间\n具体时间由系统判断，单位: 分钟',
-            desc: settings.minute
+            message: '设置缓存离线内容及图片的时长\n( 单位: 小时 )',
+            desc: settings.bufferTime
           }
         ]
       }
