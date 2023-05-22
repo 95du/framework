@@ -88,8 +88,8 @@ button, input, select, textarea {
 .modal-dialog {
   position: relative;
   width: auto;
-  margin: 55px;
-  top: -4.5%;
+  margin: 65px;
+  top: -5.5%;
 }
 
 .modal-backdrop {
@@ -182,7 +182,7 @@ a:focus,a:hover {
 }
 
 .box-body,.box-header {
-  padding: 23px;
+  padding: 25px 20 15px 20;
 }
 
 .badg.radius,.but.radius,.radius>.but {
@@ -271,7 +271,7 @@ a:focus,a:hover {
 }
 
 .title-h-center:hover:before,.title-h-left:hover:before {
-  width: 125px;
+  width: 110px;
 }
 
 .modal {
