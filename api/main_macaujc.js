@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: snowflake;
-
+main()
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -91,7 +91,7 @@ async function main() {
    * @param {string} sound
    */  
   const notify = async (title, body, url, opts = {}) => {
-    const n = Object.assign(new Notification(), { title, body, sound: 'piano_success', ...opts });
+    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
     if (url) n.openURL = url;
     return await n.schedule();
   };
@@ -292,7 +292,7 @@ async function main() {
   /**
    * 获取css及js字符串和图片并使用缓存
    * @param {string} File Extension
-   * @param {Image} Basr64 
+   * @param {Image} Base64 
    * @returns {string} - Request
    */
   const cache = fm.joinPath(mainPath, 'cachePath');
@@ -351,9 +351,9 @@ async function main() {
     if (image) {
       return image;
     }
-    const res = await getImage(url);
-    cache.writeImage(name, res);
-    return res;
+    const img = await getImage(url);
+    cache.writeImage(name, img);
+    return img;
   };
   
   const toBase64 = async (img) => {
@@ -457,13 +457,6 @@ async function main() {
       --card-background: #fff;
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
-    }
-    .preview-img {
-      display: block;
-      padding: 10px 0 5px 0;
-      margin: 0 auto;
-      width: 355px;
-      height: auto;
     }
     ${cssStyle.replace('®️', !Device.isUsingDarkAppearance() ? '#ddd' : '#454545')}
     `;
@@ -660,7 +653,7 @@ document.getElementById('install').addEventListener('click', () => {
   })()`;
   
   
-    /** 主菜单头像 | 弹窗 **/
+    /** 主菜单头像信息 | 弹窗 **/
     const mainMenuTop = async () => {
       const avatar = `  
       <center>
@@ -730,6 +723,7 @@ document.getElementById('install').addEventListener('click', () => {
     const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
     const previewImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
     
+    // 
     const html =`
     <html>
       <head>
@@ -765,14 +759,15 @@ document.getElementById('install').addEventListener('click', () => {
     
     // 清除缓存
     const clearCache = async () => {
-      const index = await generateAlert(
+      const action = await generateAlert(
         title = '清除缓存',
         message = '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
         options = ['取消', '清除']
       );
-      if (index == 1) {
+      if (action == 1) {
         fm.remove(cache);
-        notify('清除成功', '重新获取数据需等待5秒。');
+        notify('清除成功', '正在重新获取数据，请耐心等待5秒。');  
+        Safari.open('scriptable:///run/' + encodeURIComponent(uri));
       }
     };
     
