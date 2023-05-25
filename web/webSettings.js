@@ -21,9 +21,9 @@ async function main() {
   const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
   
   const getSettingPath = () => {
-    fm.createDirectory(
-      mainPath, true
-    );
+    if (!fm.fileExists(mainPath)) {
+      fm.createDirectory(mainPath);
+    }
     return fm.joinPath(mainPath, 'setting.json');
   };
 
@@ -50,11 +50,12 @@ async function main() {
     masking: 0.3,
     picture: [],
     update: true,
+    topStyle: true,
     textLightColor: '#34C759',
     textDarkColor: '#FF9500',
     titleLightColor: '#000000',
     gradient: '#BCBBBB',
-    minute: 20
+    bufferTime: 240
   };
   
   const getSettings = (file) => {
@@ -80,9 +81,6 @@ async function main() {
    */
   const getBgImage = () => {
     const bgPath = fm.joinPath(fm.documentsDirectory(), '95duBackground');
-    if (!fm.fileExists(bgPath)) {
-      fm.createDirectory(bgPath);
-    }
     return fm.joinPath(bgPath, Script.name() + '.jpg');
   };
   
@@ -94,7 +92,7 @@ async function main() {
    * @param {string} sound
    */  
   const notify = async (title, body, url, opts = {}) => {
-    const n = Object.assign(new Notification(), { title, body, sound: 'piano_success', ...opts });
+    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
     if (url) n.openURL = url;
     return await n.schedule();
   };
@@ -122,7 +120,7 @@ async function main() {
   };
   
   if (config.runsInWidget) {
-    if ( version != settings.version && settings.update === false ) {
+    if ( version !== settings.version && settings.update === false ) {
       notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
       settings.version = version;
       writeSettings(settings);
@@ -136,12 +134,12 @@ async function main() {
    * @returns {String} string
    */
   const updateVersionNotice = () => {
-    const newVer = version !== settings.version ? '.signin-loader' : undefined;
-    if (newVer) {
+    const newVersion = version !== settings.version ? '.signin-loader' : undefined;
+    if (newVersion) {
       settings.version = version;
       writeSettings(settings);
     }
-    return newVer;
+    return newVersion;
   };
   
   /**
@@ -200,16 +198,16 @@ async function main() {
       <canvas id="mainCanvas" />`;
       
     const js = `
-      var canvas = document.createElement("canvas");
-      var sourceImg = document.getElementById("sourceImg");
-      var silhouetteImg = document.getElementById("silhouetteImg");
-      var ctx = canvas.getContext('2d');
-      var size = sourceImg.width > sourceImg.height ? sourceImg.width : sourceImg.height;
+      const canvas = document.createElement("canvas");
+      const sourceImg = document.getElementById("sourceImg");
+      const silhouetteImg = document.getElementById("silhouetteImg");
+      const ctx = canvas.getContext('2d');
+      const size = sourceImg.width > sourceImg.height ? sourceImg.width : sourceImg.height;
       canvas.width = size;
       canvas.height = size;
       ctx.drawImage(sourceImg, (canvas.width - sourceImg.width) / 2, (canvas.height - sourceImg.height) / 2);
-      var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      var pix = imgData.data;
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pix = imgData.data;
       for (var i=0, n = pix.length; i < n; i+= 4){
         pix[i] = 255;
         pix[i+1] = 255;
@@ -295,7 +293,7 @@ async function main() {
   /**
    * 获取css及js字符串和图片并使用缓存
    * @param {string} File Extension
-   * @param {Image} Basr64 
+   * @param {Image} Base64 
    * @returns {string} - Request
    */
   const cache = fm.joinPath(mainPath, 'cachePath');
@@ -330,7 +328,7 @@ async function main() {
   };
   
   const getCacheString = async (cssFileName, cssFileUrl) => {
-    const cache = useFileManager({ cacheTime: 1024 });
+    const cache = useFileManager({ cacheTime: settings.bufferTime });
     const cssString = cache.readString(cssFileName);
     if (cssString) {
       return cssString;
@@ -354,9 +352,9 @@ async function main() {
     if (image) {
       return image;
     }
-    const res = await getImage(url);
-    cache.writeImage(name, res);
-    return res;
+    const img = await getImage(url);
+    cache.writeImage(name, img);
+    return img;
   };
   
   const toBase64 = async (img) => {
@@ -398,13 +396,6 @@ async function main() {
   
   
   // ====== web start ======= //
-  
-  dismissLoading = (webView) => {
-    webView.evaluateJavaScript(
-      "window.dispatchEvent(new CustomEvent('JWeb', { detail: { code: 'finishLoading' } }))",
-      false
-    );
-  };
   
   const renderAppView = async (options) => {
     const {
@@ -467,13 +458,6 @@ async function main() {
       --card-background: #fff;
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
-    }
-    .preview-img {
-      display: block;
-      padding: 10px 0 5px 0;
-      margin: 0 auto;
-      width: 355px;
-      height: auto;
     }
     ${cssStyle.replace('®️', !Device.isUsingDarkAppearance() ? '#ddd' : '#454545')}
     `;
@@ -667,10 +651,11 @@ async function main() {
 document.getElementById('install').addEventListener('click', () => {
       invoke('install');
     });
+    
   })()`;
   
   
-    /** 主菜单头像 | 弹窗 **/
+    /** 主菜单头像信息 | 弹窗 **/
     const mainMenuTop = async () => {
       const avatar = `  
       <center>
@@ -730,16 +715,32 @@ document.getElementById('install').addEventListener('click', () => {
       `
     };
     
-    // 随机预览图
+    // 预览效果图
     const previewImgUrl = [
       'http://mtw.so/5Tn2ms',
       'http://mtw.so/5wOsB3'
     ];
-    const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
-    const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
-    const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
-    const previewImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
     
+    if (settings.topStyle) {
+      const previewImgs = await Promise.all(previewImgUrl.map(async (item) => {
+        const imgName = decodeURIComponent(item.substring(item.lastIndexOf("/") + 1));
+        const previewImg = await toBase64(await getCacheImage(imgName, item));
+        return previewImg;
+      }));
+      previewImgHtml = `
+      <div id="scrollBox">
+        <div id="scrollImg">
+          ${previewImgs.map(img => `<img src="${img}">`).join('')}
+        </div>
+      </div>`; 
+    } else {
+      const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
+      const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
+      const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
+      previewImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
+    };
+    
+    // 
     const html =`
     <html>
       <head>
@@ -775,14 +776,15 @@ document.getElementById('install').addEventListener('click', () => {
     
     // 清除缓存
     const clearCache = async () => {
-      const index = await generateAlert(
+      const action = await generateAlert(
         title = '清除缓存',
         message = '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
         options = ['取消', '清除']
       );
-      if (index == 1) {
+      if (action == 1) {
         fm.remove(cache);
-        notify('清除成功', '重新获取数据需等待5秒');
+        notify('清除成功', '正在重新获取数据，请耐心等待5秒。');  
+        Safari.open('scriptable:///run/' + encodeURIComponent(uri));
       }
     };
     
@@ -834,7 +836,7 @@ document.getElementById('install').addEventListener('click', () => {
         await updateVersion();
       } else if (code === 'login') {
         await getCookie();
-      } else if (code === 'minute') {
+      } else if (code === 'bufferTime') {
         await input(data);
       };
       
@@ -903,8 +905,11 @@ document.getElementById('install').addEventListener('click', () => {
       };
       // Remove Event Listener
       if ( event ) {
-        dismissLoading(webView);
-      }
+        webView.evaluateJavaScript(
+          "window.dispatchEvent(new CustomEvent('JWeb', { detail: { code: 'finishLoading' } }))",
+          false
+        );
+      };
       await injectListener();
     };
   
@@ -926,37 +931,21 @@ document.getElementById('install').addEventListener('click', () => {
             name: 'topStyle',
             type: 'switch',
             icon: {
-              name: 'arrow.triangle.2.circlepath',
+              name: 'eject',
               color: '#FF9500'
             },
-            default: false
+            default: true
           },
           {
-            label: '选择编号',
-            name: 'choose',
-            type: 'select',
+            label: '缓存时间',
+            name: 'bufferTime',
+            type: 'cell',
             icon: {
-              name: 'textformat',
-              color: '#938BF0'
+              name: 'clock',
+              color: '#0096FF'
             },
-            options: [
-              { 
-                label: '编号 1',
-                value: 'a'
-              },
-              {
-                label: '编号 2',
-                value: 'b'
-              },
-              { 
-                label: '编号 3',
-                value: 'c'
-              },
-              {
-                label: '编号 4',
-                value: 'd'
-              }
-            ]
+            message: '设置缓存离线内容及图片的时长\n( 单位: 小时 )',
+            desc: settings.bufferTime
           },
           {
             label: '用户登录',
@@ -967,17 +956,6 @@ document.getElementById('install').addEventListener('click', () => {
               color: '#43CD80'
             },
             desc: settings.cookie ? '已登录' : '未登录'
-          },
-          {
-            label: '刷新时间',
-            name: 'minute',
-            type: 'cell',
-            icon: {
-              name: 'gearshape.fill',
-              color: '#0096FF'
-            },
-            message: '尝试改变刷新组件时间\n具体时间由系统判断，单位: 分钟',
-            desc: settings.minute
           }
         ]
       }
@@ -1082,7 +1060,8 @@ document.getElementById('install').addEventListener('click', () => {
             label: '清除背景',
             name: 'clearBgImg',
             type: 'cell',
-            icon: `${rootUrl}img/symbol/clearBg.png`
+            icon: `${rootUrl}img/symbol/clearBg.png`,
+            desc: fm.fileExists(getBgImage()) ? '已设置' : ''
           }
         ]
       },
