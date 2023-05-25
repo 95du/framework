@@ -478,6 +478,45 @@ button .iconfont {
   height: auto;
 }
 
+#scrollBox {
+  width: 355px;
+  height: 165.8px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+#scrollImg {
+  width: 710px;
+  height: auto;
+  position: relative;
+  
+  -webkit-animation: scrollBox 10s linear infinite;
+}
+
+#scrollImg img {
+  width: 355px;
+  height: auto;
+  float: left;
+}
+
+@keyframes scrollBox {
+  0% {
+    left: 0px;
+  }
+  25% {
+    left: 0px;
+  }
+  50% {
+    left: -355px;
+  }
+  75% {
+    left: -355px;
+  }
+  100% {
+    left: 0px;
+  }
+}
+
 .form-item {
   display: flex;
   align-items: center;
