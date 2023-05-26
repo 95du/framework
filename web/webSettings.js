@@ -273,7 +273,7 @@ async function main() {
       confirm(inputObj);
     }
     return getIndex;
-  }
+  };
   
   /**
    * @param message 内容
@@ -400,7 +400,6 @@ async function main() {
   const renderAppView = async (options) => {
     const {
       formItems = [],
-      onItemClick,
       head,
       $ = 'https://www.imarkr.com',
       avatarInfo,
@@ -927,11 +926,11 @@ document.getElementById('install').addEventListener('click', () => {
         type: 'group',
         items: [
           {
-            label: '顶部风格',
+            label: '图片轮播',
             name: 'topStyle',
             type: 'switch',
             icon: {
-              name: 'eject',
+              name: 'photo.tv',
               color: '#FF9500'
             },
             default: true
@@ -1128,7 +1127,7 @@ document.getElementById('install').addEventListener('click', () => {
             }
           },
           {
-            label: '用户信息',
+            label: '组件信息',
             name: 'infoPage',
             type: 'page',
             icon: {
