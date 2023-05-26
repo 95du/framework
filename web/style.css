@@ -479,14 +479,14 @@ button .iconfont {
 }
 
 #scrollBox {
-  width: 355px;
+  width: 375px;
   height: 165.8px;
   overflow: hidden;
   margin: 0 auto;
 }
 
 #scrollImg {
-  width: 710px;
+  width: 750px;
   height: auto;
   position: relative;
   -webkit-animation: scrollBox 10s linear infinite;
@@ -495,6 +495,7 @@ button .iconfont {
 #scrollImg img {
   width: 355px;
   height: auto;
+  padding: 0 10px 0 10px;
   float: left;
 }
 
@@ -506,10 +507,10 @@ button .iconfont {
     left: 0px;
   }
   50% {
-    left: -355px;
+    left: -375px;
   }
   75% {
-    left: -355px;
+    left: -375px;
   }
   100% {
     left: 0px;
