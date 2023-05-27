@@ -553,12 +553,13 @@ button .iconfont {
 
 .form-item input select,
   .form-item select {
-  outline: none;
-  text-align: right;
-  padding-right: 4px;
-  border: var(--select);
-  font-size: 15px;
-  background-color: transparent;
+    outline: none;
+    text-align: right;
+    padding-right: 4px;
+    font-size: 15px;
+    border: var(--select);
+    border-radius: 11px;
+    background-color: var(--selectColor, transparent);
 }
 
 .icon-arrow_right {
@@ -681,7 +682,8 @@ input[type='checkbox'][role='switch']:checked::before {
     --card-background: #1c1c1e;
     --list-header-color: rgba(235,235,245,0.6);
     --checkbox: #454545;
-    --select: 0.8px solid #000;
+    --select: 0.5px solid #000;
+    --selectColor: #454545;
   }
 
   body {
