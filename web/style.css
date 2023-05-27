@@ -555,10 +555,9 @@ button .iconfont {
   .form-item select {
   outline: none;
   text-align: right;
-  padding: 0 10px 0 0;
   padding-right: 4px;
-  border: none;
-  font-size: 16px;
+  border: var(--select);
+  font-size: 15px;
   background-color: transparent;
 }
 
@@ -676,12 +675,13 @@ input[type='checkbox'][role='switch']:checked::before {
 }
 
 @media (prefers-color-scheme: dark) {
-
+  
   :root {
     --divider-color: rgba(84,84,88,0.65);
     --card-background: #1c1c1e;
     --list-header-color: rgba(235,235,245,0.6);
     --checkbox: #454545;
+    --select: 0.8px solid #000;
   }
 
   body {
