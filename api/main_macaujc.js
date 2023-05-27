@@ -50,6 +50,7 @@ async function main() {
     masking: 0.3,
     picture: [],
     update: true,
+    topStyle: true,
     textLightColor: '#34C759',
     textDarkColor: '#FF9500',
     titleLightColor: '#000000',
@@ -119,7 +120,7 @@ async function main() {
   };
   
   if (config.runsInWidget) {
-    if ( version != settings.version && settings.update === false ) {
+    if ( version !== settings.version && settings.update === false ) {
       notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
       settings.version = version;
       writeSettings(settings);
@@ -272,7 +273,7 @@ async function main() {
       confirm(inputObj);
     }
     return getIndex;
-  }
+  };
   
   /**
    * @param message 内容
@@ -399,7 +400,6 @@ async function main() {
   const renderAppView = async (options) => {
     const {
       formItems = [],
-      onItemClick,
       head,
       $ = 'https://www.imarkr.com',
       avatarInfo,
@@ -458,9 +458,9 @@ async function main() {
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
     }
-    ${cssStyle.replace('®️', !Device.isUsingDarkAppearance() ? '#ddd' : '#454545')}
-    `;
-  
+    ${cssStyle}`;
+    
+    //
     const js =`
     (() => {
     const settings = ${JSON.stringify({
@@ -650,6 +650,7 @@ async function main() {
 document.getElementById('install').addEventListener('click', () => {
       invoke('install');
     });
+    
   })()`;
   
   
@@ -713,15 +714,30 @@ document.getElementById('install').addEventListener('click', () => {
       `
     };
     
-    // 随机预览图
+    // 预览效果图
     const previewImgUrl = [
       'http://mtw.so/5Tn2ms',
       'http://mtw.so/5wOsB3'
     ];
-    const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
-    const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
-    const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
-    const previewImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
+    
+    if (settings.topStyle) {
+      const previewImgs = await Promise.all(previewImgUrl.map(async (item) => {
+        const imgName = decodeURIComponent(item.substring(item.lastIndexOf("/") + 1));
+        const previewImg = await toBase64(await getCacheImage(imgName, item));
+        return previewImg;
+      }));
+      previewImgHtml = `
+      <div id="scrollBox">
+        <div id="scrollImg">
+          ${previewImgs.map(img => `<img src="${img}">`).join('')}
+        </div>
+      </div>`; 
+    } else {
+      const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
+      const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
+      const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
+      previewImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
+    };
     
     // 
     const html =`
@@ -910,51 +926,14 @@ document.getElementById('install').addEventListener('click', () => {
         type: 'group',
         items: [
           {
-            label: '顶部风格',
+            label: '图片轮播',
             name: 'topStyle',
             type: 'switch',
             icon: {
-              name: 'arrow.triangle.2.circlepath',
+              name: 'photo.tv',
               color: '#FF9500'
             },
             default: true
-          },
-          {
-            label: '选择编号',
-            name: 'choose',
-            type: 'select',
-            icon: {
-              name: 'textformat',
-              color: '#938BF0'
-            },
-            options: [
-              { 
-                label: '编号 1',
-                value: 'a'
-              },
-              {
-                label: '编号 2',
-                value: 'b'
-              },
-              { 
-                label: '编号 3',
-                value: 'c'
-              },
-              {
-                label: '编号 4',
-                value: 'd'
-              }
-            ]
-          },
-          {
-            label: '用户登录',
-            name: 'login',
-            type: 'cell',
-            icon: {
-              name: 'person.crop.circle',
-              color: '#43CD80'
-            },
-            desc: settings.cookie ? '已登录' : '未登录'
           },
           {
             label: '缓存时间',
@@ -966,6 +945,16 @@ document.getElementById('install').addEventListener('click', () => {
             },
             message: '设置缓存离线内容及图片的时长\n( 单位: 小时 )',
             desc: settings.bufferTime
+          },
+          {
+            label: '用户登录',
+            name: 'login',
+            type: 'cell',
+            icon: {
+              name: 'person.crop.circle',
+              color: '#43CD80'
+            },
+            desc: settings.cookie ? '已登录' : '未登录'
           }
         ]
       }
@@ -1070,7 +1059,8 @@ document.getElementById('install').addEventListener('click', () => {
             label: '清除背景',
             name: 'clearBgImg',
             type: 'cell',
-            icon: `${rootUrl}img/symbol/clearBg.png`
+            icon: `${rootUrl}img/symbol/clearBg.png`,
+            desc: fm.fileExists(getBgImage()) ? '已设置' : ''
           }
         ]
       },
@@ -1137,7 +1127,7 @@ document.getElementById('install').addEventListener('click', () => {
             }
           },
           {
-            label: '用户信息',
+            label: '组件信息',
             name: 'infoPage',
             type: 'page',
             icon: {
