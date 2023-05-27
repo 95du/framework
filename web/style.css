@@ -615,7 +615,7 @@ input[type='checkbox'][role='switch'] {
   width: 46.6px;
   height: 28px;
   border-radius: 28px;
-  background: ®️;
+  background: var(--checkbox, #ddd);
   transition: 0.3s ease-in-out;
 }
 
@@ -681,6 +681,7 @@ input[type='checkbox'][role='switch']:checked::before {
     --divider-color: rgba(84,84,88,0.65);
     --card-background: #1c1c1e;
     --list-header-color: rgba(235,235,245,0.6);
+    --checkbox: #454545;
   }
 
   body {
