@@ -570,7 +570,7 @@ button .iconfont {
   color: #86868b;
   margin: 0 6px 0 auto;
   max-width: 100px;
-  max-height: 23.5px;
+  max-height: 25px;
   overflow: hidden;
   text-overflow: ellipsis;
   display: flex;
