@@ -559,7 +559,7 @@ button .iconfont {
     font-size: 15px;
     border: var(--select);
     border-radius: 11px;
-    background-color: var(--selectColor, transparent);
+    background-color: var(--checkbox, transparent);
 }
 
 .icon-arrow_right {
@@ -683,7 +683,6 @@ input[type='checkbox'][role='switch']:checked::before {
     --list-header-color: rgba(235,235,245,0.6);
     --checkbox: #454545;
     --select: 0.5px solid #000;
-    --selectColor: #454545;
   }
 
   body {
