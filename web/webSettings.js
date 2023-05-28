@@ -18,7 +18,7 @@ async function main() {
    * @returns {string} - string
    */
   const fm = FileManager.local();
-  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_web');
+  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
   
   const getSettingPath = () => {
     if (!fm.fileExists(mainPath)) {
@@ -296,7 +296,7 @@ async function main() {
    * @param {Image} Base64 
    * @returns {string} - Request
    */
-  const cache = fm.joinPath(mainPath, 'cachePath');
+  const cache = fm.joinPath(mainPath, 'cache_path');
   fm.createDirectory(cache, true);
   
   const useFileManager = ({ cacheTime } = {}) => {
@@ -458,9 +458,9 @@ async function main() {
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
     }
-    ${cssStyle.replace('®️', !Device.isUsingDarkAppearance() ? '#ddd' : '#454545')}
-    `;
-  
+    ${cssStyle}`;
+    
+    //
     const js =`
     (() => {
     const settings = ${JSON.stringify({
