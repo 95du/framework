@@ -1,6 +1,39 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: cannabis;
+td, th {
+  padding: 0;
+}
+
+print *:not(html):after, 
+  print *:not(html):before {
+  color: #000 !important;
+  text-shadow: none!important;
+  background: 0 0!important;
+  box-shadow: none!important;
+}
+
+*:after, *:before {
+  box-sizing: border-box;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
 
 .btn-block {
   display: block;
@@ -181,10 +214,14 @@ a:focus,a:hover {
   height: 3px;
   top: auto;
   left: 0;
-  right: 0;
-  margin: auto;
   bottom: 3px;
   transition: .4s;
+}
+
+.tab-nav-theme li:before,.title-h-center:before,.wp-posts-content>h1.has-text-align-center:before,.wp-posts-content>h2.has-text-align-center:before,.wp-posts-content>h3.has-text-align-center:before,.wp-posts-content>h4.has-text-align-center:before {
+  left: 0;
+  right: 0;
+  margin: auto;
 }
 
 .title-h-center:hover:before,.title-h-left:hover:before {
