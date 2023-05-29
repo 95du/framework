@@ -214,14 +214,10 @@ a:focus,a:hover {
   height: 3px;
   top: auto;
   left: 0;
-  bottom: 3px;
-  transition: .4s;
-}
-
-.tab-nav-theme li:before,.title-h-center:before,.wp-posts-content>h1.has-text-align-center:before,.wp-posts-content>h2.has-text-align-center:before,.wp-posts-content>h3.has-text-align-center:before,.wp-posts-content>h4.has-text-align-center:before {
-  left: 0;
   right: 0;
   margin: auto;
+  bottom: 3px;
+  transition: .4s;
 }
 
 .title-h-center:hover:before,.title-h-left:hover:before {
