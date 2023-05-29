@@ -1,40 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: cannabis;
-td, th {
-  padding: 0;
-}
-
-print *:not(html):after, 
-  print *:not(html):before {
-  color: #000 !important;
-  text-shadow: none!important;
-  background: 0 0!important;
-  box-shadow: none!important;
-}
-
-*:after, *:before {
-  box-sizing: border-box;
-}
-
-button, input, select, textarea {
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-}
-
-.text-left {
-  text-align: left;
-}
-
-.text-right {
-  text-align: right;
-}
-
-.text-center {
-  text-align: center;
-}
-
 .btn-block {
   display: block;
   width: 100%;
