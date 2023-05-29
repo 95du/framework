@@ -1,13 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: cannabis;
-:root {
-  --color-primary: #007aff;
-  --divider-color: rgba(60,60,67,0.36);
-  --card-background: #fff;
-  --card-radius: 10px;
-  --list-header-color: rgba(60,60,67,0.6);
-}
 
 .btn-block {
   display: block;
