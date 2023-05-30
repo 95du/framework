@@ -472,13 +472,10 @@ button .iconfont {
 
 .form-item input select,
   .form-item select {
-    outline: none;
-    text-align: right;
-    padding-right: 4px;
     font-size: 15px;
     border: var(--select);
     border-radius: 11px;
-    background-color: var(--checkbox, transparent);
+    background-color: var(--card-background);
 }
 
 .icon-arrow_right {
@@ -599,7 +596,7 @@ input[type='checkbox'][role='switch']:checked::before {
     --card-background: #1c1c1e;
     --list-header-color: rgba(235,235,245,0.6);
     --checkbox: #454545;
-    --select: 0.5px solid #000;
+    --select: 1px solid #000;
   }
   
   .dark-theme {
