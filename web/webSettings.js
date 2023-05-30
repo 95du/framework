@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: teal; icon-glyph: snowflake;
+// icon-color: teal; icon-glyph: cog;
 main()
 async function main() {
   const uri = Script.name();
@@ -362,7 +362,7 @@ async function main() {
   };
   
   
-  
+  // 测试登录
   const getCookie = async () => {  
     const webView = new WebView();  
     await webView.loadURL('https://plogin.m.jd.com/login/login?appid=300&returnurl=https%3A%2F%2Fwqs.jd.com%2Fmy%2Faccountv2.shtml%3Fsceneval%3D2%26jxsid%3D16323729562173504755%26ptag%3D7155.1.2&source=wq_passport');
@@ -389,7 +389,7 @@ async function main() {
       settings.cookie = cookie.join(';');
       settings.login = '已登录'
       notify('Cookie获取/更新成功', settings.cookie);
-      await writeSettings(settings)
+      await writeSettings(settings);
     }
   };
   
@@ -670,31 +670,31 @@ document.getElementById('install').addEventListener('click', () => {
       </center>
       `
       
-      const popup = `  
+      const popup = `      
       <div class="modal fade" id="u_sign" role="dialog">
         <div class="modal-dialog" role="document">
-          <div class="sign zib-widget blur-bg relative" style="border-radius: 27px;">
+          <div class="sign zib-widget blur-bg relative">
             <div class="sign-logo box-body">
               <img src="${appleHub}" class="lazyload">
             </div>
-            <div class="tab-content">
-              <div class="box-body">
-                <div class="title-h-center fa-2x hh title">
-                  ${scriptName}
-                </div>
-                <a class="muted-color px30" class="display-name">
-                  <div id="myName" class="update-content">Version ${version}</div></a>
-                <br />
-                <div class="form-label-title"><li>${updateDate}&nbsp;🔥</li><li>修复已知问题</li><li>性能优化，改进用户体验</li>
-                </div>
+            <div class="box-body">
+              <div class="title-h-center fa-2x hh title">
+                ${scriptName}
               </div>
-              <div class="box-body">
-                <div id="sign-in">
-                  <button id="install" type="button" class="but radius jb-pink padding-lg  btn-block">立即更新</button>
-                </div>
+              <a class="muted-color px30 display-name-container">
+                <div id="myName" class="update-content">Version ${version}</div></a>
+              <br />
+              <div class="form-label-title"> <li>${updateDate}&nbsp;🔥</li> <li>修复已知问题</li> <li>性能优化，改进用户体验</li>
               </div>
-              <p class="social-separator separator muted-5-color em12">95度茅台</p>
             </div>
+            <div class="box-body">
+              <div id="sign-in">
+                <button id="install" type="button" class="but radius jb-pink padding-lg  btn-block">
+                  立即更新
+                </button>
+              </div>
+            </div>
+            <p class="social-separator separator">95度茅台</p>
           </div>
         </div>
       </div>
@@ -716,8 +716,8 @@ document.getElementById('install').addEventListener('click', () => {
     
     // 预览效果图
     const previewImgUrl = [
-      'http://mtw.so/5Tn2ms',
-      'http://mtw.so/5wOsB3'
+      'http://mtw.so/5LXCZT',
+      'http://mtw.so/5SNSCU'
     ];
     
     if (settings.topStyle) {
