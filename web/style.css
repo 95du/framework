@@ -472,8 +472,8 @@ button .iconfont {
 
 .form-item input select,
   .form-item select {
-    outline: 1px solid #3F86FF;
-    font-size: 14.5px;
+    outline: none;
+    font-size: 15px;
     border: var(--select);
     border-radius: 11px;
     background-color: var(--card-background);
