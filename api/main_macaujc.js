@@ -381,17 +381,20 @@ async function main() {
         cookie.push(value);
     });
     
-    const sign = new Request('https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld');
+    const sign = new Request('https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld')
     sign.method = 'POST'
     sign.headers = { Referer: 'https://h5.m.jd.com/' }
-    const { code } = await sign.loadJSON();
+    const { code } = await sign.loadJSON()
     if (code === '0') {
-      settings.cookie = cookie.join(';');
-      settings.login = '已登录'
-      notify('Cookie获取/更新成功', settings.cookie);
-      await writeSettings(settings);
+      return new Promise(resolve => {
+        settings.cookie = cookie.join(';')
+        notify('Cookie获取/更新成功', settings.cookie)
+        writeSettings(settings)
+        resolve('已登录')
+      })
     }
   };
+
   
   
   
@@ -483,7 +486,8 @@ async function main() {
       formData[item.name] = value;
       const label = document.createElement("label");
       label.className = "form-item";
-          
+      label.dataset.name = item.name;
+      
       const div = document.createElement("div");
       div.className = 'form-label';
       label.appendChild(div);
@@ -782,28 +786,48 @@ document.getElementById('install').addEventListener('click', () => {
       );
       if (action == 1) {
         fm.remove(cache);
-        notify('清除成功', '正在重新获取数据，请耐心等待5秒。');  
-        Safari.open('scriptable:///run/' + encodeURIComponent(uri));
+        notify('清除成功', '正在重新获取数据，请耐心等待 5 秒。');  
+        Timer.schedule(1500, false, () => { Safari.open('scriptable:///run/' + encodeURIComponent(uri)) });
       }
     };
     
-    // Input window
+    /**
+     * Input window
+     * @param data
+     * @returns {Promise<string>}
+     */
     const input = async (data) => {
       const { label, message, name } = data;
-      await generateInputAlert({
-        title: label,
-        message: message,
-        options: [
-          { 
-            hint: String(settings[name]),
-            value: String(settings[name])
-          }
-        ]
-      }, 
-      async ([{value}]) => {
-        value.match(/^\d+$/)[0] ? settings[name] = Number(value) : settings[name];
-        writeSettings(settings);
+      return new Promise(resolve => {
+        generateInputAlert({
+          title: label,
+          message: message,
+          options: [
+            {
+              hint: String(settings[name]),
+              value: String(settings[name])
+            }
+          ]
+        },
+        async ([{ value }]) => {
+          const result = value.match(/^\d+$/)[0] ? settings[name] = Number(value) : settings[name];
+          writeSettings(settings);
+          resolve(result);
+        })
       })
+    };  
+      
+    /**
+     * 修改特定 form 表单项的文本
+     * @param {string} fieldName
+     * @param {string} newText
+     * @param {WebView} webView
+     */
+    const updateFormText = async (fieldName, newText) => {
+      webView.evaluateJavaScript(
+        `const div = document.querySelector('.form-item[data-name="${fieldName}"] .form-item-right-desc');
+        div.innerText = ${JSON.stringify(newText)}`
+      )
     };
     
     // 注入监听器
@@ -834,9 +858,9 @@ document.getElementById('install').addEventListener('click', () => {
       } else if (code === 'updateCode') {
         await updateVersion();
       } else if (code === 'login') {
-        await getCookie();
+        updateFormText('login', await getCookie());
       } else if (code === 'bufferTime') {
-        await input(data);
+        updateFormText('bufferTime', await input(data));
       };
       
       switch (code) {
@@ -1135,8 +1159,7 @@ document.getElementById('install').addEventListener('click', () => {
               color: '#43CD80'
             },
             formItems: userMenu,
-            previewImage: true,
-            desc: settings.cookie ? '已登录' : '未登录'
+            previewImage: true
           },
           {
             label: '偏好设置',
