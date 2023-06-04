@@ -191,7 +191,7 @@ a:focus,a:hover {
 }
 
 .title-h-center:hover:before,.title-h-left:hover:before {
-  width: 105px;
+  width: 100px;
 }
 
 .modal {
