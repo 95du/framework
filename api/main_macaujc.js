@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: cog;
-main()
+
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -540,7 +540,7 @@ async function main() {
           desc.className = 'form-item-right-desc';
           desc.innerText = item.desc;
           label.appendChild(desc);
-        } 
+        }
         
         label.classList.add('form-item--link');
         const icon = document.createElement('i');
