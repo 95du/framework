@@ -389,6 +389,10 @@ button .iconfont {
   font-size: 16px;
 }
 
+.custom-iframe {
+  height: 0px;
+}
+
 .preview-img {
   display: block;
   padding: 10px 0 2px 0;
