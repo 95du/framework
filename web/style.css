@@ -267,7 +267,12 @@ a:focus,a:hover {
 .avatar {
   border-radius: 50%;
   animation: light 4s ease-in-out infinite;
+  margin-bottom: 10px;
   transition: 0.5s;
+}
+
+.avatarInfo {
+  text-align: center;
 }
 
 .avatar:hover {
@@ -298,6 +303,10 @@ a:focus,a:hover {
 }
 
 /** 头像呼吸光环旋转放大结束 **/
+
+.interval {
+  margin-top: 10px;
+}
 
 /** 彩色昵称开始 **/
 
