@@ -51,6 +51,7 @@ async function main() {
     picture: [],
     update: true,
     topStyle: true,
+    music: true,
     textLightColor: '#34C759',
     textDarkColor: '#FF9500',
     titleLightColor: '#000000',
@@ -250,7 +251,7 @@ async function main() {
    * @param opt   属性
    * @returns { Promise<void> }
    */
-  const generateInputAlert = async (options,confirm) => {  
+  const generateInputAlert = async (options, confirm) => {  
     const inputAlert = new Alert();
     inputAlert.title = options.title;
     inputAlert.message = options.message;
@@ -266,7 +267,7 @@ async function main() {
     let getIndex = await inputAlert.presentAlert();
     if (getIndex == 1) {
       const inputObj = [];
-      fieldArr.forEach((_, index) => {
+      fieldArr.forEach((index) => {
         let value = inputAlert.textFieldValue(index);
         inputObj.push({index, value});
       });
@@ -349,7 +350,7 @@ async function main() {
   const getCacheImage = async (name, url) => {
     const cache = useFileManager();
     const image = cache.readImage(name);
-    if (image) {
+    if ( image ) {
       return image;
     }
     const img = await getImage(url);
@@ -395,8 +396,6 @@ async function main() {
     }
   };
 
-  
-  
   
   // ====== web start ======= //
   
@@ -540,7 +539,7 @@ async function main() {
           desc.className = 'form-item-right-desc';
           desc.innerText = item.desc;
           label.appendChild(desc);
-        } 
+        }
         
         label.classList.add('form-item--link');
         const icon = document.createElement('i');
@@ -658,20 +657,18 @@ document.getElementById('install').addEventListener('click', () => {
   })()`;
   
   
-    /** 主菜单头像信息 | 弹窗 **/
+    // 主菜单头像信息
     const mainMenuTop = async () => {
-      const avatar = `  
-      <center>
-        <div class="hover-show relative">
-          <span class="avatar-img hh signin-loader">
-            <img src="${authorAvatar}" width="95" height="95" class="lazyload avatar avatar-id-0"/>
-          </span>
-        </div>
-        <br>
-          <img id="hubImg" src="${appleHub}" width="200" height="40">
+      const avatar = `    
+      <div class="avatarInfo">  
+        <span class="signin-loader">
+          <img src="${authorAvatar}" width="95" height="95" class="lazyload avatar avatar-id-0"/>
+        </span>
+        <div class="interval"></div>
+        <img id="hubImg" src="${appleHub}" width="200" height="40">
         <br>
         <a class="display-name" id="store">组件商店</a>
-      </center>
+      </div>
       `
       
       const popup = `      
@@ -682,7 +679,7 @@ document.getElementById('install').addEventListener('click', () => {
               <img src="${appleHub}" class="lazyload">
             </div>
             <div class="box-body">
-              <div class="title-h-center fa-2x hh title">
+              <div class="title-h-center fa-2x hh popup-title">
                 ${scriptName}
               </div>
               <a class="muted-color px30 display-name-container">
@@ -705,20 +702,36 @@ document.getElementById('install').addEventListener('click', () => {
       <script type="text/javascript">
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
-        }, 1500);
+        }, 1200);
         window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll', qj_loading: '1' };
       </script>
       `
+      
+      const songId = [
+        '8fk9B72BcV2',
+        '8duPZb8BcV2',
+        '8fAWh80BcV2',
+        '8t84tf5BcV2'
+      ];
+      const randomId = songId[Math.floor(Math.random() * songId.length)];
+      const music = `
+      <iframe data-src="https://t1.kugou.com/song.html?id=${randomId}" class="custom-iframe" frameborder="0" scrolling="auto">
+      </iframe>
+      <script>
+        const iframe = document.querySelector('.custom-iframe');
+        iframe.src = iframe.getAttribute('data-src');
+      </script>`;
+      
       return `
-        <!-- 旋转头像 -->
         ${avatar}
+        ${settings.music === true ? music : ''}
         <!-- 弹窗 -->
         ${popup}
         ${scriptTags.join('\n')}
       `
     };
     
-    // 预览效果图
+    // 组件效果图
     const previewImgUrl = [
       'http://mtw.so/5LXCZT',
       'http://mtw.so/5SNSCU'
@@ -815,7 +828,7 @@ document.getElementById('install').addEventListener('click', () => {
           resolve(result);
         })
       })
-    };  
+    };
       
     /**
      * 修改特定 form 表单项的文本
@@ -1032,8 +1045,7 @@ document.getElementById('install').addEventListener('click', () => {
             label: '刷新时间',
             name: 'refresh',
             type: 'number',
-            icon: `${rootUrl}img/symbol/refresh.png`,
-            val: 'refresh'
+            icon: `${rootUrl}img/symbol/refresh.png`
           },
           {
             label: '渐变方向',
@@ -1056,8 +1068,7 @@ document.getElementById('install').addEventListener('click', () => {
             name: 'transparency',
             type: 'number',
             id: 'input',
-            icon: `${rootUrl}img/symbol/masking.png`,
-            val: 'transparency'
+            icon: `${rootUrl}img/symbol/masking.png`
           },
           {
             label: '透明背景',
@@ -1070,8 +1081,7 @@ document.getElementById('install').addEventListener('click', () => {
             name: 'masking',
             type: 'number',
             id: 'input',
-            icon: `${rootUrl}img/symbol/photo_9D64FF.png`,
-            val: 'masking'
+            icon: `${rootUrl}img/symbol/photo_9D64FF.png`
           },
           {
             label: '图片背景',
@@ -1099,11 +1109,14 @@ document.getElementById('install').addEventListener('click', () => {
             default: true
           },
           {
-            label: '顶部风格',
-            name: 'topStyle',
+            label: '背景音乐',
+            name: 'music',
             type: 'switch',
-            icon: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',  
-            default: false
+            icon: {
+              name: 'music.note',  
+              color: '#FF6800'
+            },
+            default: true
           }
         ]
       }
