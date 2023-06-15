@@ -447,6 +447,43 @@ button .iconfont {
   }
 }
 
+/* 提示框 */
+.popup {
+  position: fixed;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #222;
+  color: #fff;
+  border-radius: 50px;
+  padding: 10px;
+  width: 130px;
+  height: 20px;
+  opacity: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.popup.show {
+  opacity: 1;
+}
+
+.fd {
+  animation: fd .15s ease-in-out;
+}
+
+@keyframes fd {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .form-item {
   display: flex;
   align-items: center;
