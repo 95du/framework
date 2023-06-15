@@ -9,6 +9,7 @@ td, th {
   display: block;
   width: 100%;
   height: 32px;
+  font-size: 14.5px;
 }
 
 .fade {
