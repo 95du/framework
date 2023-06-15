@@ -219,7 +219,7 @@ a:focus,a:hover {
 
 .separator-center {
   color: #86868b;
-  font-size: 14.5px;
+  font-size: 14px;
 }
 
 .separator::after,.separator::before {
