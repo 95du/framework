@@ -217,6 +217,11 @@ a:focus,a:hover {
   align-items: center;
 }
 
+.separator-center {
+  color: #86868b;
+  font-size: 15px;
+}
+
 .separator::after,.separator::before {
   content: "";
   background: var(--main-border-color);
@@ -607,11 +612,11 @@ input[type='checkbox'][role='switch']:checked::before {
   }
   
   .white-theme {
-    --blur-bg: rgba(50, 51, 53, 0.8);
+    --blur-bg: rgba(50,51,53,0.8);
   }
   
   .dark-theme {
-    --blur-bg: rgba(50, 51, 53, 0.8);
+    --blur-bg: rgba(50,51,53,0.8);
   }
 
   body {
