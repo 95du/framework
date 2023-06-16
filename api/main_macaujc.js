@@ -531,9 +531,7 @@ async function main() {
         select.appendChild(icon);
         label.appendChild(select);
       } else if (
-        item.type === 'cell' || 
-        item.type === 'page'
-      ) {
+        item.type === 'cell' || item.type === 'page') {
         if ( item.desc ) {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
@@ -690,12 +688,12 @@ document.getElementById('install').addEventListener('click', () => {
             </div>
             <div class="box-body">
               <div id="sign-in">
-                <button id="install" type="button" class="but radius jb-pink padding-lg  btn-block">
+                <button id="install" type="button" class="but radius jb-yellow padding-lg  btn-block">
                   立即更新
                 </button>
               </div>
             </div>
-            <p class="social-separator separator">95度茅台</p>
+            <p class="social-separator separator separator-center">95度茅台</p>
           </div>
         </div>
       </div>
@@ -703,7 +701,7 @@ document.getElementById('install').addEventListener('click', () => {
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
         }, 1200);
-        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll', qj_loading: '1' };
+        window._win = { uri: 'https://zibll.com/wp-content/themes/zibll', qj_loading: '1' };
       </script>
       `
       
@@ -748,7 +746,18 @@ document.getElementById('install').addEventListener('click', () => {
         <div id="scrollImg">
           ${previewImgs.map(img => `<img src="${img}">`).join('')}
         </div>
-      </div>`; 
+      </div>
+      <div class="popup" id="popup">
+        <p>Good Luck</p>
+      </div>
+      <script>
+        const popupTips = document.getElementById("popup").classList;
+        setTimeout(() => popupTips.add("show", "fd"), 1000);
+        setTimeout(() => {
+          popupTips.remove("fd");
+          setTimeout(() => popupTips.remove("show"), 1500);
+        }, 3500);
+      </script>`; 
     } else {
       const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
       const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
@@ -823,7 +832,7 @@ document.getElementById('install').addEventListener('click', () => {
           ]
         },
         async ([{ value }]) => {
-          const result = value.match(/^\d+$/)[0] ? settings[name] = Number(value) : settings[name];
+          const result = /^\d+$/.test(value) ? settings[name] = Number(value) : settings[name];
           writeSettings(settings);
           resolve(result);
         })
@@ -899,7 +908,7 @@ document.getElementById('install').addEventListener('click', () => {
           const bgImagePath = fm.fileExists(getBgImage());
           if ( bgImagePath ) {
             fm.remove(getBgImage());
-            notify('删除成功', '桌面组件稍后将自动刷新');
+            notify('已删除背景图', '桌面组件稍后将自动刷新');
           }
           break;
         case 'background':
