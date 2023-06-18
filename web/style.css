@@ -269,6 +269,8 @@ a:focus,a:hover {
   animation: light 4s ease-in-out infinite;
   margin-bottom: 10px;
   transition: 0.5s;
+  width: 95;
+  height: 95;
 }
 
 .avatarInfo {
