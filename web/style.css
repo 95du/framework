@@ -234,15 +234,6 @@ a:focus,a:hover {
   background-color: rgba(128, 128, 128, 0.5);
 }
 
-.sign-content {
-  padding: 20px 0;
-}
-
-.sign-img {
-  position: absolute;
-  padding-right: 40%;
-}
-
 .sign-logo {
   display: flex;
   justify-content: center;
@@ -264,6 +255,10 @@ a:focus,a:hover {
 
 /** 头像呼吸光环旋转放大开始 **/
 
+.avatarInfo {
+  text-align: center;
+}
+
 .avatar {
   border-radius: 50%;
   animation: light 4s ease-in-out infinite;
@@ -271,10 +266,6 @@ a:focus,a:hover {
   transition: 0.5s;
   width: 95px;
   height: 95px;
-}
-
-.avatarInfo {
-  text-align: center;
 }
 
 .avatar:hover {
