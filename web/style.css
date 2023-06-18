@@ -649,13 +649,9 @@ input[type='checkbox'][role='switch']:checked::before {
     --checkbox: #454545;
     --select: 0.1px solid #000;
   }
-  
-  .white-theme {
-    --blur-bg: rgba(50,51,53,0.8);
-  }
-  
-  .dark-theme {
-    --blur-bg: rgba(50,51,53,0.8);
+    
+  .white-theme, .dark-theme {
+    --blur-bg: rgba(50, 51, 53, 0.8);
   }
 
   body {
