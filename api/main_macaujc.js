@@ -88,7 +88,7 @@ async function main() {
   // 获取头像图片
   const getAvatarImg = () => {
     const avatarImgPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
-    return fm.joinPath(avatarImgPath, Script.name() + '.png');
+    return fm.joinPath(avatarImgPath, 'userSetAvatar.png');
   };
   
   /**
@@ -663,15 +663,14 @@ document.getElementById('install').addEventListener('click', () => {
   
     // 主菜单头像信息
     const mainMenuTop = async () => {
-      const avatar = `    
-      <div class="avatarInfo">  
+      const avatar = `
+      <div class="avatarInfo">
         <span class="signin-loader">
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img id="hubImg" src="${appleHub}" width="200" height="40">
-        <br>
-        <a class="display-name" id="store">组件商店</a>
+        <img id="hubImg" src="${appleHub}" class="custom-img">
+        <div class="display-name" id="store">组件商店</div>
       </div>
       `
       
@@ -679,7 +678,7 @@ document.getElementById('install').addEventListener('click', () => {
       <div class="modal fade" id="u_sign" role="dialog">
         <div class="modal-dialog">
           <div class="sign zib-widget blur-bg relative">
-            <div class="sign-logo box-body">
+            <div class="box-body sign-logo">
               <img src="${appleHub}" class="lazyload">
             </div>
             <div class="box-body">
@@ -687,14 +686,14 @@ document.getElementById('install').addEventListener('click', () => {
                 ${scriptName}
               </div>
               <a class="muted-color px30 display-name-container">
-                <div id="myName" class="update-content">Version ${version}</div></a>
+                <div class="update-content">Version ${version}</div></a>
               <br />
               <div class="form-label-title"> <li>${updateDate}&nbsp;🔥</li> <li>修复已知问题</li> <li>性能优化，改进用户体验</li>
               </div>
             </div>
             <div class="box-body">
               <div id="sign-in">
-                <button id="install" type="button" class="but radius jb-yellow padding-lg  btn-block">
+                <button id="install" type="button" class="but radius jb-yellow padding-lg btn-block">
                   立即更新
                 </button>
               </div>
@@ -896,7 +895,7 @@ document.getElementById('install').addEventListener('click', () => {
           fm.writeImage(
             getAvatarImg(), avatar
           );
-          notify('设置成功', '重新运行即可显示更新后的头像。');
+          Safari.open('scriptable:///run/' + encodeURIComponent(uri));
           break;
         case 'telegram':
           Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);  
@@ -1220,7 +1219,7 @@ document.getElementById('install').addEventListener('click', () => {
         items: [
           {
             name: "version",
-            label: "当前版本",
+            label: "组件版本",
             type: "cell",
             icon: {
               name: 'externaldrive.fill', 
