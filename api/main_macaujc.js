@@ -85,7 +85,13 @@ async function main() {
     return fm.joinPath(bgPath, Script.name() + '.jpg');
   };
   
-  /**  
+  // 获取头像图片
+  const getAvatarImg = () => {
+    const avatarImgPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
+    return fm.joinPath(avatarImgPath, Script.name() + '.png');
+  };
+  
+  /**
    * 弹出一个通知
    * @param {string} title
    * @param {string} body
@@ -99,7 +105,7 @@ async function main() {
   };
   
   /**
-   * 跳转到安装页面
+   * 指定模块页面
    * @param { string } time
    * @param { string } color
    * @param { string } module
@@ -144,7 +150,7 @@ async function main() {
   };
   
   /**
-   * Download update Script
+   * Download Update Script
    * @param { string } string
    */
   const updateVersion = async () => {
@@ -417,8 +423,8 @@ async function main() {
       `${rootUrl}img/picture/appleHub_${logoColor}.png`
     ));
     
-    const authorAvatar = await toBase64(await getCacheImage(
-      'author.png', 
+    const authorAvatar = await toBase64(fm.fileExists(getAvatarImg()) ? fm.readImage(getAvatarImg()) : await getCacheImage(
+      'author.png',
       `${rootUrl}img/icon/4qiao.png`
     ));
     
@@ -660,7 +666,7 @@ document.getElementById('install').addEventListener('click', () => {
       const avatar = `    
       <div class="avatarInfo">  
         <span class="signin-loader">
-          <img src="${authorAvatar}" width="95" height="95" class="lazyload avatar avatar-id-0"/>
+          <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
         <img id="hubImg" src="${appleHub}" width="200" height="40">
@@ -671,13 +677,13 @@ document.getElementById('install').addEventListener('click', () => {
       
       const popup = `      
       <div class="modal fade" id="u_sign" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog">
           <div class="sign zib-widget blur-bg relative">
             <div class="sign-logo box-body">
               <img src="${appleHub}" class="lazyload">
             </div>
             <div class="box-body">
-              <div class="title-h-center fa-2x hh popup-title">
+              <div class="title-h-center fa-2x popup-title">
                 ${scriptName}
               </div>
               <a class="muted-color px30 display-name-container">
@@ -747,11 +753,11 @@ document.getElementById('install').addEventListener('click', () => {
           ${previewImgs.map(img => `<img src="${img}">`).join('')}
         </div>
       </div>
-      <div class="popup" id="popup">
+      <div class="popup" id="store">
         <p>Good Luck</p>
       </div>
       <script>
-        const popupTips = document.getElementById("popup").classList;
+        const popupTips = document.getElementById("store").classList;
         setTimeout(() => popupTips.add("show", "fd"), 1000);
         setTimeout(() => {
           popupTips.remove("fd");
@@ -818,8 +824,7 @@ document.getElementById('install').addEventListener('click', () => {
      * @param data
      * @returns {Promise<string>}
      */
-    const input = async (data) => {
-      const { label, message, name } = data;
+    const input = async ({ label, message, name } = data) => {
       return new Promise(resolve => {
         generateInputAlert({
           title: label,
@@ -887,15 +892,19 @@ document.getElementById('install').addEventListener('click', () => {
       
       switch (code) {
         case 'setAvatar':
-          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
-          break
+          const avatar = await Photos.fromLibrary();
+          fm.writeImage(
+            getAvatarImg(), avatar
+          );
+          notify('设置成功', '重新运行即可显示更新后的头像。');
+          break;
         case 'telegram':
           Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);  
           break;
         case 'changeSettings':
           Object.assign(settings, data);
           writeSettings(settings);
-          break
+          break;
         case 'preview':
           await importModule(await webModule(scrName, scrUrl)).main();
           break;
@@ -903,7 +912,7 @@ document.getElementById('install').addEventListener('click', () => {
           const image = await Photos.fromLibrary();
           await fm.writeImage(getBgImage(), image);
           notify('设置成功', '桌面组件稍后将自动刷新');
-          break
+          break;
         case 'clearBgImg':
           const bgImagePath = fm.fileExists(getBgImage());
           if ( bgImagePath ) {
