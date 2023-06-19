@@ -669,8 +669,8 @@ document.getElementById('install').addEventListener('click', () => {
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img id="hubImg" src="${appleHub}" class="custom-img">
-        <div class="display-name" id="store">组件商店</div>
+        <img id="hubImg" src="${appleHub}" class="custom-img"><br>
+        <a class="display-name" id="store">组件商店</a>
       </div>
       `
       
