@@ -52,7 +52,7 @@ td, th {
   position: relative;
   width: auto;
   margin: 70px;
-  top: -5.5%;
+  top: -6%;
 }
 
 .modal-backdrop {
@@ -82,8 +82,8 @@ body {
   --main-shadow: rgba(116, 116, 116, 0.08);
   --main-bg-color: #fff;
   --main-border-color: rgba(50, 50, 50, 0.06);
-  --main-radius: 27px;
-  --blur-bg: rgba(255, 255, 255, 0.8);
+  --main-radius: 25px;
+  --blur-bg: rgba(255, 255, 255, 0.75);
 }
 
 a:focus,a:hover {
