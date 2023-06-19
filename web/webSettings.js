@@ -85,7 +85,13 @@ async function main() {
     return fm.joinPath(bgPath, Script.name() + '.jpg');
   };
   
-  /**  
+  // 获取头像图片
+  const getAvatarImg = () => {
+    const avatarImgPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
+    return fm.joinPath(avatarImgPath, 'userSetAvatar.png');
+  };
+  
+  /**
    * 弹出一个通知
    * @param {string} title
    * @param {string} body
@@ -99,7 +105,7 @@ async function main() {
   };
   
   /**
-   * 跳转到安装页面
+   * 指定模块页面
    * @param { string } time
    * @param { string } color
    * @param { string } module
@@ -144,7 +150,7 @@ async function main() {
   };
   
   /**
-   * Download update Script
+   * Download Update Script
    * @param { string } string
    */
   const updateVersion = async () => {
@@ -417,8 +423,8 @@ async function main() {
       `${rootUrl}img/picture/appleHub_${logoColor}.png`
     ));
     
-    const authorAvatar = await toBase64(await getCacheImage(
-      'author.png', 
+    const authorAvatar = await toBase64(fm.fileExists(getAvatarImg()) ? fm.readImage(getAvatarImg()) : await getCacheImage(
+      'author.png',
       `${rootUrl}img/icon/4qiao.png`
     ));
     
@@ -531,9 +537,7 @@ async function main() {
         select.appendChild(icon);
         label.appendChild(select);
       } else if (
-        item.type === 'cell' || 
-        item.type === 'page'
-      ) {
+        item.type === 'cell' || item.type === 'page') {
         if ( item.desc ) {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
@@ -659,43 +663,42 @@ document.getElementById('install').addEventListener('click', () => {
   
     // 主菜单头像信息
     const mainMenuTop = async () => {
-      const avatar = `    
-      <div class="avatarInfo">  
+      const avatar = `
+      <div class="avatarInfo">
         <span class="signin-loader">
-          <img src="${authorAvatar}" width="95" height="95" class="lazyload avatar avatar-id-0"/>
+          <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img id="hubImg" src="${appleHub}" width="200" height="40">
-        <br>
+        <img id="hubImg" src="${appleHub}" class="custom-img"><br>
         <a class="display-name" id="store">组件商店</a>
       </div>
       `
       
       const popup = `      
       <div class="modal fade" id="u_sign" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog">
           <div class="sign zib-widget blur-bg relative">
-            <div class="sign-logo box-body">
+            <div class="box-body sign-logo">
               <img src="${appleHub}" class="lazyload">
             </div>
             <div class="box-body">
-              <div class="title-h-center fa-2x hh popup-title">
+              <div class="title-h-center fa-2x popup-title">
                 ${scriptName}
               </div>
               <a class="muted-color px30 display-name-container">
-                <div id="myName" class="update-content">Version ${version}</div></a>
+                <div class="update-content">Version ${version}</div></a>
               <br />
               <div class="form-label-title"> <li>${updateDate}&nbsp;🔥</li> <li>修复已知问题</li> <li>性能优化，改进用户体验</li>
               </div>
             </div>
             <div class="box-body">
               <div id="sign-in">
-                <button id="install" type="button" class="but radius jb-pink padding-lg  btn-block">
+                <button id="install" type="button" class="but radius jb-yellow padding-lg btn-block">
                   立即更新
                 </button>
               </div>
             </div>
-            <p class="social-separator separator">95度茅台</p>
+            <p class="social-separator separator separator-center">95度茅台</p>
           </div>
         </div>
       </div>
@@ -703,7 +706,7 @@ document.getElementById('install').addEventListener('click', () => {
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
         }, 1200);
-        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll', qj_loading: '1' };
+        window._win = { uri: 'https://zibll.com/wp-content/themes/zibll', qj_loading: '1' };
       </script>
       `
       
@@ -748,7 +751,18 @@ document.getElementById('install').addEventListener('click', () => {
         <div id="scrollImg">
           ${previewImgs.map(img => `<img src="${img}">`).join('')}
         </div>
-      </div>`; 
+      </div>
+      <div class="popup" id="store">
+        <p>Good Luck</p>
+      </div>
+      <script>
+        const popupTips = document.getElementById("store").classList;
+        setTimeout(() => popupTips.add("show", "fd"), 1000);
+        setTimeout(() => {
+          popupTips.remove("fd");
+          setTimeout(() => popupTips.remove("show"), 1500);
+        }, 3500);
+      </script>`; 
     } else {
       const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
       const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
@@ -809,8 +823,7 @@ document.getElementById('install').addEventListener('click', () => {
      * @param data
      * @returns {Promise<string>}
      */
-    const input = async (data) => {
-      const { label, message, name } = data;
+    const input = async ({ label, message, name } = data) => {
       return new Promise(resolve => {
         generateInputAlert({
           title: label,
@@ -823,7 +836,7 @@ document.getElementById('install').addEventListener('click', () => {
           ]
         },
         async ([{ value }]) => {
-          const result = value.match(/^\d+$/)[0] ? settings[name] = Number(value) : settings[name];
+          const result = /^\d+$/.test(value) ? settings[name] = Number(value) : settings[name];
           writeSettings(settings);
           resolve(result);
         })
@@ -878,15 +891,19 @@ document.getElementById('install').addEventListener('click', () => {
       
       switch (code) {
         case 'setAvatar':
-          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
-          break
+          const avatar = await Photos.fromLibrary();
+          fm.writeImage(
+            getAvatarImg(), avatar
+          );
+          Safari.open('scriptable:///run/' + encodeURIComponent(uri));
+          break;
         case 'telegram':
           Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);  
           break;
         case 'changeSettings':
           Object.assign(settings, data);
           writeSettings(settings);
-          break
+          break;
         case 'preview':
           await importModule(await webModule(scrName, scrUrl)).main();
           break;
@@ -894,12 +911,12 @@ document.getElementById('install').addEventListener('click', () => {
           const image = await Photos.fromLibrary();
           await fm.writeImage(getBgImage(), image);
           notify('设置成功', '桌面组件稍后将自动刷新');
-          break
+          break;
         case 'clearBgImg':
           const bgImagePath = fm.fileExists(getBgImage());
           if ( bgImagePath ) {
             fm.remove(getBgImage());
-            notify('删除成功', '桌面组件稍后将自动刷新');
+            notify('已删除背景图', '桌面组件稍后将自动刷新');
           }
           break;
         case 'background':
@@ -1202,7 +1219,7 @@ document.getElementById('install').addEventListener('click', () => {
         items: [
           {
             name: "version",
-            label: "当前版本",
+            label: "组件版本",
             type: "cell",
             icon: {
               name: 'externaldrive.fill', 
