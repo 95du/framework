@@ -193,7 +193,7 @@ async function main() {
         title: 'Telegram',
         val: '>',
         onClick: async () => {
-          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);
+          Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
         }
       },
       {
@@ -1004,15 +1004,16 @@ async function main() {
       // interval 2
       await gapRow(table);
   
-      // video Row
-      const videoRow = new UITableRow();
-      videoRow.height = 70;
-      const videoText = videoRow.addButton('Animusic HD Pipe Dreams Video');
-      videoText.centerAligned();
-      videoText.onTap = async () => {
-        await Safari.openInApp(atob('aHR0cHM6Ly9zd2VpeGluZmlsZS5oaXNlbnNlLmNvbS9tZWRpYS9NMDAvNzIvNUEvQ2g0RnlHT1l0dy1BSTI4Q0FPRDkzNDk1Y2hVMzMxLm1wNA=='), false);
+      // telegramRow
+      const telegramRow = new UITableRow();
+      telegramRow.height = 70;
+      const telegram = telegramRow.addButton('加入 Scriptable 小组件交流群');
+      telegram.widthWeight = 0.3;
+      telegram.centerAligned();
+      telegram.onTap = async () => {
+        Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
       };
-      table.addRow(videoRow);
+      table.addRow(telegramRow);
   
       // bottom interval
       const bottom = new UITableRow();
