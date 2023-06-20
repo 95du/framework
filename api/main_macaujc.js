@@ -898,7 +898,7 @@ document.getElementById('install').addEventListener('click', () => {
           Safari.open('scriptable:///run/' + encodeURIComponent(uri));
           break;
         case 'telegram':
-          Safari.openInApp('https://t.me/+ViT7uEUrIUV0B_iy', false);  
+          Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);  
           break;
         case 'changeSettings':
           Object.assign(settings, data);
