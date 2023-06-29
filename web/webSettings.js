@@ -288,7 +288,7 @@ async function main() {
    * @returns { Promise<number> }
    */
   const generateAlert = async (title, message, options) => {
-    let alert = new Alert();
+    const alert = new Alert();
     alert.title = title
     alert.message = message
     for (const option of options) {
@@ -486,7 +486,7 @@ async function main() {
     }
     
     const formData = {};
-    const createFormItem = (item) => {
+    const createFormItem = ( item ) => {
       const value = settings[item.name] ?? item.default ?? null
       formData[item.name] = value;
       const label = document.createElement("label");
@@ -669,7 +669,7 @@ document.getElementById('install').addEventListener('click', () => {
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img id="hubImg" src="${appleHub}" class="custom-img"><br>
+        <img src="${appleHub}" class="custom-img"><br>
         <a class="display-name" id="store">组件商店</a>
       </div>
       `
@@ -678,7 +678,7 @@ document.getElementById('install').addEventListener('click', () => {
       <div class="modal fade" id="u_sign" role="dialog">
         <div class="modal-dialog">
           <div class="sign zib-widget blur-bg relative">
-            <div class="box-body sign-logo">
+            <div id="appleHub" class="box-body sign-logo">
               <img src="${appleHub}" class="lazyload">
             </div>
             <div class="box-body">
@@ -706,15 +706,14 @@ document.getElementById('install').addEventListener('click', () => {
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
         }, 1200);
-        window._win = { uri: 'https://zibll.com/wp-content/themes/zibll', qj_loading: '1' };
+        window._win = { uri: 'https://zibll.com/wp-content/themes/zibll', loading: '0' };
       </script>
       `
       
       const songId = [
         '8fk9B72BcV2',
         '8duPZb8BcV2',
-        '8fAWh80BcV2',
-        '8t84tf5BcV2'
+        '8fAWh80BcV2'
       ];
       const randomId = songId[Math.floor(Math.random() * songId.length)];
       const music = `
@@ -756,7 +755,8 @@ document.getElementById('install').addEventListener('click', () => {
         <p>Good Luck</p>
       </div>
       <script>
-        const popupTips = document.getElementById("store").classList;
+        const popupTips = document.getElementById("store")
+        .classList;
         setTimeout(() => popupTips.add("show", "fd"), 1000);
         setTimeout(() => {
           popupTips.remove("fd");
@@ -1009,6 +1009,20 @@ document.getElementById('install').addEventListener('click', () => {
               color: '#43CD80'
             },
             desc: settings.cookie ? '已登录' : '未登录'
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '组件商店',
+            name: 'store',
+            type: 'cell',
+            icon: {
+              name: 'bag.fill',  
+              color: 'FF6800'
+            }
           }
         ]
       }
