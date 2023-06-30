@@ -310,7 +310,7 @@ a:focus,a:hover {
 /** 彩色昵称开始 **/
 
 .display-name {
-  background-image: -webkit-linear-gradient(90deg, #07c160, #fb6bea 25%, #3aedff 50%, #fb6bea 75%, #28d079);
+  background-image: -webkit-linear-gradient(90deg, #07c160, #fb6bea 25%, #3aedff 50%, #fb6bea 5%, #28d079);
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   background-size: 100% 600%;
