@@ -670,7 +670,7 @@ document.getElementById('install').addEventListener('click', () => {
         </span>
         <div class="interval"></div>
         <img src="${appleHub}" class="custom-img"><br>
-        <a class="display-name" id="store">组件商店</a>
+        <a class="but display-name" id="store">组件商店</a>
       </div>
       `
       
