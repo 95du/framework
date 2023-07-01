@@ -447,12 +447,13 @@ button .iconfont {
   }
 }
 
-/* 提示框 */
+/* 提示框开始 */
+
 .popup {
   position: fixed;
-  top: 90%;
+  bottom: -50px;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   background-color: #1B9AF1;
   color: #fff;
   border-radius: 50px;
@@ -464,15 +465,16 @@ button .iconfont {
   justify-content: center;
   align-items: center;
   text-align: center;
-  transition: opacity 0.5s ease-in-out;
+  transition: bottom 0.7s ease-in-out, opacity 0.5s ease-in-out;
 }
 
 .popup.show {
+  bottom: 6%;
   opacity: 1;
 }
 
 .fd {
-  animation: fd .15s ease-in-out;
+  animation: fd 0.15s ease-in-out;
 }
 
 @keyframes fd {
@@ -483,6 +485,8 @@ button .iconfont {
     opacity: 1;
   }
 }
+
+/* 提示框结束 */
 
 .form-item {
   display: flex;
