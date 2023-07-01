@@ -73,10 +73,10 @@ td, th {
   opacity: .5;
 }
 
-/* style 间隔 */
+/* style 间隔 f04494 */
 
 body {
-  --theme-color: #f04494;
+  --theme-color: #ff6800;
   --focus-color: var(--theme-color);
   --main-color: #4e5358;
   --main-shadow: rgba(116, 116, 116, 0.08);
@@ -310,7 +310,7 @@ a:focus,a:hover {
 /** 彩色昵称开始 **/
 
 .display-name {
-  background-image: -webkit-linear-gradient(90deg, #07c160, #fb6bea 25%, #3aedff 50%, #fb6bea 5%, #28d079);
+  background-image: -webkit-linear-gradient(90deg, #07c160, #fb6bea 25%, #3aedff 50%, #fb6bea 75%, #28d079);
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   background-size: 100% 600%;
