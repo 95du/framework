@@ -316,8 +316,8 @@ a:focus,a:hover {
   background-size: 100% 600%;
   animation: wzw 10s linear infinite;
   font-size: 18px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 @keyframes wzw {
