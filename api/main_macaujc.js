@@ -670,7 +670,7 @@ document.getElementById('install').addEventListener('click', () => {
         </span>
         <div class="interval"></div>
         <img src="${appleHub}" class="custom-img"><br>
-        <a class="but display-name" id="store">组件商店</a>
+        <a id="store" class="but display-name">组件商店</a>
       </div>
       `
       
@@ -686,8 +686,8 @@ document.getElementById('install').addEventListener('click', () => {
                 ${scriptName}
               </div>
               <a class="muted-color px30 display-name-container">
-                <div class="update-content">Version ${version}</div></a>
-              <br />
+                <div class="update-content but">Version ${version}</div>
+              </a><br>
               <div class="form-label-title"> <li>${updateDate}&nbsp;🔥</li> <li>修复已知问题</li> <li>性能优化，改进用户体验</li>
               </div>
             </div>
@@ -752,7 +752,7 @@ document.getElementById('install').addEventListener('click', () => {
         </div>
       </div>
       <div class="popup" id="store">
-        <p>Good Luck</p>
+        <p>Don't touch me</p>
       </div>
       <script>
         const popupTips = document.getElementById("store")
