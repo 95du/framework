@@ -327,7 +327,7 @@ a:focus,a:hover {
   padding-right: 5px;
   color: transparent;
   animation: hue 3s linear infinite;
-  background-image: linear-gradient(to right, rgb(0,128,255), rgb(8,0,255), rgb(128,0,255), rgb(255,0,255), rgb(255,0,128));
+  background-image: linear-gradient(to right, rgb(0,128,255), rgb(8,0,255), rgb(128,0,255), rgb(255,128,0), rgb(255,0,255), rgb(255,0,128));
   -webkit-background-clip: text;
 }
 
