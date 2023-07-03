@@ -309,25 +309,24 @@ a:focus,a:hover {
 
 /** 彩色昵称开始 **/
 
-.display-name {
-  background-image: -webkit-linear-gradient(90deg, #07c160, #fb6bea 25%, #3aedff 50%, #fb6bea 75%, #28d079);
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
-  background-size: 100% 600%;
-  animation: wzw 10s linear infinite;
-  font-size: 18px;
-  padding-left: 10px;
-  padding-right: 10px;
+@keyframes hue {
+  from {
+    filter: hue-rotate(0);
+  }
+
+  to {
+    filter: hue-rotate(360deg);
+  }
 }
 
-@keyframes wzw {
-  0% {
-    background-position: 0 0;
-  }
-
-  100% {
-    background-position: 0 -300%;
-  }
+.rainbow-text {
+  position: relative;
+  font-weight: 500;
+  font-size: 18px;
+  color: transparent;
+  animation: hue 2s linear infinite;
+  background-image: linear-gradient(to right, rgb(255,0,0), rgb(255,128,0), rgb(0,128,255), rgb(0,0,255), rgb(128,0,255), rgb(255,0,255), rgb(255,0,128));
+  -webkit-background-clip: text;
 }
 
 /** 彩色昵称结束 **/
