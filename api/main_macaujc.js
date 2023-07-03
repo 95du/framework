@@ -715,7 +715,7 @@ document.getElementById('install').addEventListener('click', () => {
       const songId = [
         '8fk9B72BcV2',
         '8duPZb8BcV2',
-        '6pDh5fdBdV2'
+        '6pM373bBdV2'
       ];
       const randomId = songId[Math.floor(Math.random() * songId.length)];
       const music = `
@@ -754,7 +754,7 @@ document.getElementById('install').addEventListener('click', () => {
         </div>
       </div>
       <div class="popup" id="store">
-        <p>Don't touch me</p>
+        <p>Hey, 别碰我</p>
       </div>
       <script>
         const popupTips = document.getElementById("store")
