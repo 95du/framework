@@ -715,7 +715,7 @@ document.getElementById('install').addEventListener('click', () => {
       const songId = [
         '8fk9B72BcV2',
         '8duPZb8BcV2',
-        '8fAWh80BcV2'
+        '6pDh5fdBdV2'
       ];
       const randomId = songId[Math.floor(Math.random() * songId.length)];
       const music = `
