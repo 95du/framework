@@ -52,9 +52,9 @@ async function main() {
     update: true,
     topStyle: true,
     music: true,
-    textLightColor: '#34C759',
-    textDarkColor: '#FF9500',
-    titleLightColor: '#000000',
+    textLightColor: '#000000',
+    textDarkColor: '#FFFFFF',
+    titleLightColor: '#34C759',
     gradient: '#BCBBBB',
     bufferTime: 240
   };
@@ -670,7 +670,7 @@ document.getElementById('install').addEventListener('click', () => {
         </span>
         <div class="interval"></div>
         <img src="${appleHub}" class="custom-img"><br>
-        <a id="store" class="rainbow-text but">组件商店</a>
+        <a id="store" class="rainbow-text but">Widget Store</a>
       </div>
       `
       
