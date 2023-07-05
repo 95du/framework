@@ -5,7 +5,7 @@
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
-  const version = '1.0.2'
+  const version = '1.0.3'
   const updateDate = '2023年05月18日'
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
@@ -52,9 +52,9 @@ async function main() {
     update: true,
     topStyle: true,
     music: true,
-    textLightColor: '#34C759',
-    textDarkColor: '#FF9500',
-    titleLightColor: '#000000',
+    textLightColor: '#000000',
+    textDarkColor: '#FFFFFF',
+    titleLightColor: '#34C759',
     gradient: '#BCBBBB',
     bufferTime: 240
   };
@@ -248,6 +248,37 @@ async function main() {
     const x = (size.width - iw) / 2;
     ctx.drawImageInRect(iconImage, new Rect(x, x, iw, iw));
     return ctx.getImage();
+  };
+  
+  /**
+   * drawSquare
+   * @param { Image } image
+   * @param { string } string
+   */
+  const drawSquare = async (img) => {
+    const imgData = Data.fromPNG(img).toBase64String();
+    const html = `
+      <img id="sourceImg" src="data:image/png;base64,${imgData}" />
+      <img id="silhouetteImg" src="" />
+      <canvas id="mainCanvas" />`;
+    const js = `
+      const canvas = document.createElement("canvas");
+      const sourceImg = document.getElementById("sourceImg");
+      const silhouetteImg = document.getElementById("silhouetteImg");
+      const ctx = canvas.getContext('2d');
+      // 裁剪成正方形
+      const size = Math.min(sourceImg.width, sourceImg.height);
+      canvas.width = canvas.height = size;
+      ctx.drawImage(sourceImg, (sourceImg.width - size) / 2, (sourceImg.height - size) / 2, size, size, 0, 0, size, size);
+      
+      silhouetteImg.src = canvas.toDataURL();
+      output = canvas.toDataURL();
+    `;
+    
+    const wv = new WebView();
+    await wv.loadHTML(html);
+    const base64Image = await wv.evaluateJavaScript(js);
+    return await new Request(base64Image).loadImage();  
   };
   
   /**
@@ -670,7 +701,7 @@ document.getElementById('install').addEventListener('click', () => {
         </span>
         <div class="interval"></div>
         <img src="${appleHub}" class="custom-img"><br>
-        <a id="store" class="rainbow-text but">组件商店</a>
+        <a id="store" class="rainbow-text but">Widget Store</a>
       </div>
       `
       
@@ -895,7 +926,7 @@ document.getElementById('install').addEventListener('click', () => {
         case 'setAvatar':
           const avatar = await Photos.fromLibrary();
           fm.writeImage(
-            getAvatarImg(), avatar
+            getAvatarImg(), await drawSquare(avatar)
           );
           Safari.open('scriptable:///run/' + encodeURIComponent(uri));
           break;
