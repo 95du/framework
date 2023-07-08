@@ -5,7 +5,7 @@
 async function main() {
   const uri = Script.name();
   const scriptName = '组件商店'
-  const version = '1.0.1'
+  const version = '1.0.0'
   const updateDate = '2023年07月07日'
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
@@ -1149,7 +1149,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '交管12123_2',
             desc: '违章信息、累积记分',
-            rightDesc: '1.0.5',
+            rightDesc: '1.2.7',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/framework/raw/master/mian/module12123.js',
             icon: `${rootUrl}img/icon/new12123.png`
@@ -1179,7 +1179,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '交管12123',
             desc: '违章信息，累积记分',
-            rightDesc: '1.0.3',
+            rightDesc: '1.2.5',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/bottomBar.js',
             icon: `${rootUrl}img/icon/12123.png`
@@ -1187,7 +1187,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '全国油价',
             desc: '每日油价，油价预警',
-            rightDesc: '1.0.3',
+            rightDesc: '1.2.0',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/bottomBar.js',
             icon: `${rootUrl}img/icon/map.gif`
@@ -1195,7 +1195,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '负一屏底栏',
             desc: '高仿通知样式，未来两小时天气',
-            rightDesc: '1.0.3',
+            rightDesc: '1.2.0',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/bottomBar.js',
             icon: `${rootUrl}img/icon/bottomBars.png`
@@ -1203,7 +1203,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '南网在线',
             desc: '昨日用电量，月用电量，账单',
-            rightDesc: '1.0.2',
+            rightDesc: '1.0.1',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/framework/raw/master/mian/module_south_PowerGrid.js',
             icon: `${rootUrl}img/icon/electric.png`
@@ -1211,7 +1211,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '随机组件',
             desc: '随机切换多个小组件',
-            rightDesc: '1.0.5',
+            rightDesc: '1.1.5',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/randomScript.js',
             icon: `${rootUrl}img/icon/random.png`
@@ -1219,7 +1219,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '房屋估值',
             desc: '幸福里全国房屋估值',
-            rightDesc: '1.0.5',
+            rightDesc: '1.0.0',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/housePrice.js',
             icon: `${rootUrl}img/icon/house.png`
@@ -1227,7 +1227,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '澳门六合彩',
             desc: '新旧版澳门六合彩每日开奖结果',
-            rightDesc: '1.0.5',
+            rightDesc: '1.0.2',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/framework/raw/master/mian/module_macaujc.js',
             icon: `${rootUrl}img/icon/macaujc.png`
@@ -1249,7 +1249,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '京东收支账单',
             desc: '京东收支账单、白条、总资产',
-            rightDesc: '1.0.0',
+            rightDesc: '1.0.3',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_Bill.js',
             icon: `${rootUrl}img/icon/jingDong.png`
@@ -1257,7 +1257,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '京东小白鹅',
             desc: '白条信息、白条等级',
-            rightDesc: '1.0.0',
+            rightDesc: '1.0.3',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/framework/raw/master/mian/moduleJD_baitiao.js',
             icon: `${rootUrl}img/icon/jingDong.png`
@@ -1295,7 +1295,7 @@ document.getElementById('telegram').addEventListener('click', () => {
           {
             label: '清空回收站',
             desc: '一键清空Scriptable回收站',
-            rightDesc: '1.0.2',
+            rightDesc: '1.0.1',
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/cleanTrash.js',
             icon: `${rootUrl}img/icon/cleanFiles.png`
