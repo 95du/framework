@@ -7,7 +7,7 @@
  * Version 1.0.0
  * 2023-07-07
  */
-
+main()
 async function main() {
   const scriptName = '95du_store';
   const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlLy0vcmF3L21hc3Rlci92aXAvbWFpbjk1ZHVTdG9yZS5qcw==');
@@ -77,4 +77,4 @@ async function main() {
     return [null, null];
   }
 };
-module.export = { main }
+module.exports = { main }
