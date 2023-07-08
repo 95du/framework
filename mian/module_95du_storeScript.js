@@ -1,16 +1,16 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: pink; icon-glyph: cloud-download-alt;
-/**
+ /**
  * 组件名称: 小组件商店
  * 小组件作者: 95度茅台
  * Version 1.0.0
  * 2023-07-07
  */
-  
+
 async function main() {
   const scriptName = '95du_store';
-  const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbl85NWR1U2NyaXB0Lmpz');
+  const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdmlwL21haW45NWR1U3RvcmUuanM=');
   const fm = FileManager.local();
   const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
   if (!fm.fileExists(runPath)) {
@@ -76,5 +76,5 @@ async function main() {
     }
     return [null, null];
   }
-}
-module.exports = { main }
+};
+module.export = { main }
