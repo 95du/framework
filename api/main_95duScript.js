@@ -1299,6 +1299,14 @@ document.getElementById('telegram').addEventListener('click', () => {
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/cleanTrash.js',
             icon: `${rootUrl}img/icon/cleanFiles.png`
+          },
+          {
+            label: '清空回收站',
+            desc: '一键清空Scriptable回收站',
+            rightDesc: '1.0.1',
+            type: 'button',
+            scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/cleanTrash.js',
+            icon: `${rootUrl}img/icon/cleanFiles.png`
           }
         ]
       },
