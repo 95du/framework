@@ -603,7 +603,7 @@ async function main() {
     }
     
     body {
-      margin: 85px 0;
+      margin: 75px 0;
       -webkit-font-smoothing: antialiased;
       font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
       accent-color: var(--color-primary);
@@ -1291,14 +1291,6 @@ document.getElementById('telegram').addEventListener('click', () => {
             type: 'button',
             scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/jd_schemeUrl.js',
             icon: `${rootUrl}img/icon/jd_green.png`
-          },
-          {
-            label: '清空回收站',
-            desc: '一键清空Scriptable回收站',
-            rightDesc: '1.0.1',
-            type: 'button',
-            scrUrl: 'https://gitcode.net/4qiao/scriptable/raw/master/api/cleanTrash.js',
-            icon: `${rootUrl}img/icon/cleanFiles.png`
           },
           {
             label: '清空回收站',
