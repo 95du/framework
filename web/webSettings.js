@@ -54,7 +54,7 @@ async function main() {
     music: true,
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
-    titleLightColor: '#34C759',
+    titleLightColor: '#3F8BFF',
     gradient: '#BCBBBB',
     bufferTime: 240
   };
@@ -567,8 +567,7 @@ async function main() {
         select.appendChild(input);
         select.appendChild(icon);
         label.appendChild(select);
-      } else if (
-        item.type === 'cell' || item.type === 'page') {
+      } else if ( item.type === 'cell' || item.type === 'page' ) {
         if ( item.desc ) {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
@@ -703,7 +702,7 @@ document.getElementById('install').addEventListener('click', () => {
         <img src="${appleHub}" class="custom-img"><br>
         <a id="store" class="rainbow-text but">Widget Store</a>
       </div>
-      `
+      `;
       
       const popup = `      
       <div class="modal fade" id="u_sign" role="dialog">
@@ -767,43 +766,43 @@ document.getElementById('install').addEventListener('click', () => {
     };
     
     // 组件效果图
-    const previewImgUrl = [
-      'http://mtw.so/5LXCZT',
-      'http://mtw.so/5SNSCU'
-    ];
-    
-    if (settings.topStyle) {
-      const previewImgs = await Promise.all(previewImgUrl.map(async (item) => {
-        const imgName = decodeURIComponent(item.substring(item.lastIndexOf("/") + 1));
-        const previewImg = await toBase64(await getCacheImage(imgName, item));
-        return previewImg;
-      }));
-      previewImgHtml = `
-      <div id="scrollBox">
-        <div id="scrollImg">
-          ${previewImgs.map(img => `<img src="${img}">`).join('')}
+    previewImgHtml = async () => {
+      const previewImgUrl = [
+        'http://mtw.so/5LXCZT',
+        'http://mtw.so/5SNSCU'
+      ];
+      
+      if ( settings.topStyle ) {
+        const previewImgs = await Promise.all(previewImgUrl.map(async (item) => {
+          const imgName = decodeURIComponent(item.substring(item.lastIndexOf("/") + 1));
+          const previewImg = await toBase64(await getCacheImage(imgName, item));
+          return previewImg;
+        }));
+        return `<div id="scrollBox">
+          <div id="scrollImg">
+            ${previewImgs.map(img => `<img src="${img}">`).join('')}
+          </div>
         </div>
-      </div>
-      <div class="popup" id="store">
-        <p>Hey, 别碰我</p>
-      </div>
-      <script>
-        const popupTips = document.getElementById("store")
-        .classList;
-        setTimeout(() => popupTips.add("show", "fd"), 1000);
-        setTimeout(() => {
-          popupTips.remove("fd");
-          setTimeout(() => popupTips.remove("show"), 1500);
-        }, 3500);
-      </script>`; 
-    } else {
-      const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
-      const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
-      const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
-      previewImgHtml = `<img id="store" src="${previewImg}" class="preview-img">`;
+        <div class="popup" id="store"><p>别碰我</p>
+        </div>
+        <script>
+          const popupTips = document.getElementById("store")
+          .classList;
+          setTimeout(() => popupTips.add("show", "fd"), 1000);
+          setTimeout(() => {
+            popupTips.remove("fd");
+            setTimeout(() => popupTips.remove("show"), 1500);
+          }, 3500);
+        </script>`; 
+      } else {
+        const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
+        const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
+        const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
+        return `<img id="store" src="${previewImg}" class="preview-img">`
+      }
     };
     
-    // 
+    // HTML
     const html =`
     <html>
       <head>
@@ -812,7 +811,7 @@ document.getElementById('install').addEventListener('click', () => {
         <style>${style}</style>
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
-        ${avatarInfo ? await mainMenuTop() : previewImage ? previewImgHtml : ''}
+        ${avatarInfo ? await mainMenuTop() : previewImage ? await previewImgHtml() : ''}
         ${head || ''}
         <section id="settings">
         </section>
@@ -844,7 +843,7 @@ document.getElementById('install').addEventListener('click', () => {
         message = '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
         options = ['取消', '清除']
       );
-      if (action == 1) {
+      if ( action == 1 ) {
         fm.remove(cache);
         notify('清除成功', '正在重新获取数据，请耐心等待 5 秒。');  
         Timer.schedule(1500, false, () => { Safari.open('scriptable:///run/' + encodeURIComponent(uri)) });
@@ -931,7 +930,7 @@ document.getElementById('install').addEventListener('click', () => {
           Safari.open('scriptable:///run/' + encodeURIComponent(uri));
           break;
         case 'telegram':
-          Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);  
+          Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
           break;
         case 'changeSettings':
           Object.assign(settings, data);
