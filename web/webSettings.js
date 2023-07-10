@@ -136,6 +136,13 @@ async function main() {
     return null;
   };
   
+  // download store
+  const myStore = async () => {
+    const script = await new Request('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js').loadString();
+    const fm = FileManager.iCloud();
+    fm.writeString(fm.documentsDirectory() + '/95° 小组件商店.js', script);
+   };
+  
   /**
    * 版本更新时弹出窗口
    * @returns {String} string
@@ -402,35 +409,12 @@ async function main() {
   
   // 测试登录
   const getCookie = async () => {  
-    const webView = new WebView();  
-    await webView.loadURL('https://plogin.m.jd.com/login/login?appid=300&returnurl=https%3A%2F%2Fwqs.jd.com%2Fmy%2Faccountv2.shtml%3Fsceneval%3D2%26jxsid%3D16323729562173504755%26ptag%3D7155.1.2&source=wq_passport');
-    await webView.present(false);
-    const req = new Request('https://ms.jr.jd.com/gw/generic/bt/h5/m/firstScreenNew',);
-    req.method = 'POST';
-    req.body = `{ clientType: ios }`
-    await req.loadJSON();
-    const cookies = req.response.cookies;
-    const cookie = [];
-    cookies.forEach((item) => {
-      const value = `${item.name}=${item.value}`;
-      if (item.name === 'pt_key')
-        cookie.push(value);
-      if (item.name === 'pt_pin')
-        cookie.push(value);
-    });
-    
-    const sign = new Request('https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld')
-    sign.method = 'POST'
-    sign.headers = { Referer: 'https://h5.m.jd.com/' }
-    const { code } = await sign.loadJSON()
-    if (code === '0') {
-      return new Promise(resolve => {
-        settings.cookie = cookie.join(';')
-        notify('Cookie获取/更新成功', settings.cookie)
-        writeSettings(settings)
-        resolve('已登录')
-      })
-    }
+    return new Promise(resolve => {
+      settings.cookie = '已登录';
+      notify(settings.cookie, '这只是一个测试的效果');
+      writeSettings(settings)
+      resolve('已登录')
+    })
   };
 
   
@@ -874,7 +858,7 @@ document.getElementById('install').addEventListener('click', () => {
         })
       })
     };
-      
+    
     /**
      * 修改特定 form 表单项的文本
      * @param {string} fieldName
@@ -956,6 +940,7 @@ document.getElementById('install').addEventListener('click', () => {
           break;
         case 'store':
           await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
+          await myStore();
           break;
         case 'install':
           await updateString();
