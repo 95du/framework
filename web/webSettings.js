@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: cog;
-
+main()
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -140,7 +140,7 @@ async function main() {
   const myStore = async () => {
     const script = await new Request('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js').loadString();
     const fm = FileManager.iCloud();
-    fm.writeString(fm.documentsDirectory() + '/95° 小组件商店.js', script);
+    fm.writeString(fm.documentsDirectory() + '/95du_ScriptStore.js', script);
    };
   
   /**
@@ -684,7 +684,7 @@ document.getElementById('install').addEventListener('click', () => {
         </span>
         <div class="interval"></div>
         <img src="${appleHub}" class="custom-img"><br>
-        <a id="store" class="rainbow-text but">Widget Store</a>
+        <a id="store" class="rainbow-text but">Script Store</a>
       </div>
       `;
       
