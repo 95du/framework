@@ -45,14 +45,14 @@ td, th {
 
 .modal-open .modal {
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: auto; /* 纵向滑动 */
 }
 
 .modal-dialog {
   position: relative;
   width: auto;
   margin: 72px;
-  top: -6%;
+  top: -6%; /* 弹窗位置 */
 }
 
 .modal-backdrop {
@@ -73,7 +73,7 @@ td, th {
   opacity: .5;
 }
 
-/* style 间隔 f04494 */
+/* 弹窗 body f04494 */
 
 body {
   --theme-color: #ff6800;
@@ -261,7 +261,7 @@ a:focus,a:hover {
   font-weight: bold;
 }
 
-.update-content {
+.popup-content {
   text-align: center;
   font-size: 16px;
 }
