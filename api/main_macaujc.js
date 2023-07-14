@@ -605,7 +605,7 @@ async function main() {
             item.type === 'switch'
             ? e.target.checked
             : e.target.value;
-          invoke('changeSettings', formData)
+          invoke('changeSettings', formData);
         });
         label.appendChild(input);
       }
@@ -691,7 +691,7 @@ document.getElementById('install').addEventListener('click', () => {
       const popup = `      
       <div class="modal fade" id="u_sign" role="dialog">
         <div class="modal-dialog">
-          <div class="sign zib-widget blur-bg relative">
+          <div class="zib-widget blur-bg relative">
             <div id="appleHub" class="box-body sign-logo">
               <img src="${appleHub}" class="lazyload">
             </div>
@@ -699,19 +699,17 @@ document.getElementById('install').addEventListener('click', () => {
               <div class="title-h-center fa-2x popup-title">
                 ${scriptName}
               </div>
-              <a class="muted-color px30 update-content">
+              <a class="muted-color px30 popup-content">
                 <div class="but">
                   Version ${version}
                 </div>
               </a><br>
-              <div class="form-label-title"> <li>${updateDate}&nbsp;🔥</li> <li>修复已知问题</li> <li>性能优化，改进用户体验</li>
+              <div class="form-label-title"> <li>${updateDate}</li> <li>修复已知问题</li> <li>性能优化，改进用户体验</li>
               </div>
             </div>
             <div class="box-body">
               <div id="sign-in">
-                <button id="install" type="button" class="but radius jb-yellow padding-lg btn-block">
-                  立即更新
-                </button>
+                <button id="install" type="button" class="but radius jb-yellow btn-block">立即更新</button>
               </div>
             </div>
             <p class="social-separator separator separator-center">95度茅台</p>
