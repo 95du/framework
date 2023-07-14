@@ -350,7 +350,7 @@ a:focus,a:hover {
 }
 
 body {
-  margin: 68px 0 90px 0;
+  margin: 70px 0 90px 0;
   -webkit-font-smoothing: antialiased;
   font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
   accent-color: var(--color-primary);
