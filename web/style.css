@@ -1,10 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: cannabis;
-td, th {
-  padding: 0;
-}
-
 .btn-block {
   display: block;
   width: 100%;
@@ -51,8 +47,8 @@ td, th {
 .modal-dialog {
   position: relative;
   width: auto;
-  margin: 72px;
-  top: -6%; /* 弹窗位置 */
+  margin: 78px;
+  top: -7%; /* 弹窗位置 */
 }
 
 .modal-backdrop {
@@ -108,7 +104,7 @@ a:focus,a:hover {
 }
 
 .box-body,.box-header {
-  padding: 20px 20 15px 20;
+  padding: 20px 20px 10px 20px;
 }
 
 .badg.radius,.but.radius,.radius>.but {
