@@ -750,8 +750,8 @@ document.getElementById('install').addEventListener('click', () => {
     // 组件效果图
     previewImgHtml = async () => {
       const previewImgUrl = [
-        'http://mtw.so/5LXCZT',
-        'http://mtw.so/5SNSCU'
+        `${rootUrl}img/picture/macaujc_black.png`,
+        `${rootUrl}img/picture/macaujc_white.png`
       ];
       
       if ( settings.topStyle ) {
@@ -937,7 +937,7 @@ document.getElementById('install').addEventListener('click', () => {
           await importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
           break;
         case 'store':
-          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/main95duStore.js')).main();
+          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/framework/raw/master/mian/module_95du_storeScript.js')).main();
           await myStore();
           break;
         case 'install':
