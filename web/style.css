@@ -84,6 +84,7 @@ body {
   --main-border-color: rgba(50, 50, 50, 0.06);
   --main-radius: 25px;
   --blur-bg: rgba(255, 255, 255, 0.75);
+  --bottom-popup: rgba(255, 255, 255, 0.82);
 }
 
 a:focus,a:hover {
