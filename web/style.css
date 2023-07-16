@@ -501,10 +501,6 @@ button .iconfont {
 /* 抽屉菜单 */
 .popup-container {
   text-align: center;
-  -webkit-backdrop-filter: saturate(5) blur(20px);
-  backdrop-filter: saturate(5) blur(20px);
-  background: var(--bottom-popup);
-  border-radius: 20px;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -513,6 +509,15 @@ button .iconfont {
   z-index: 100;
   transition: height 0.3s ease;
 }
+
+.popup-widget {
+  clear: both;
+  padding: 15px;
+  border-radius: var(--main-radius);
+  margin-bottom: 20px;
+  height: 255px;
+}
+
 
 /* 底部弹窗开始 */
 .chat-message {
