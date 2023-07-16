@@ -340,8 +340,6 @@ a:focus,a:hover {
 }
 /** 彩色昵称结束 **/
 
-
-
 * {
   -webkit-user-select: none;
   user-select: none;
@@ -399,6 +397,7 @@ button .iconfont {
   height: 0px;
 }
 
+/* 预览图片 */
 .preview-img {
   display: block;
   padding: 10px 0 2px 0;
@@ -502,7 +501,7 @@ button .iconfont {
 .popup-container {
   text-align: center;
   position: fixed;
-  bottom: 0;
+  bottom: 10px;
   left: 0;
   right: 0;
   height: 0;
