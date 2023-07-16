@@ -568,7 +568,8 @@ async function main() {
         label.addEventListener('click', (e) => {
           const { name } = item;
           if (name === 'version') {
-            switchDrawerMenu();
+            //switchDrawerMenu();
+            popupOpen();
           }
           const methodName = name === 'preference' || name === 'infoPage' ? 'itemClick' : name;
           invoke(methodName, item);
@@ -721,6 +722,9 @@ document.getElementById('install').addEventListener('click', () => {
         </div>
       </div>
       <script type="text/javascript">
+        function popupOpen() {
+          $('.signin-loader').click()
+        }
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
         }, 1200);
@@ -753,7 +757,7 @@ document.getElementById('install').addEventListener('click', () => {
     // 底部弹窗信息
     const buttonPopup = async () => {  
       const js = `
-      const menuMask = document.querySelector(".popup-mask");
+      const menuMask = document.querySelector(".popup-mask")
       
       const showMask = (callback, isFadeIn) => {
         const targetOpacity = isFadeIn ? 1 : 0;
@@ -768,7 +772,7 @@ document.getElementById('install').addEventListener('click', () => {
             if (callback) callback();
             return;
           }
-          menuMask.style.opacity = opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration;
+          menuMask.style.opacity = opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration
           requestAnimationFrame(
             animate
           );
