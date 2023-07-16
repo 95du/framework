@@ -480,6 +480,8 @@ async function main() {
       --card-background: #fff;
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
+      --typing-indicator: #000;
+      --bottom-popup: rgba(255, 255, 255, 0.82);
     }
     ${cssStyle}`;
     
@@ -565,6 +567,9 @@ async function main() {
         label.appendChild(icon);
         label.addEventListener('click', (e) => {
           const { name } = item;
+          if (name === 'version') {
+            switchDrawerMenu();
+          }
           const methodName = name === 'preference' || name === 'infoPage' ? 'itemClick' : name;
           invoke(methodName, item);
         });
@@ -672,7 +677,7 @@ document.getElementById('install').addEventListener('click', () => {
       invoke('install');
     });
     
-  })()`;
+    })()`;
   
   
     // 主菜单头像信息
@@ -683,23 +688,22 @@ document.getElementById('install').addEventListener('click', () => {
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img src="${appleHub}" class="custom-img"><br>
+        <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img"><br>
         <a id="store" class="rainbow-text but">Script Store</a>
-      </div>
-      `;
+      </div>`;
       
       const popup = `      
       <div class="modal fade" id="u_sign" role="dialog">
         <div class="modal-dialog">
           <div class="zib-widget blur-bg relative">
             <div id="appleHub" class="box-body sign-logo">
-              <img src="${appleHub}" class="lazyload">
+              <img src="${appleHub}">
             </div>
             <div class="box-body">
-              <div class="title-h-center fa-2x popup-title">
+              <div class="title-h-center popup-title">
                 ${scriptName}
               </div>
-              <a class="muted-color px30 popup-content">
+              <a id="notify" class="popup-content">
                 <div class="but">
                   Version ${version}
                 </div>
@@ -723,7 +727,7 @@ document.getElementById('install').addEventListener('click', () => {
         window._win = { uri: 'https://zibll.com/wp-content/themes/zibll', loading: '0' };
       </script>
       `
-      
+      // music
       const songId = [
         '8fk9B72BcV2',
         '8duPZb8BcV2',
@@ -741,10 +745,93 @@ document.getElementById('install').addEventListener('click', () => {
       return `
         ${avatar}
         ${settings.music === true ? music : ''}
-        <!-- 弹窗 -->
         ${popup}
         ${scriptTags.join('\n')}
       `
+    };
+    
+    // 底部弹窗信息
+    const buttonPopup = async () => {  
+      const js = `
+      const menuMask = document.querySelector(".popup-mask");
+      
+      const showMask = (callback, isFadeIn) => {
+        const targetOpacity = isFadeIn ? 1 : 0;
+        const duration = isFadeIn ? 200 : 150;
+        let opacity = isFadeIn ? 0 : 1;
+        const startTime = performance.now();
+      
+        const animate = ( currentTime ) => {
+          const elapsedTime = currentTime - startTime;
+          if ( elapsedTime >= duration ) {
+            menuMask.style.opacity = targetOpacity;
+            if (callback) callback();
+            return;
+          }
+          menuMask.style.opacity = opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration;
+          requestAnimationFrame(
+            animate
+          );
+        };
+        menuMask.style.display = "block";
+        requestAnimationFrame(
+          animate
+        );
+      };
+      
+      function switchDrawerMenu() {
+        const popup = document.querySelector(".popup-container");
+        const chatMsg = document.querySelector(".chat-message");
+        chatMsg.textContent = "";
+      
+        if (popup.style.height === "0px" || popup.style.height !== "255px") {
+          showMask(null, true);
+          popup.style.height = "255px";
+          typeNextChar(); // 开始打字
+        } else {
+          showMask(() => {
+            menuMask.style.display = "none";
+          }, false);
+          popup.style.height = "0px";
+        }
+        
+        function typeNextChar() {
+          chatMsg.textContent = "";
+          let currentChar = 0;
+      
+          function appendNextChar() {
+            if (currentChar < message.length) {
+              chatMsg.textContent += message[currentChar++];
+              chatMsg.innerHTML += '<span class="typing-indicator"></span>';
+              chatMsg.scrollTop = chatMsg.scrollHeight;
+              setTimeout(appendNextChar, 30);
+            } else {
+              const typingInd = chatMsg.getElementsByClassName("typing-indicator");
+              for (let i = 0; i < typingInd.length; i++) {
+                // 删除圆点typingInd[i].remove()  
+                typingInd[i].style.
+animationDuration = "1.5s";
+              }
+            }
+          }
+          appendNextChar();
+        }
+      }`;
+      
+      return `
+      <div class="popup-mask" onclick="switchDrawerMenu()"></div>
+      <div class="popup-container">
+        <div class="popup-widget blur-bg ">
+          <div id="appleHub" class="box-body sign-logo">
+            <img src="${appleHub}">
+          </div>
+          <div class="chat-message"></div>
+        </div>
+      </div>
+      <script>
+        const message = 'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice.';
+        ${js}
+      </script>`;
     };
     
     // 组件效果图
@@ -795,6 +882,8 @@ document.getElementById('install').addEventListener('click', () => {
       <body class="${themeColor}-theme nav-fixed site-layout-1">
         ${avatarInfo ? await mainMenuTop() : previewImage ? await previewImgHtml() : ''}
         ${head || ''}
+        <!-- 底部窗口 -->
+        ${await buttonPopup()}
         <section id="settings">
         </section>
         <script>${js}</script>
@@ -934,21 +1023,14 @@ document.getElementById('install').addEventListener('click', () => {
           }
           break;
         case 'background':
-          await importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
+          importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
           break;
         case 'store':
-          await importModule(await webModule('store.js', 'https://gitcode.net/4qiao/framework/raw/master/mian/module_95du_storeScript.js')).main();
+          importModule(await webModule('store.js', 'https://gitcode.net/4qiao/framework/raw/master/mian/module_95du_storeScript.js')).main();
           await myStore();
           break;
         case 'install':
           await updateString();
-          break;
-        case 'version':
-          await generateAlert(
-            title = '点击头像查看',
-            message = code.message,
-            options = ['完成']
-          );
           break;
         case 'itemClick':
           if (data.type === 'page') {
