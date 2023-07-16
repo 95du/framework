@@ -689,7 +689,7 @@ document.getElementById('install').addEventListener('click', () => {
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img"><br>
+        <img src="${appleHub}" onclick="switchDrawerMenu()" class="fade-in-other custom-img"><br>
         <a id="store" class="rainbow-text but">Script Store</a>
       </div>`;
       
@@ -698,7 +698,7 @@ document.getElementById('install').addEventListener('click', () => {
         <div class="modal-dialog">
           <div class="zib-widget blur-bg relative">
             <div id="appleHub" class="box-body sign-logo">
-              <img src="${appleHub}" class="fade-in-other">
+              <img src="${appleHub}">
             </div>
             <div class="box-body">
               <div class="title-h-center popup-title">
