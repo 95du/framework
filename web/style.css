@@ -267,7 +267,6 @@ a:focus,a:hover {
 }
 
 /** 头像呼吸光环旋转放大开始 **/
-
 .avatarInfo {
   text-align: center;
 }
@@ -307,7 +306,6 @@ a:focus,a:hover {
     box-shadow: 0 0 4px #f00;
   }
 }
-
 /** 头像呼吸光环旋转放大结束 **/
 
 .interval {
@@ -321,7 +319,6 @@ a:focus,a:hover {
 }
 
 /** 彩色昵称开始 **/
-
 @keyframes hue {
   from {
     filter: hue-rotate(0);
@@ -341,8 +338,9 @@ a:focus,a:hover {
   background-image: linear-gradient(to right, rgb(0,128,255), rgb(8,0,255), rgb(128,0,255), rgb(255,0,255), rgb(255,0,128), rgb(255,128,0));
   -webkit-background-clip: text;
 }
-
 /** 彩色昵称结束 **/
+
+
 
 * {
   -webkit-user-select: none;
@@ -449,7 +447,6 @@ button .iconfont {
 }
 
 /* 提示框开始 */
-
 .popup {
   position: fixed;
   bottom: -50px;
@@ -486,7 +483,6 @@ button .iconfont {
     opacity: 1;
   }
 }
-
 /* 提示框结束 */
 
 /* 遮罩层 */
@@ -518,8 +514,39 @@ button .iconfont {
   transition: height 0.3s ease;
 }
 
-/* 列表开始 */
+/* 底部弹窗开始 */
+.chat-message {
+  overflow: hidden;
+  text-align: left;
+  padding: 0 30px;
+  font-size: 18px;
+}
 
+.typing-indicator {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--typing-indicator);
+  margin-left: 8px;
+  vertical-align: middle;
+  animation: typing-dot 0.4s infinite;
+}
+
+@keyframes typing-dot {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* 底部弹窗完 */
+
+/** 列表开始 **/
 .form-item {
   display: flex;
   align-items: center;
@@ -683,6 +710,7 @@ input[type='checkbox'][role='switch']:checked::before {
     --checkbox: #454545;
     --select: 0.1px solid #000;
     --bottom-popup: rgba(50,51,53,0.9);
+    --typing-indicator: #fff;
   }
     
   .white-theme, .dark-theme {
