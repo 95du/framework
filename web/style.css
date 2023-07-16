@@ -340,6 +340,26 @@ a:focus,a:hover {
 }
 /** 彩色昵称结束 **/
 
+/* 渐入动画 */
+.fade-in-other {
+  position: relative;
+  top: -100%;
+  opacity: 0;
+  animation: slideIn 1s ease forwards;
+}
+
+@keyframes slideIn {
+  0% {
+    top: -100%;
+    opacity: 0;
+  }
+  100% {
+    top: 0;
+    opacity: 1;
+  }
+}
+/* 渐入动画结束 */
+
 * {
   -webkit-user-select: none;
   user-select: none;
