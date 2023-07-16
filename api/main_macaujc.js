@@ -762,7 +762,6 @@ document.getElementById('install').addEventListener('click', () => {
       const showMask = (callback, isFadeIn) => {
         const targetOpacity = isFadeIn ? 1 : 0;
         const duration = isFadeIn ? 200 : 150;
-        let opacity = isFadeIn ? 0 : 1;
         const startTime = performance.now();
       
         const animate = ( currentTime ) => {
@@ -788,7 +787,7 @@ document.getElementById('install').addEventListener('click', () => {
         const chatMsg = document.querySelector(".chat-message");
         chatMsg.textContent = "";
       
-        if (popup.style.height === "0px" || popup.style.height !== "255px") {
+        if (!popup.style.height || popup.style.height !== "255px") {
           showMask(null, true);
           popup.style.height = "255px";
           typeNextChar(); // 开始打字
@@ -796,7 +795,7 @@ document.getElementById('install').addEventListener('click', () => {
           showMask(() => {
             menuMask.style.display = "none";
           }, false);
-          popup.style.height = "0px";
+          popup.style.height = "";
         }
         
         function typeNextChar() {
@@ -812,8 +811,8 @@ document.getElementById('install').addEventListener('click', () => {
             } else {
               const typingInd = chatMsg.getElementsByClassName("typing-indicator");
               for (let i = 0; i < typingInd.length; i++) {
-                // 删除圆点typingInd[i].remove()  
-                typingInd[i].style.
+                typingInd[i].remove()  
+                // 保留圆点typingInd[i].style.
 animationDuration = "1.5s";
               }
             }
