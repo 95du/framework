@@ -52,7 +52,7 @@ td, th {
   position: relative;
   width: auto;
   margin: 78px;
-  top: -7.6%; /* 弹窗位置 */
+  top: -8%; /* 弹窗位置 */
 }
 
 .modal-backdrop {
