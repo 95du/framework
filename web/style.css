@@ -501,7 +501,7 @@ button .iconfont {
 .popup-container {
   text-align: center;
   position: fixed;
-  bottom: 10px;
+  bottom: 0.1px;
   left: 0;
   right: 0;
   height: 0;
