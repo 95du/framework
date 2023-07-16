@@ -345,7 +345,7 @@ a:focus,a:hover {
   position: relative;
   top: -100%;
   opacity: 0;
-  animation: slideIn 0.5s ease forwards;
+  animation: slideIn 1s ease forwards;
 }
 
 @keyframes slideIn {
