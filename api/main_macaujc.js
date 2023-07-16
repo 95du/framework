@@ -698,7 +698,7 @@ document.getElementById('install').addEventListener('click', () => {
         <div class="modal-dialog">
           <div class="zib-widget blur-bg relative">
             <div id="appleHub" class="box-body sign-logo">
-              <img src="${appleHub}">
+              <img src="${appleHub}" class="fade-in-other">
             </div>
             <div class="box-body">
               <div class="title-h-center popup-title">
