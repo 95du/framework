@@ -340,84 +340,6 @@ a:focus,a:hover {
 }
 /** 彩色昵称结束 **/
 
-/* 渐入动画 */
-.fade-in-other {
-  position: relative;
-  top: -100%;
-  opacity: 0;
-  animation: slideIn 1s ease forwards;
-}
-
-@keyframes slideIn {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-/* 渐入动画结束 */
-
-* {
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-body {
-  margin: 70px 0 90px 0;
-  -webkit-font-smoothing: antialiased;
-  font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
-  accent-color: var(--color-primary);
-  font-size: 14px;
-  line-height: 1.42857143;
-  color: #333;
-  background: #f2f2f7;
-}
-
-input {
-  -webkit-user-select: auto;
-  user-select: auto;
-}
-
-button {
-  font-size: 16px;
-  background: var(--color-primary);
-  color: #fff;
-  border-radius: 8px;
-  border: none;
-  padding: 0.24em 0.5em;
-}
-
-button .iconfont {
-  margin-right: 6px;
-}
-
-.list {
-  margin: 15px;
-}
-
-.list__header {
-  margin: 0 20px;
-  font-size: 32px;
-  font-weight: bold;
-}
-
-.list__body {
-  margin-top: 18px;
-  margin-bottom: 30px;
-  background: var(--card-background);
-  border-radius: var(--card-radius);
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.custom-iframe {
-  height: 0px;
-}
-
 /* 预览图片 */
 .preview-img {
   display: block;
@@ -570,6 +492,63 @@ button .iconfont {
 }
 
 /** 列表开始 **/
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+body {
+  margin: 70px 0 90px 0;
+  -webkit-font-smoothing: antialiased;
+  font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
+  accent-color: var(--color-primary);
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #333;
+  background: #f2f2f7;
+}
+
+input {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+button {
+  font-size: 16px;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+  padding: 0.24em 0.5em;
+}
+
+button .iconfont {
+  margin-right: 6px;
+}
+
+.list {
+  margin: 15px;
+}
+
+.list__header {
+  margin: 0 20px;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.list__body {
+  margin-top: 18px;
+  margin-bottom: 30px;
+  background: var(--card-background);
+  border-radius: var(--card-radius);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.custom-iframe {
+  height: 0px;
+}
+
 .form-item {
   display: flex;
   align-items: center;
@@ -732,7 +711,6 @@ input[type='checkbox'][role='switch']:checked::before {
     --list-header-color: rgba(235,235,245,0.6);
     --checkbox: #454545;
     --select: 0.1px solid #000;
-    --bottom-popup: rgba(50,51,53,0.9);
     --typing-indicator: #fff;
   }
     
