@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: cog;
-
+main()
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -481,7 +481,6 @@ async function main() {
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
       --typing-indicator: #000;
-      --bottom-popup: rgba(255, 255, 255, 0.82);
     }
     ${cssStyle}`;
     
@@ -527,32 +526,46 @@ async function main() {
       }
       divTitle.innerText = item.label;
       div.appendChild(divTitle);
-      
+          
       if (item.type === 'select') {
-        const select = document.createElement('div');
-        select.classList.add('form-item__input__select');
-        const input = document.createElement('select');
-        input.name = item.name;
-        input.value = value;
-        input.classList.add('select-input');
-        
-        for (const opt of (item.options || [])) {
-          const option = document.createElement('option');
-          option.value = opt.value;
-          option.innerText = opt.label;
-          option.selected = value === opt.value;
-          input.appendChild(option);
-        }
-        input.addEventListener('change', (e) => {
-          formData[item.name] = e.target.value;
+        const select = document.createElement('select');
+        select.name = item.name;
+        select.value = value;
+        select.classList.add('select-input');
+        select.multiple = !item.multiple ? false : true;
+        select.style.width = '99px';
+      
+        for (const grp of (item.options || [])) {
+          const optgrp = document.createElement('optgroup');
+          if (grp.label) {
+            optgrp.label = grp.label;
+          }
+          
+          for (const opt of (grp.values || [])) {
+            const optEl = document.createElement('option');
+            optEl.value = opt.value;
+            optEl.innerText = opt.label;
+            optEl.disabled = opt.disabled || false;
+            optEl.selected = Array.isArray(value) ? value.includes(opt.value) : value === opt.value;
+            optgrp.appendChild(optEl)
+          }
+          select.appendChild(optgrp);
+        };
+        select.addEventListener( 'change', (e) => {
+          const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
+          formData[item.name] = selectedValues;
           invoke('changeSettings', formData);
-        })
+        });
+        
+        const selCont = document.createElement('div');
+        selCont.classList.add('form-item__input__select');
+        selCont.appendChild(select);
         
         const icon = document.createElement('i');
         icon.className = 'iconfont icon-arrow_right form-item__icon';
-        select.appendChild(input);
-        select.appendChild(icon);
-        label.appendChild(select);
+        selCont.appendChild(icon);
+        
+        label.appendChild(selCont);
       } else if ( item.type === 'cell' || item.type === 'page' ) {
         if ( item.desc ) {
           const desc = document.createElement("div");
@@ -618,7 +631,7 @@ async function main() {
       return label
     };
   
-    const createList = (list, title) => {
+    const createList = ( list, title ) => {
       const fragment = document.createDocumentFragment()
   
       let elBody;
@@ -673,7 +686,7 @@ async function main() {
     document.getElementById('store').addEventListener('click', () => {
       invoke('store');
     });
-      
+    
 document.getElementById('install').addEventListener('click', () => {
       invoke('install');
     });
@@ -689,7 +702,7 @@ document.getElementById('install').addEventListener('click', () => {
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img src="${appleHub}" onclick="switchDrawerMenu()" class="fade-in-other custom-img"><br>
+        <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img"><br>
         <a id="store" class="rainbow-text but">Script Store</a>
       </div>`;
       
@@ -860,7 +873,7 @@ animationDuration = "1.5s";
         <script>
           const popupTips = document.getElementById("store")
           .classList;
-          setTimeout(() => popupTips.add("show", "fd"), 1000);
+          setTimeout(() => popupTips.add("show", "fd"), 999000);
           setTimeout(() => {
             popupTips.remove("fd");
             setTimeout(() => popupTips.remove("show"), 1500);
@@ -1179,18 +1192,81 @@ animationDuration = "1.5s";
             icon: `${rootUrl}img/symbol/refresh.png`
           },
           {
+            label: '多项选择',
+            name: 'gradual',
+            type: 'select',
+            multiple: true,
+            icon: `${rootUrl}img/symbol/abc.png`,
+            options: [
+              {
+                label: "First",
+                values: [
+                  { 
+                    label: 'One',
+                    value: '#34c759'
+                  },
+                  {
+                    label: 'Two',
+                    value: '#ff9500'
+                  }
+                ]
+              },
+              {
+                label: "Second",
+                values: [
+                  { 
+                    label: 'Three',
+                    value: '#ff0000'
+                  },
+                  {
+                    label: 'Four',
+                    value: '#34c759'
+                  },
+                  { 
+                    label: "Five",  
+                    value: '#ff6800'
+                  },
+                  {
+                    label: "其他角度",
+                    value: "other",
+                    disabled: true 
+                  }
+                ]
+              }
+            ]
+          },
+          {
             label: '渐变方向',
             name: 'angle',
             type: 'select',
+            multiple: false,
             icon: `${rootUrl}img/symbol/gradientBackground.png`,
             options: [
-              { 
-                label: '由上往下',
-                value: 'topBottom'
+              {
+                label: "Up - Down",
+                values: [
+                  { 
+                    label: '由上往下',
+                    value: 'topBott'
+                  },
+                  {
+                    label: '由下往上',
+                    value: 'bottTop'
+                  }
+                ]
               },
               {
-                label: '由下往上',
-                value: 'bottomTop'
+                label: "Left - Right",
+                values: [
+                  { 
+                    label: '从左往右',
+                    value: 'leftRig'
+                  },
+                  {
+                    label: '从右往左',
+                    value: 'rigLeft'
+                  }
+                ]
               }
             ]
           },
