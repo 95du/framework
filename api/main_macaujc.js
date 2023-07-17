@@ -1193,43 +1193,43 @@ animationDuration = "1.5s";
           },
           {
             label: '多项选择',
-            name: 'gradual',
+            name: 'gradualColor',
             type: 'select',
             multiple: true,
             icon: `${rootUrl}img/symbol/abc.png`,
             options: [
               {
-                label: "First",
+                label: 'Up - Down',
                 values: [
                   { 
                     label: 'One',
-                    value: '#34c759'
+                    value: 'a'
                   },
                   {
                     label: 'Two',
-                    value: '#ff9500'
+                    value: 'b'
+                  },
+                  { 
+                    label: 'Three',
+                    value: 'c'
                   }
                 ]
               },
               {
-                label: "Second",
+                label: 'Left - Right',
                 values: [
                   { 
-                    label: 'Three',
-                    value: '#ff0000'
-                  },
-                  {
                     label: 'Four',
-                    value: '#34c759'
+                    value: 'd'
                   },
                   { 
-                    label: "Five",  
-                    value: '#ff6800'
+                    label: 'Five',
+                    value: 'e'
                   },
                   {
-                    label: "其他角度",
-                    value: "other",
-                    disabled: true 
+                    label: '备用',
+                    value: 'f',
+                    disabled: true
                   }
                 ]
               }
@@ -1243,20 +1243,20 @@ animationDuration = "1.5s";
             icon: `${rootUrl}img/symbol/gradientBackground.png`,
             options: [
               {
-                label: "Up - Down",
+                label: 'Up - Down',
                 values: [
                   { 
                     label: '由上往下',
-                    value: 'topBott'
+                    value: 'topBot'
                   },
                   {
                     label: '由下往上',
-                    value: 'bottTop'
+                    value: 'botTop'
                   }
                 ]
               },
               {
-                label: "Left - Right",
+                label: 'Left - Right',
                 values: [
                   { 
                     label: '从左往右',
