@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: cog;
-
+main()
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -452,10 +452,10 @@ async function main() {
     for (const i of formItems) {
       for (const item of i.items) {
         const { icon } = item;
-        if (icon.name) {
+        if (typeof icon === 'object' && icon.name) {
           const {name, color} = icon;
           item.icon = await loadSF2B64(name, color);
-        } else if (icon.startsWith('http')) {
+        } else if (typeof icon === 'string') {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
           const image = await getCacheImage(name, icon);
           item.icon = await toBase64(image);
@@ -481,6 +481,7 @@ async function main() {
       --card-radius: 10px;
       --list-header-color: rgba(60,60,67,0.6);
       --typing-indicator: #000;
+      --separ: #ccc;
     }
     ${cssStyle}`;
     
@@ -632,21 +633,63 @@ async function main() {
     };
   
     const createList = ( list, title ) => {
-      const fragment = document.createDocumentFragment()
-  
+      const fragment = document.createDocumentFragment();
       let elBody;
+    
       for (const item of list) {
         if (item.type === 'group') {
-          const grouped = createList(item.items, item.label)
-          fragment.appendChild(grouped)
+          const grouped = createList(item.items, item.label);
+          fragment.appendChild(grouped);
+        } else if (item.type === 'range') {
+          const groupDiv = fragment.appendChild(document.createElement('div'));
+          groupDiv.className = 'list'
+          
+          const elTitle = groupDiv.appendChild(document.createElement('div'));
+          elTitle.className = 'el__header';
+          elTitle.textContent = title
+          
+          elBody = groupDiv.appendChild(document.createElement('div'));
+          elBody.className = 'el__body';
+          
+          const range = elBody.appendChild(document.createElement('div'));
+          range.className = 'range';
+          range.innerHTML = \`
+            <div class="range-head">
+              <input id="_range" type="range" value="\${settings.range || 20}" max="100" step="1" data-left="关闭" data-value="\${formData[item.name]}">
+            </div>
+            <hr class="separ">
+          \`;
+          
+          const rangeInput = range.querySelector('#_range');
+          rangeInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            const min = e.target.min;
+            const max = e.target.max;
+            const percent = ((value - min) / (max - min)) * 100;
+            const color = \`linear-gradient(90deg, #ff6800 \${percent}%, #ccc \${percent}%)\`;
+            rangeInput.dataset.value = value;
+            rangeInput.style.background = color;
+          });
+          rangeInput.addEventListener('change', (event) => {
+            formData[item.name] = event.target.value;
+            invoke('changeSettings', formData);
+          });
+          
+          const value = rangeInput.value;
+          const min = rangeInput.min;
+          const max = rangeInput.max;
+          const percent = ((value - min) / (max - min)) * 100;
+          const color = \`linear-gradient(90deg, #ff6800 \${percent}%, #ccc \${percent}%)\`;
+          rangeInput.dataset.value = value;
+          rangeInput.style.background = color;
         } else {
-          if (!elBody) {
-            const groupDiv = fragment.appendChild(document.createElement('div'))
+          if ( !elBody ) {
+            const groupDiv = fragment.appendChild(document.createElement('div'));
             groupDiv.className = 'list'
-            if (title) {
+            if ( title ) {
               const elTitle = groupDiv.appendChild(document.createElement('div'))
               elTitle.className = 'list__header'
-              elTitle.textContent = title
+              elTitle.textContent = title;
             }
             elBody = groupDiv.appendChild(document.createElement('div'))
             elBody.className = 'list__body'
@@ -773,14 +816,13 @@ document.getElementById('install').addEventListener('click', () => {
       const menuMask = document.querySelector(".popup-mask")
       
       const showMask = (callback, isFadeIn) => {
-        const targetOpacity = isFadeIn ? 1 : 0;
         const duration = isFadeIn ? 200 : 150;
         const startTime = performance.now();
       
         const animate = ( currentTime ) => {
           const elapsedTime = currentTime - startTime;
           if ( elapsedTime >= duration ) {
-            menuMask.style.opacity = targetOpacity;
+            menuMask.style.opacity = isFadeIn ? 1 : 0;
             if (callback) callback();
             return;
           }
@@ -800,10 +842,10 @@ document.getElementById('install').addEventListener('click', () => {
         const chatMsg = document.querySelector(".chat-message");
         chatMsg.textContent = "";
       
-        if (!popup.style.height || popup.style.height !== "255px") {
+        if (!popup.style.height || popup.style.height !== '255px') {
           showMask(null, true);
-          popup.style.height = "255px";
-          typeNextChar(); // 开始打字
+          popup.style.height = '255px';
+          typeNextChar();
         } else {
           showMask(() => {
             menuMask.style.display = "none";
@@ -824,9 +866,7 @@ document.getElementById('install').addEventListener('click', () => {
             } else {
               const typingInd = chatMsg.getElementsByClassName("typing-indicator");
               for (let i = 0; i < typingInd.length; i++) {
-                typingInd[i].remove()  
-                // 保留圆点typingInd[i].style.
-animationDuration = "1.5s";
+                typingInd[i].remove()
               }
             }
           }
@@ -845,7 +885,7 @@ animationDuration = "1.5s";
         </div>
       </div>
       <script>
-        const message = 'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice.';
+        const message = 'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice.--- 95度茅台 ---';
         ${js}
       </script>`;
     };
@@ -1199,7 +1239,7 @@ animationDuration = "1.5s";
             icon: `${rootUrl}img/symbol/abc.png`,
             options: [
               {
-                label: 'Up - Down',
+                label: 'Single',
                 values: [
                   { 
                     label: 'One',
@@ -1216,7 +1256,7 @@ animationDuration = "1.5s";
                 ]
               },
               {
-                label: 'Left - Right',
+                label: 'Multiple',
                 values: [
                   { 
                     label: 'Four',
@@ -1243,7 +1283,6 @@ animationDuration = "1.5s";
             icon: `${rootUrl}img/symbol/gradientBackground.png`,
             options: [
               {
-                label: 'Up - Down',
                 values: [
                   { 
                     label: '由上往下',
@@ -1256,7 +1295,7 @@ animationDuration = "1.5s";
                 ]
               },
               {
-                label: 'Left - Right',
+                label: 'Single Selection',
                 values: [
                   { 
                     label: '从左往右',
@@ -1326,7 +1365,43 @@ animationDuration = "1.5s";
             default: true
           }
         ]
-      }
+      },
+      {
+        label: '滑块备用',
+        type: 'group',
+        items: [
+          {
+            type: 'range',
+            name: 'range'
+          },
+          {
+            label: '全自动化',
+            name: 'open',
+            type: 'switch',
+            icon: {
+              name: 'sun.max.fill',  
+              color: '#A48778'
+            },
+            default: true
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '组件信息',
+            name: 'infoPage',
+            type: 'page',
+            icon: {
+              name: 'person.crop.circle',
+              color: '#43CD80'
+            },
+            formItems: userMenu,
+            previewImage: true
+          }
+        ]
+      },
     ];
     return formItems;
   })();
