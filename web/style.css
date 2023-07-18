@@ -730,13 +730,13 @@ input[type="range"]:after {
   border-radius: var(--card-radius);
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 30px;
+  margin-bottom: -10px;
 }
   
 .range-head {
   display: flex;
   margin-top: 25px;
-  padding: 15px 10px 15px 10px;
+  padding: 15px 10px 4px 10px;
 }
 
 .separ {
@@ -774,6 +774,7 @@ input[type="range"]:after {
     --checkbox: #454545;
     --select: 0.1px solid #000;
     --typing-indicator: #fff;
+    --separ: #444;
   }
     
   .white-theme, .dark-theme {
