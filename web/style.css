@@ -531,9 +531,18 @@ button .iconfont {
 }
 
 .el__header {
-  margin: 0 20px 5px 20px;
+  padding: 0 20px;
   font-size: 13px;
   color: var(--list-header-color);
+}
+
+.el__body {
+  margin-top: 5px;
+  margin-bottom: 30px;
+  background: var(--card-background);
+  border-radius: var(--card-radius);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .list__header {
