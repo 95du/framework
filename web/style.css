@@ -530,6 +530,12 @@ button .iconfont {
   margin: 15px;
 }
 
+.el__header {
+  margin: 0 20px 5px 20px;
+  font-size: 13px;
+  color: var(--list-header-color);
+}
+
 .list__header {
   margin: 0 20px;
   font-size: 32px;
@@ -684,6 +690,55 @@ input[type='checkbox'][role='switch']:checked::before {
   color: #515154;
   text-decoration: none;
 }
+
+/* 滑块样式 */
+input[type="range"] {
+  -webkit-appearance: none;
+  display: block;
+  width: 353px;
+  height: 5px;
+  background: #ccc;
+  border-radius: 8px;
+  position: relative;
+  margin: 13px 10px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  width: 25px;
+  height: 25px;
+}
+
+input[type="range"]:before, .double-range-slider:before {  
+  content: attr(data-left);
+  display: block;
+  font-size: 13px;
+  position: absolute;
+  top: -40px;
+}
+
+input[type="range"]:after {  
+  content: attr(data-value);
+  display: block;
+  font-size: 14px;
+  position: absolute;
+  top: -40px;
+  right: 0;
+}
+
+.range {
+  background: var(--card-background);
+  border-radius: var(--card-radius);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+  
+.range-head {
+  display: flex;
+  margin-top: 25px;
+  padding: 15px 10px 15px 10px;
+}
+/* 滑块样式结束 */
 
 .preview.loading {
   pointer-events: none;
