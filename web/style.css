@@ -738,6 +738,13 @@ input[type="range"]:after {
   margin-top: 25px;
   padding: 15px 10px 15px 10px;
 }
+
+.separ {
+  height: 0.3px;
+  border: none;
+  background-color: var(--separ);
+  margin: 10px 20px;
+}
 /* 滑块样式结束 */
 
 .preview.loading {
