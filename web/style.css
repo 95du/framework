@@ -699,7 +699,7 @@ input[type="range"] {
   display: block;
   width: 353px;
   height: 5px;
-  background: var(--checkbox, #ddd);
+  background: var(--checkbox);
   border-radius: 8px;
   position: relative;
   margin: 13px 10px;
@@ -776,7 +776,7 @@ input[type="range"]:after {
     --checkbox: #454545;
     --select: 0.1px solid #000;
     --typing-indicator: #fff;
-    --separ: #444;
+    --separ: var(--checkbox);
   }
     
   .white-theme, .dark-theme {
