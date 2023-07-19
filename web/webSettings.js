@@ -479,13 +479,20 @@ async function main() {
       --divider-color: rgba(60,60,67,0.36);
       --card-background: #fff;
       --card-radius: 10px;
+      --checkbox: #ddd;
       --list-header-color: rgba(60,60,67,0.6);
       --typing-indicator: #000;
       --separ: #ccc;
     }
+    .modal-dialog {
+      position: relative;
+      width: auto;
+      margin: ${Device.screenSize().height < 926 ? '62px' : '78px'};
+      top: ${Device.screenSize().height < 926 ? '-5%' : '-8%'}; /* 弹窗位置 */
+    }
     ${cssStyle}`;
     
-    //
+    // Java Script
     const js =`
     (() => {
     const settings = ${JSON.stringify({
@@ -651,37 +658,28 @@ async function main() {
           elBody = groupDiv.appendChild(document.createElement('div'));
           elBody.className = 'el__body';
           
-          const range = elBody.appendChild(document.createElement('div'));
+          const range = elBody.appendChild(document.createElement('div'));  
           range.className = 'range';
           range.innerHTML = \`
             <div class="range-head">
-              <input id="_range" type="range" value="\${settings.range || 20}" max="100" step="1" data-left="关闭" data-value="\${formData[item.name]}">
+              <input id="_range" type="range" value="\${settings.range || 20}" min="0" max="100" step="1" data-left="关闭">
             </div>
             <hr class="separ">
           \`;
           
           const rangeInput = range.querySelector('#_range');
-          rangeInput.addEventListener('input', (e) => {
-            const value = e.target.value;
-            const min = e.target.min;
-            const max = e.target.max;
-            const percent = ((value - min) / (max - min)) * 100;
-            const color = \`linear-gradient(90deg, #ff6800 \${percent}%, #ccc \${percent}%)\`;
+          const updateRange = () => {
+            const value = rangeInput.value;
+            const percent = ((value - rangeInput.min) / (rangeInput.max - rangeInput.min)) * 100;
             rangeInput.dataset.value = value;
-            rangeInput.style.background = color;
-          });
+            rangeInput.style.background = \`linear-gradient(90deg, #ff6800 \${percent}%, var(--checkbox) \${percent}%)\`;
+          };
+          rangeInput.addEventListener('input', updateRange);
           rangeInput.addEventListener('change', (event) => {
             formData[item.name] = event.target.value;
             invoke('changeSettings', formData);
           });
-          
-          const value = rangeInput.value;
-          const min = rangeInput.min;
-          const max = rangeInput.max;
-          const percent = ((value - min) / (max - min)) * 100;
-          const color = \`linear-gradient(90deg, #ff6800 \${percent}%, #ccc \${percent}%)\`;
-          rangeInput.dataset.value = value;
-          rangeInput.style.background = color;
+          updateRange();
         } else {
           if ( !elBody ) {
             const groupDiv = fragment.appendChild(document.createElement('div'));
@@ -1376,11 +1374,11 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             label: '全自动化',
-            name: 'open',
+            name: 'auto',
             type: 'switch',
             icon: {
               name: 'sun.max.fill',  
-              color: '#A48778'
+              color: '#EDBF23'
             },
             default: true
           }
