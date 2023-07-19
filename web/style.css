@@ -48,13 +48,6 @@ td, th {
   overflow-y: auto; /* 纵向滑动 */
 }
 
-.modal-dialog {
-  position: relative;
-  width: auto;
-  margin: ${Device.screenSize().height < 926 ? '62px' : '78px'};
-  top: ${Device.screenSize().height < 926 ? '-129.6%' : '-119.6%'}; /* 弹窗位置 */
-}
-
 .modal-backdrop {
   position: fixed;
   top: 0;
