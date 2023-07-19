@@ -776,7 +776,7 @@ input[type="range"]:after {
     --checkbox: #454545;
     --select: 0.1px solid #000;
     --typing-indicator: #fff;
-    --separ: var(--checkbox);
+    --separ: #444;
   }
     
   .white-theme, .dark-theme {
