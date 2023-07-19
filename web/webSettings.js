@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: cog;
-main()
+
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -808,7 +808,11 @@ document.getElementById('install').addEventListener('click', () => {
       `
     };
     
-    // 底部弹窗信息
+    /**
+     * 底部弹窗信息
+     * 创建底部弹窗的相关交互功能
+     * 当用户点击底部弹窗时，显示/隐藏弹窗动画，并显示预设消息的打字效果。
+     */
     const buttonPopup = async () => {  
       const js = `
       const menuMask = document.querySelector(".popup-mask")
@@ -888,7 +892,7 @@ document.getElementById('install').addEventListener('click', () => {
       </script>`;
     };
     
-    // 组件效果图
+    // 组件效果图预览
     previewImgHtml = async () => {
       const previewImgUrl = [
         `${rootUrl}img/picture/macaujc_black.png`,
@@ -1378,7 +1382,7 @@ document.getElementById('install').addEventListener('click', () => {
             type: 'switch',
             icon: {
               name: 'sun.max.fill',  
-              color: '#EDBF23'
+              color: '#EFBE56'
             },
             default: true
           }
