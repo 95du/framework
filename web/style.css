@@ -51,8 +51,8 @@ td, th {
 .modal-dialog {
   position: relative;
   width: auto;
-  margin: 78px;
-  top: -8%; /* 弹窗位置 */
+  margin: ${Device.screenSize().height < 926 ? '62px' : '78px'};
+  top: ${Device.screenSize().height < 926 ? '-129.6%' : '-119.6%'}; /* 弹窗位置 */
 }
 
 .modal-backdrop {
