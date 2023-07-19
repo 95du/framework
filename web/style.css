@@ -699,7 +699,7 @@ input[type="range"] {
   display: block;
   width: 353px;
   height: 5px;
-  background: #ccc;
+  background: var(--checkbox, #ddd);
   border-radius: 8px;
   position: relative;
   margin: 13px 10px;
