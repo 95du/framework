@@ -52,11 +52,12 @@ async function main() {
     update: true,
     topStyle: true,
     music: true,
+    bufferTime: 240,
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
     titleLightColor: '#3F8BFF',
     gradient: '#BCBBBB',
-    bufferTime: 240
+    rangeColor: '#ff6800'
   };
   
   const getSettings = (file) => {
@@ -472,7 +473,8 @@ async function main() {
      * @returns {string} html
      */
     const cssStyle = await getCacheString('cssStyle.css', `${rootUrl}web/style.css`);  
-    
+    const screenSize = Device.screenSize().height;
+
     const style =`  
     :root {
       --color-primary: #007aff;
@@ -487,8 +489,8 @@ async function main() {
     .modal-dialog {
       position: relative;
       width: auto;
-      margin: ${Device.screenSize().height < 926 ? '62px' : '78px'};
-      top: ${Device.screenSize().height < 926 ? '-5%' : '-8%'}; /* 弹窗位置 */
+      margin: ${screenSize < 926 ? '62px' : '78px'};
+      top: ${screenSize < 926 ? '-5%' : '-8%'}; /* 弹窗位置 */
     }
     ${cssStyle}`;
     
@@ -582,7 +584,6 @@ async function main() {
           label.appendChild(desc);
         }
         
-        label.classList.add('form-item--link');
         const icon = document.createElement('i');
         icon.className = 'iconfont icon-arrow_right'
         label.appendChild(icon);
@@ -638,7 +639,8 @@ async function main() {
       }
       return label
     };
-  
+    
+    // 创建列表
     const createList = ( list, title ) => {
       const fragment = document.createDocumentFragment();
       let elBody;
@@ -662,24 +664,59 @@ async function main() {
           range.className = 'range';
           range.innerHTML = \`
             <div class="range-head">
-              <input id="_range" type="range" value="\${settings.range || 20}" min="0" max="100" step="1" data-left="关闭">
+              <input id="_range" type="range" value="${settings.range || 20}" min="0" max="100" step="1">
             </div>
-            <hr class="separ">
           \`;
           
           const rangeInput = range.querySelector('#_range');
+          
           const updateRange = () => {
             const value = rangeInput.value;
             const percent = ((value - rangeInput.min) / (rangeInput.max - rangeInput.min)) * 100;
             rangeInput.dataset.value = value;
-            rangeInput.style.background = \`linear-gradient(90deg, #ff6800 \${percent}%, var(--checkbox) \${percent}%)\`;
+            rangeInput.style.background = \`linear-gradient(90deg, \${settings.rangeColor} \${percent}%, var(--checkbox) \${percent}%)\`;
           };
+          
           rangeInput.addEventListener('input', updateRange);
           rangeInput.addEventListener('change', (event) => {
             formData[item.name] = event.target.value;
             invoke('changeSettings', formData);
           });
           updateRange();
+          
+          const colorPicker = elBody.appendChild(document.createElement("div"));
+          colorPicker.innerHTML = \`
+            <hr class="separ">
+            <form class="color__body" action="javascript:void(0);">
+              <label class="form-item">
+                <div class="form-label">
+                  <img class="form-label-img" src="${await loadSF2B64('gearshape.fill', '#DAA520')}"/>
+                  <div class="form-label-title">滑块颜色</div>
+                </div>
+                <input id="colorPicker" type="color" value="${settings.rangeColor}">
+              </label>
+            </form>
+          \`;
+          
+          colorPicker.addEventListener("change", (e) => {
+            const selectedColor = e.target.value;
+            settings.rangeColor = selectedColor;
+            updateRange();
+            formData[item.color] = selectedColor;
+            invoke('changeSettings', formData);
+          });
+          
+          let colorPickerVisible = false;
+          const toggleColorPicker = () => {
+            colorPickerVisible = !colorPickerVisible;
+            colorPicker.style.display = colorPickerVisible ? 'block' : 'none';
+          };
+          
+          document.addEventListener("DOMContentLoaded", () => {
+            const sliderInput = document.querySelector(".range");
+            sliderInput.addEventListener("click", toggleColorPicker);
+            colorPicker.style.display = 'none';
+          });
         } else {
           if ( !elBody ) {
             const groupDiv = fragment.appendChild(document.createElement('div'));
@@ -813,48 +850,42 @@ document.getElementById('install').addEventListener('click', () => {
      * 创建底部弹窗的相关交互功能
      * 当用户点击底部弹窗时，显示/隐藏弹窗动画，并显示预设消息的打字效果。
      */
-    const buttonPopup = async () => {  
+    const buttonPopup = async () => {
       const js = `
-      const menuMask = document.querySelector(".popup-mask")
-      
+      const menuMask = document.querySelector(".popup-mask");
+  
       const showMask = (callback, isFadeIn) => {
-        const duration = isFadeIn ? 200 : 150;
+        const duration = isFadeIn ? 200 : 300;
         const startTime = performance.now();
       
         const animate = ( currentTime ) => {
           const elapsedTime = currentTime - startTime;
-          if ( elapsedTime >= duration ) {
-            menuMask.style.opacity = isFadeIn ? 1 : 0;
-            if (callback) callback();
-            return;
-          }
-          menuMask.style.opacity = opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration
-          requestAnimationFrame(
-            animate
-          );
+          menuMask.style.opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration;
+          if (elapsedTime < duration) requestAnimationFrame(animate);
+          else if (callback) callback();
         };
+        
         menuMask.style.display = "block";
-        requestAnimationFrame(
+        requestAnimationFrame(  
           animate
-        );
+        )
       };
-      
+    
+      const message = 'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice.--- 95度茅台 ---';
+    
       function switchDrawerMenu() {
         const popup = document.querySelector(".popup-container");
         const chatMsg = document.querySelector(".chat-message");
-        chatMsg.textContent = "";
       
         if (!popup.style.height || popup.style.height !== '255px') {
           showMask(null, true);
           popup.style.height = '255px';
           typeNextChar();
         } else {
-          showMask(() => {
-            menuMask.style.display = "none";
-          }, false);
+          showMask(() => menuMask.style.display = "none", false);
           popup.style.height = "";
         }
-        
+      
         function typeNextChar() {
           chatMsg.textContent = "";
           let currentChar = 0;
@@ -866,30 +897,24 @@ document.getElementById('install').addEventListener('click', () => {
               chatMsg.scrollTop = chatMsg.scrollHeight;
               setTimeout(appendNextChar, 30);
             } else {
-              const typingInd = chatMsg.getElementsByClassName("typing-indicator");
-              for (let i = 0; i < typingInd.length; i++) {
-                typingInd[i].remove()
-              }
+              chatMsg.querySelectorAll(".typing-indicator").forEach(indicator => indicator.remove());
             }
           }
           appendNextChar();
         }
       }`;
-      
+    
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
-        <div class="popup-widget blur-bg ">
+        <div class="popup-widget blur-bg">
           <div id="appleHub" class="box-body sign-logo">
             <img src="${appleHub}">
           </div>
           <div class="chat-message"></div>
         </div>
       </div>
-      <script>
-        const message = 'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice.--- 95度茅台 ---';
-        ${js}
-      </script>`;
+      <script>${js}</script>`;
     };
     
     // 组件效果图预览
@@ -1374,17 +1399,8 @@ document.getElementById('install').addEventListener('click', () => {
         items: [
           {
             type: 'range',
-            name: 'range'
-          },
-          {
-            label: '全自动化',
-            name: 'auto',
-            type: 'switch',
-            icon: {
-              name: 'sun.max.fill',  
-              color: '#EFBE56'
-            },
-            default: true
+            name: 'range',
+            color: 'rangeColor'
           }
         ]
       },
