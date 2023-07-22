@@ -749,7 +749,7 @@ input[type="range"]:after {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-5px);
   }
   to {
     opacity: 1;
@@ -763,7 +763,7 @@ input[type="range"]:after {
   background: var(--card-background);
   border-radius: var(--card-radius);
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
   animation: fadeIn 0.3s ease;
 }
 /* 滑块样式结束 */
