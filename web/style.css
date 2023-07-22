@@ -764,7 +764,7 @@ input[type="range"]:after {
   border-radius: var(--card-radius);
   overflow: hidden;
   /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
-  animation: fadeIn 0.4s ease;
+  animation: fadeIn 0.3s ease;
 }
 /* 滑块样式结束 */
 
