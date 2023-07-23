@@ -119,19 +119,19 @@ a:focus,a:hover {
   border: none;
 }
 
-.jb-red,.order-type-9 .pay-tag {
+.jb-red {
   --this-bg: linear-gradient(135deg, #fd7a64 10%, #fb2d2d 100%);
 }
 
-.jb-pink,.order-type-2 .pay-tag {
+.jb-pink {
   --this-bg: linear-gradient(135deg, #ff5e7f 30%, #ff967e 100%);
 }
 
-.jb-yellow,.order-type-3 .pay-tag {
+.jb-yellow {
   --this-bg: linear-gradient(135deg, #f59f54 10%, #ff6922 100%);
 }
 
-.jb-blue,.order-type-7 .pay-tag {
+.jb-blue {
   --this-bg: linear-gradient(135deg, #59c3fb 10%, #268df7 100%);
 }
 
@@ -139,20 +139,20 @@ a:focus,a:hover {
   --this-bg: linear-gradient(140deg, #039ab3 10%, #58dbcf 90%);
 }
 
-.jb-green,.order-type-5 .pay-tag {
+.jb-green {
   --this-bg: linear-gradient(135deg, #60e464 10%, #5cb85b 100%);
 }
 
-.jb-purple,.order-type-6 .pay-tag {
+.jb-purple {
   --this-bg: linear-gradient(135deg, #f98dfb 10%, #ea00f9 100%);
 }
 
-.jb-vip1,.order-type-4 .pay-tag {
+.jb-vip1 {
   --this-bg: linear-gradient(25deg, #eabe7b 10%, #f5e3c7 70%, #edc788 100%);
   --this-color: #866127;
 }
 
-.jb-vip2,.order-type-8 .pay-tag {
+.jb-vip2 {
   --this-bg: linear-gradient(317deg, #4d4c4c 30%, #7b7b7b 70%, #5f5c5c 100%);
   --this-color: #ddd;
 }
