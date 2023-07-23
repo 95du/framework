@@ -742,7 +742,7 @@ input[type="range"]:after {
 
 /* 线加动画开始 */
 .separ {
-  height: 0.45px;
+  height: 0.5px;
   border: none;
   background-color: var(--separ);
   margin: -0.1px 20px;
@@ -826,7 +826,7 @@ input[type="range"]:after {
     --checkbox: #454545;
     --select: 0 solid #000;
     --typing-indicator: #fff;
-    --separ: #333;
+    --separ: #444;
   }
     
   .white-theme, .dark-theme {
