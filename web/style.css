@@ -67,7 +67,6 @@ td, th {
 }
 
 /* 弹窗 body f04494 */
-
 body {
   --theme-color: #ff6800;
   --focus-color: var(--theme-color);
@@ -205,6 +204,7 @@ a:focus,a:hover {
   transform: scale(1);
 }
 
+/* 弹窗底部线 */
 .separator {
   text-align: center;
   display: flex;
@@ -227,6 +227,7 @@ a:focus,a:hover {
   background-color: rgba(128, 128, 128, 0.5);
 }
 
+/* logo图片 */
 .sign-logo {
   display: flex;
   justify-content: center;
@@ -739,12 +740,42 @@ input[type="range"]:after {
   padding: 18px 10px 18px 10px;
 }
 
+/* 线加动画开始 */
 .separ {
   height: 0.5px;
   border: none;
   background-color: var(--separ);
   margin: -0.1px 20px;
 }
+
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+.animated.infinite {
+  animation-iteration-count: infinite;
+}
+
+.animated.hinge {
+  animation-duration: 2s;
+}
+
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fadeInDown {
+  animation-name: fadeInDown;
+}
+/* 线动画结束 */
 
 @keyframes fadeIn {
   from {
@@ -795,7 +826,7 @@ input[type="range"]:after {
     --checkbox: #454545;
     --select: 0 solid #000;
     --typing-indicator: #fff;
-    --separ: #444;
+    --separ: #333;
   }
     
   .white-theme, .dark-theme {
