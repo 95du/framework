@@ -742,7 +742,7 @@ input[type="range"]:after {
 
 /* 线加动画开始 */
 .separ {
-  height: 0.35px;
+  height: 0.45px;
   border: none;
   background-color: var(--separ);
   margin: -0.1px 20px;
