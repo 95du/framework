@@ -826,7 +826,7 @@ input[type="range"]:after {
     --checkbox: #454545;
     --select: 0 solid #000;
     --typing-indicator: #fff;
-    --separ: #444;
+    --separ: #333;
   }
     
   .white-theme, .dark-theme {
