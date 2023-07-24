@@ -530,24 +530,12 @@ button .iconfont {
   color: var(--list-header-color);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .el__body {
   margin-top: 5px;
   margin-bottom: 30px;
   background: var(--card-background);
   border-radius: var(--card-radius);
   overflow: hidden;
-  animation: fadeIn 0.3s ease;
 }
 
 .list__header {
@@ -704,16 +692,57 @@ input[type='checkbox'][role='switch']:checked::before {
   text-decoration: none;
 }
 
-/* 滑块样式 */
+/* 滑块折叠列表 */
+.collapsible-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+  min-height: 2.3em;
+  padding: 0.3em 20px;
+  position: relative;
+}
+    
+.collapsible-value {
+  font-size: 14px;
+  width: 15px;
+  color: #3F86FF;
+  font-weight: 500;
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.collapsible-content.show {
+  max-height: 100%;
+  transition: max-height 2s;
+}
+
+.icon-right-down {
+  font-size: 12px;
+  color: #86868b;
+  margin: 0 5px;
+}
+
+.separ {
+  height: 0.5px;
+  border: none;
+  background-color: var(--separ);
+  margin: -0.1px 20px;
+}
+
 input[type="range"] {
   -webkit-appearance: none;
   display: block;
-  width: 353px;
+  width: 100%;
   height: 4px;
   background: var(--checkbox);
   border-radius: 8px;
   position: relative;
-  margin: 10px 10px;
+  margin: 0 15px 0 20px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -738,14 +767,7 @@ input[type="range"]:after {
   top: -40px;
   right: 0;
 }
-
-.separ {
-  height: 0.5px;
-  border: none;
-  background-color: var(--separ);
-  margin: -0.1px 20px;
-}
-/* 滑块样式结束 */
+/* 滑块折叠列表结束 */
 
 .preview.loading {
   pointer-events: none;
