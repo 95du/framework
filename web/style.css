@@ -530,12 +530,24 @@ button .iconfont {
   color: var(--list-header-color);
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .el__body {
   margin-top: 5px;
   margin-bottom: 30px;
   background: var(--card-background);
   border-radius: var(--card-radius);
   overflow: hidden;
+  animation: fadeIn 0.3s ease;
 }
 
 .list__header {
@@ -727,75 +739,11 @@ input[type="range"]:after {
   right: 0;
 }
 
-.range {
-  background: var(--card-background);
-  border-radius: var(--card-radius);
-  overflow: hidden;
-  margin-bottom: 1px;
-}
-  
-.range-head {
-  display: flex;
-  margin-top: 25px;
-  padding: 18px 10px 18px 10px;
-}
-
-/* 线加动画开始 */
 .separ {
   height: 0.5px;
   border: none;
   background-color: var(--separ);
   margin: -0.1px 20px;
-}
-
-.animated {
-  animation-duration: 1s;
-  animation-fill-mode: both;
-}
-
-.animated.infinite {
-  animation-iteration-count: infinite;
-}
-
-.animated.hinge {
-  animation-duration: 2s;
-}
-
-@keyframes fadeInDown {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, -100%, 0);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.fadeInDown {
-  animation-name: fadeInDown;
-}
-/* 线动画结束 */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.color__body {
-  margin-top: 0;
-  margin-bottom: 0;
-  background: var(--card-background);
-  border-radius: var(--card-radius);
-  overflow: hidden;
-  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
-  animation: fadeIn 0.3s ease;
 }
 /* 滑块样式结束 */
 
