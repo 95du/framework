@@ -702,7 +702,12 @@ input[type='checkbox'][role='switch']:checked::before {
   padding: 0.3em 20px;
   position: relative;
 }
-    
+
+.collapsible-label--img {
+  width: 28.5px;
+  height: 28.5px;
+}
+
 .collapsible-value {
   font-size: 14px;
   width: 15px;
@@ -731,7 +736,7 @@ input[type='checkbox'][role='switch']:checked::before {
   height: 0.5px;
   border: none;
   background-color: var(--separ);
-  margin: -0.1px 20px;
+  margin: 0.2px 0 0.2px 20px;
 }
 
 input[type="range"] {
