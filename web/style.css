@@ -709,7 +709,7 @@ input[type='checkbox'][role='switch']:checked::before {
 
 .collapsible-label-img {
   width: 28.5px;
-  height: 28.5px;
+  height: 26px;
 }
 
 .collapsible-value {
