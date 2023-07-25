@@ -249,10 +249,10 @@ a:focus,a:hover {
 
 .popup-title {
   text-align: center;
-  font-size: 20px;
+  font-size: 19px;
   margin-top: -18px;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-weight: 400;
 }
 
 .popup-content {
