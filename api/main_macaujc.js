@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: cog;
-
+main()
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -407,7 +407,6 @@ async function main() {
     return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
   };
   
-  
   // 测试登录
   const getCookie = async () => {  
     return new Promise(resolve => {
@@ -430,7 +429,6 @@ async function main() {
       previewImage
     } = options;
     
-    
     // themeColor
     const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
 
@@ -443,6 +441,9 @@ async function main() {
       'author.png',
       `${rootUrl}img/icon/4qiao.png`
     ));
+    
+    const rangeColorImg = await loadSF2B64('gearshape.fill', '#B171FF');
+    
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
@@ -484,7 +485,7 @@ async function main() {
       --checkbox: #ddd;
       --list-header-color: rgba(60,60,67,0.6);
       --typing-indicator: #000;
-      --separ: #ccc;
+      --separ: var(--checkbox);
     }
     .modal-dialog {
       position: relative;
@@ -492,7 +493,8 @@ async function main() {
       margin: ${screenSize < 926 ? '62px' : '78px'};
       top: ${screenSize < 926 ? '-5%' : '-8%'}; /* 弹窗位置 */
     }
-    ${cssStyle}`;
+    ${cssStyle}
+    `;
     
     // Java Script
     const js =`
@@ -515,6 +517,7 @@ async function main() {
     const createFormItem = ( item ) => {
       const value = settings[item.name] ?? item.default ?? null
       formData[item.name] = value;
+      
       const label = document.createElement("label");
       label.className = "form-item";
       label.dataset.name = item.name;
@@ -531,50 +534,44 @@ async function main() {
       }
           
       const divTitle = document.createElement("div");
-      if ( item.icon ) {
-        divTitle.className = 'form-label-title';
-      }
+      divTitle.className = 'form-label-title';
       divTitle.innerText = item.label;
       div.appendChild(divTitle);
           
       if (item.type === 'select') {
         const select = document.createElement('select');
         select.name = item.name;
-        select.value = value;
         select.classList.add('select-input');
-        select.multiple = !item.multiple ? false : true;
+        select.multiple = !!item.multiple;
         select.style.width = '99px';
       
-        for (const grp of (item.options || [])) {
-          const optgrp = document.createElement('optgroup');
-          if (grp.label) {
-            optgrp.label = grp.label;
-          }
-          
-          for (const opt of (grp.values || [])) {
-            const optEl = document.createElement('option');
-            optEl.value = opt.value;
-            optEl.innerText = opt.label;
-            optEl.disabled = opt.disabled || false;
-            optEl.selected = Array.isArray(value) ? value.includes(opt.value) : value === opt.value;
-            optgrp.appendChild(optEl)
-          }
-          select.appendChild(optgrp);
-        };
-        select.addEventListener( 'change', (e) => {
-          const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
-          formData[item.name] = selectedValues;
-          invoke('changeSettings', formData);
+        item.options?.forEach(grp => {
+          const container = grp.label && (item.multiple || !item.multiple) ? document.createElement('optgroup') : select;
+          if ( grp.label ) container.label = grp.label;
+      
+          grp.values.forEach(opt => {
+            const option = new Option(opt.label, opt.value);
+            option.disabled = opt.disabled || false;
+            option.selected = (item.multiple && Array.isArray(value)) ? value.includes(opt.value) : value === opt.value;
+            container.appendChild(option);
+          });
+          if (container !== select) select.appendChild(container);
         });
         
+        select.addEventListener( 'change', (e) => {
+          const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
+          formData[item.name] = item.multiple ? selectedValues : selectedValues[0];
+          invoke('changeSettings', formData);
+        });
+      
         const selCont = document.createElement('div');
         selCont.classList.add('form-item__input__select');
         selCont.appendChild(select);
-        
+      
         const icon = document.createElement('i');
         icon.className = 'iconfont icon-arrow_right form-item__icon';
         selCont.appendChild(icon);
-        
+      
         label.appendChild(selCont);
       } else if ( item.type === 'cell' || item.type === 'page' ) {
         if ( item.desc ) {
@@ -660,21 +657,56 @@ async function main() {
           elBody = groupDiv.appendChild(document.createElement('div'));
           elBody.className = 'el__body';
           
-          const range = elBody.appendChild(document.createElement('div'));  
-          range.className = 'range';
+          const range = elBody.appendChild(document.createElement('div'));
           range.innerHTML = \`
-            <div class="range-head">
-              <input id="_range" type="range" value="${settings.range || 20}" min="0" max="100" step="1">
+          <label class="collapsible-label" for="collapse-toggle">
+            <div class="form-label">
+              <div class="collapsible-value">${settings.range || 20}</div>
             </div>
-          \`;
+            <input id="_range" type="range" value="${settings.range || 20}" min="0" max="100" step="1">
+            <i class="fas fa-chevron-right icon-right-down"></i>
+          </label>
+          <!-- 折叠取色器 -->
+          <div class="collapsible-content" id="content">
+            <hr class="separ">
+            <label class="form-item">
+              <div class="form-label">
+                <img class="form-label-img" src="${rangeColorImg}" />
+                <div class="form-label-title">滑块颜色</div>
+              </div>
+              <input type="color" value="${settings.rangeColor}" id="color-input">
+            </label>
+          </div>\`;
           
+          const icon = range.querySelector('.collapsible-label .icon-right-down');
+          const content = range.querySelector('.collapsible-content');
+          const colorInput = range.querySelector('#color-input');
           const rangeInput = range.querySelector('#_range');
+          let isExpanded = false;
+          
+          const toggleContent = () => {
+            content.classList.toggle('show');
+            isExpanded = !isExpanded;
+            icon.style.transition = 'transform 0.5s';
+            icon.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+          };
+          
+          range.querySelector('.collapsible-label').addEventListener('click', toggleContent);
+          
+          colorInput.addEventListener('change', (e) => {
+            const selectedColor = e.target.value;
+            settings.rangeColor = selectedColor;
+            updateRange();
+            formData[item.color] = selectedColor;
+            invoke('changeSettings', formData);
+          });
           
           const updateRange = () => {
             const value = rangeInput.value;
             const percent = ((value - rangeInput.min) / (rangeInput.max - rangeInput.min)) * 100;
             rangeInput.dataset.value = value;
             rangeInput.style.background = \`linear-gradient(90deg, \${settings.rangeColor} \${percent}%, var(--checkbox) \${percent}%)\`;
+            range.querySelector('.collapsible-value').textContent = value;
           };
           
           rangeInput.addEventListener('input', updateRange);
@@ -683,40 +715,6 @@ async function main() {
             invoke('changeSettings', formData);
           });
           updateRange();
-          
-          const colorPicker = elBody.appendChild(document.createElement("div"));
-          colorPicker.innerHTML = \`
-            <hr class="separ">
-            <form class="color__body" action="javascript:void(0);">
-              <label class="form-item">
-                <div class="form-label">
-                  <img class="form-label-img" src="${await loadSF2B64('gearshape.fill', '#DAA520')}"/>
-                  <div class="form-label-title">滑块颜色</div>
-                </div>
-                <input id="colorPicker" type="color" value="${settings.rangeColor}">
-              </label>
-            </form>
-          \`;
-          
-          colorPicker.addEventListener("change", (e) => {
-            const selectedColor = e.target.value;
-            settings.rangeColor = selectedColor;
-            updateRange();
-            formData[item.color] = selectedColor;
-            invoke('changeSettings', formData);
-          });
-          
-          let colorPickerVisible = false;
-          const toggleColorPicker = () => {
-            colorPickerVisible = !colorPickerVisible;
-            colorPicker.style.display = colorPickerVisible ? 'block' : 'none';
-          };
-          
-          document.addEventListener("DOMContentLoaded", () => {
-            const sliderInput = document.querySelector(".range");
-            sliderInput.addEventListener("click", toggleColorPicker);
-            colorPicker.style.display = 'none';
-          });
         } else {
           if ( !elBody ) {
             const groupDiv = fragment.appendChild(document.createElement('div'));
@@ -738,7 +736,7 @@ async function main() {
     const fragment = createList(formItems);
     document.getElementById('settings').appendChild(fragment);
     
-    /** loading **/
+    /** 加载动画 **/
     const toggleLoading = (e) => {
       const target = e.currentTarget;
       target.classList.add('loading')
@@ -885,7 +883,7 @@ document.getElementById('install').addEventListener('click', () => {
           showMask(() => menuMask.style.display = "none", false);
           popup.style.height = "";
         }
-      
+        
         function typeNextChar() {
           chatMsg.textContent = "";
           let currentChar = 0;
@@ -960,7 +958,8 @@ document.getElementById('install').addEventListener('click', () => {
       <head>
         <meta name='viewport' content='width=device-width, user-scalable=no, viewport-fit=cover'>
         <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
-        <style>${style}</style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <style>${style}</style>
       </head>
       <body class="${themeColor}-theme nav-fixed site-layout-1">
         ${avatarInfo ? await mainMenuTop() : previewImage ? await previewImgHtml() : ''}
@@ -1266,7 +1265,6 @@ document.getElementById('install').addEventListener('click', () => {
             icon: `${rootUrl}img/symbol/abc.png`,
             options: [
               {
-                label: 'Single',
                 values: [
                   { 
                     label: 'One',
@@ -1354,7 +1352,10 @@ document.getElementById('install').addEventListener('click', () => {
             name: 'masking',
             type: 'number',
             id: 'input',
-            icon: `${rootUrl}img/symbol/photo_9D64FF.png`
+            icon: {
+              name: 'photo.stack',
+              color: '#8E8D91'
+            }
           },
           {
             label: '图片背景',
