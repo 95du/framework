@@ -693,6 +693,10 @@ input[type='checkbox'][role='switch']:checked::before {
 }
 
 /* 滑块折叠列表 */
+.coll__body {
+  background: var(--coll-color);
+}
+
 .collapsible-label {
   display: flex;
   align-items: center;
@@ -703,7 +707,7 @@ input[type='checkbox'][role='switch']:checked::before {
   position: relative;
 }
 
-.collapsible-label--img {
+.collapsible-label-img {
   width: 28.5px;
   height: 28.5px;
 }
@@ -802,6 +806,7 @@ input[type="range"]:after {
     --select: 0 solid #000;
     --typing-indicator: #fff;
     --separ: #333;
+    --coll-color: hsl(0, 0%, 6%);
   }
     
   .white-theme, .dark-theme {
