@@ -385,7 +385,7 @@ a:focus,a:hover {
 /* 提示框开始 */
 .popup {
   position: fixed;
-  bottom: -50px;
+  top: -50px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #1B9AF1;
@@ -403,7 +403,7 @@ a:focus,a:hover {
 }
 
 .popup.show {
-  bottom: 6%;
+  top: 1.25%;
   opacity: 1;
 }
 
