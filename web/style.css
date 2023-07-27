@@ -727,7 +727,7 @@ input[type='checkbox'][role='switch']:checked::before {
 
 .collapsible-content.show {
   max-height: 100%;
-  transition: max-height 2s;
+  transition: max-height 1s;
 }
 
 .icon-right-down {
