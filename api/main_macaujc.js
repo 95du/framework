@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: cog;
-
+main()
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -406,16 +406,6 @@ async function main() {
   const toBase64 = async (img) => {
     return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
   };
-  
-  // 测试登录
-  const getCookie = async () => {  
-    return new Promise(resolve => {
-      settings.cookie = '已登录';
-      notify(settings.cookie, '这只是一个测试的效果');
-      writeSettings(settings)
-      resolve('已登录')
-    })
-  };
 
   
   // ====== web start ======= //
@@ -483,6 +473,7 @@ async function main() {
       --card-background: #fff;
       --card-radius: 10px;
       --checkbox: #ddd;
+      --desc-color: #888;
       --list-header-color: rgba(60,60,67,0.6);
       --typing-indicator: #000;
       --separ: var(--checkbox);
@@ -577,7 +568,7 @@ async function main() {
         if ( item.desc ) {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
-          desc.innerText = item.desc;
+          desc.innerText = settings[item.name];
           label.appendChild(desc);
         }
         
@@ -952,7 +943,7 @@ document.getElementById('install').addEventListener('click', () => {
       }
     };
     
-    // HTML
+    // =======  HTML  =======//
     const html =`
     <html>
       <head>
@@ -1068,8 +1059,6 @@ document.getElementById('install').addEventListener('click', () => {
         await removeData();
       } else if (code === 'updateCode') {
         await updateVersion();
-      } else if (code === 'login') {
-        updateFormText('login', await getCookie());
       } else if (code === 'bufferTime') {
         updateFormText('bufferTime', await input(data));
       };
@@ -1186,8 +1175,7 @@ document.getElementById('install').addEventListener('click', () => {
             icon: {
               name: 'person.crop.circle',
               color: '#43CD80'
-            },
-            desc: settings.cookie ? '已登录' : '未登录'
+            }
           }
         ]
       },
