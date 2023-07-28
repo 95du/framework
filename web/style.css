@@ -606,7 +606,7 @@ button .iconfont {
 
 .form-item-right-desc {
   font-size: 16px;
-  color: #86868b;
+  color: var(--desc-color);
   margin: 0 6px 0 auto;
   max-width: 100px;
   max-height: 25px;
@@ -804,6 +804,7 @@ input[type="range"]:after {
     --list-header-color: rgba(235,235,245,0.6);
     --checkbox: #454545;
     --select: 0 solid #000;
+    --desc-color: darkGrey;
     --typing-indicator: #fff;
     --separ: #333;
     --coll-color: hsl(0, 0%, 6%);
