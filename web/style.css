@@ -713,7 +713,7 @@ input[type='checkbox'][role='switch']:checked::before {
 }
 
 .collapsible-value {
-  font-size: 14px;
+  font-size: 16px;
   width: 15px;
   color: #3F86FF;
   font-weight: 500;
