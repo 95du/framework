@@ -751,7 +751,7 @@ input[type="range"] {
   background: var(--checkbox);
   border-radius: 8px;
   position: relative;
-  margin: 0 15px 0 20px;
+  margin: 0 15px 0 25px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
