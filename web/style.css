@@ -383,6 +383,13 @@ a:focus,a:hover {
 }
 
 /* 提示框开始 */
+.countdown {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  margin-right: 8px;
+}
+
 .popup {
   position: fixed;
   top: -50px;
