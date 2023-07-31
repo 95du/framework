@@ -390,6 +390,12 @@ a:focus,a:hover {
   margin-right: 8px;
 }
 
+.countdown i {
+  color: white;
+  font-size: 18px;
+  padding-top: 1.8px;
+}
+
 .popup {
   position: fixed;
   top: -50px;
