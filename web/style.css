@@ -736,11 +736,18 @@ input[type='checkbox'][role='switch']:checked::before {
   margin: 0 5px;
 }
 
-.separ {
+.separ, .separ-range {
   height: 0.5px;
   border: none;
-  background-color: var(--separ);
   margin: 0.2px 0 0.2px 20px;
+}
+
+.separ {
+  background-color: var(--separ);
+}
+
+.range-separ {
+  background-color: var(--divider-color);
 }
 
 input[type="range"] {
@@ -775,13 +782,6 @@ input[type="range"]:after {
   position: absolute;
   top: -40px;
   right: 0;
-}
-
-.range-separ {
-  height: 0.5px;
-  border: none;
-  background-color: var(--divider-color);
-  margin: 0.2px 0 0.2px 20px;
 }
 /* 滑块折叠列表结束 */
 
