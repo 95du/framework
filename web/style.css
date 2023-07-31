@@ -776,6 +776,13 @@ input[type="range"]:after {
   top: -40px;
   right: 0;
 }
+
+.range-separ {
+  height: 0.5px;
+  border: none;
+  background-color: var(--divider-color);
+  margin: 0.2px 0 0.2px 20px;
+}
 /* 滑块折叠列表结束 */
 
 .preview.loading {
