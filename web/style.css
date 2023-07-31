@@ -736,7 +736,7 @@ input[type='checkbox'][role='switch']:checked::before {
   margin: 0 5px;
 }
 
-.separ, .separ-range {
+.separ, .range-separ {
   height: 0.5px;
   border: none;
   margin: 0.2px 0 0.2px 20px;
