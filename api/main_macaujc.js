@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: cog;
-
+main()
 async function main() {
   const uri = Script.name();
   const scriptName = '澳门六合彩'
@@ -188,13 +188,25 @@ async function main() {
    * @param { Image } image
    * @param { string } string
    */  
+  const getCacheMaskSFIcon = async (name, color) => {
+    const cache = useFileManager();
+    const image = cache.readImage(name);
+    if ( image ) {
+      return toBase64(image);
+    }
+    const img = await loadSF2B64(name, color);
+    cache.writeImage(name, img);
+    return toBase64(img);
+  };
+  
+  // loadSF2B64
   const loadSF2B64 = async (
     icon = 'square.grid.2x2',
     color = '#56A8D6',
     cornerWidth = 39
   ) => {
     const sfSymbolImg = await drawTableIcon(icon, color, cornerWidth);
-    return toBase64(sfSymbolImg);
+    return sfSymbolImg;
   };
   
   const drawTableIcon = async (
@@ -432,7 +444,7 @@ async function main() {
       `${rootUrl}img/icon/4qiao.png`
     ));
     
-    const rangeColorImg = await loadSF2B64('gearshape.fill', '#B171FF');
+    const rangeColorImg = await getCacheMaskSFIcon('gearshape.fill', '#B171FF');
     
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
@@ -446,7 +458,7 @@ async function main() {
         const { icon } = item;
         if (typeof icon === 'object' && icon.name) {
           const {name, color} = icon;
-          item.icon = await loadSF2B64(name, color);
+          item.icon = await getCacheMaskSFIcon(name, color);
         } else if (typeof icon === 'string') {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
           const image = await getCacheImage(name, icon);
