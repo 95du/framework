@@ -406,7 +406,7 @@ a:focus,a:hover {
   font-size: 14px;
   color: #fff;
   opacity: 0;
-  animation: title 0.3s 0.3s ease-in-out forwards;
+  animation: title 0.2s 0.3s ease-in-out forwards;
 }
 
 .circle {
