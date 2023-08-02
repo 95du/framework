@@ -406,6 +406,7 @@ a:focus,a:hover {
 .svg-header {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .svg-title {
