@@ -438,7 +438,7 @@ a:focus,a:hover {
   transform: translate(0.5px, 1px);
   stroke-dasharray: 18;
   stroke-dashoffset: 18;
-  animation: tick 0.7s 0.5s ease-in-out forwards;
+  animation: tick 0.3s 0.5s ease-in-out forwards;
 }
 
 svg {
