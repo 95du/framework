@@ -395,6 +395,7 @@ a:focus,a:hover {
   font-size: 16px;
   font-weight: 400;
   margin-right: 8px;
+  margin-bottom: 0.7px;
 }
 
 .countdown i {
@@ -413,6 +414,7 @@ a:focus,a:hover {
   margin-left: 6px;
   font-size: 14px;
   color: #fff;
+  justify-content: center;
   opacity: 0;
   animation: title 0.2s 0.3s ease-in-out forwards;
 }
