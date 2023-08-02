@@ -393,7 +393,82 @@ a:focus,a:hover {
 .countdown i {
   color: white;
   font-size: 18px;
-  padding-top: 1.8px;
+  padding-top: 1.6px;
+}
+
+.svg-header {
+  display: flex;
+  align-items: center;
+}
+
+.svg-title {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #fff;
+  opacity: 0;
+  animation: title 0.3s 0.3s ease-in-out forwards;
+}
+
+.circle {
+  stroke: #fff;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  fill: none;
+  transform-origin: center;
+  transform: rotate(-90deg);
+  stroke-dasharray: 94;
+  stroke-dashoffset: 94;
+  animation: circle 0.5s ease-in-out forwards;
+}
+
+.tick {
+  stroke: #fff;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  transform-origin: center;
+  transform: translate(0.4px, 0.6px);
+  stroke-dasharray: 18;
+  stroke-dashoffset: 18;
+  animation: tick 0.7s 0.5s ease-in-out forwards;
+}
+
+svg {
+  width: 20px;
+  height: 20px;
+}
+
+@keyframes circle {
+  from {
+    stroke-dashoffset: 94;
+  }
+
+  to {
+    stroke-dashoffset: 188;
+  }
+}
+
+@keyframes tick {
+  from {
+    stroke-dashoffset: 10;
+    opacity: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes title {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .popup {
