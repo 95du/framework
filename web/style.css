@@ -329,7 +329,14 @@ a:focus,a:hover {
   font-size: 19px;
   color: transparent;
   animation: hue 3s linear infinite;
-  background-image: linear-gradient(to right, rgb(0,128,255), rgb(8,0,255), rgb(128,0,255), rgb(255,0,255), rgb(255,0,128), rgb(255,128,0));
+  background-image: linear-gradient(to top, 
+    rgb(0,128,255),
+    rgb(8,0,255),
+    rgb(128,0,255),
+    rgb(255,0,255),
+    rgb(255,0,128),
+    rgb(255,128,0)
+  );
   -webkit-background-clip: text;
 }
 /** 彩色昵称结束 **/
