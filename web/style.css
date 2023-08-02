@@ -428,7 +428,7 @@ a:focus,a:hover {
   stroke-linejoin: round;
   fill: none;
   transform-origin: center;
-  transform: translate(0.4px, 0.6px);
+  transform: translate(0.5px, 1px);
   stroke-dasharray: 18;
   stroke-dashoffset: 18;
   animation: tick 0.7s 0.5s ease-in-out forwards;
