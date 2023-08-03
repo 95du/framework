@@ -416,7 +416,7 @@ a:focus,a:hover {
   color: #fff;
   justify-content: center;
   opacity: 0;
-  animation: title 0.2s 0.3s ease-in-out forwards;
+  animation: title 0.2s 0.25s ease-in-out forwards;
 }
 
 .circle {
