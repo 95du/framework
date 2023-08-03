@@ -444,7 +444,7 @@ async function main() {
       `${rootUrl}img/icon/4qiao.png`
     ));
     
-    const rangeColorImg = await getCacheMaskSFIcon('gearshape.fill', '#B171FF');
+    const rangeColorImg = await getCacheMaskSFIcon('arrowshape.turn.up.left.2.fill', '#F6C534');
     
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
@@ -570,11 +570,13 @@ async function main() {
         const selCont = document.createElement('div');
         selCont.classList.add('form-item__input__select');
         selCont.appendChild(select);
-      
+        
+        /**
         const icon = document.createElement('i');
         icon.className = 'iconfont icon-arrow_right form-item__icon';
         selCont.appendChild(icon);
-      
+        */
+        
         label.appendChild(selCont);
       } else if ( item.type === 'cell' || item.type === 'page' ) {
         if ( item.desc ) {
@@ -664,9 +666,9 @@ async function main() {
           range.innerHTML = \`
           <label class="collapsible-label" for="collapse-toggle">
             <div class="form-label">
-              <div class="collapsible-value">${settings.range || 20}</div>
+              <div class="collapsible-value">${settings.range || 90}</div>
             </div>
-            <input id="_range" type="range" value="${settings.range || 20}" min="0" max="100" step="1">
+            <input id="_range" type="range" value="${settings.range || 90}" min="0" max="360" step="5">
             <i class="fas fa-chevron-right icon-right-down"></i>
           </label>
           <!-- 折叠取色器 -->
@@ -675,7 +677,7 @@ async function main() {
             <label class="form-item">
               <div class="form-label">
                 <img class="form-label-img" src="${rangeColorImg}" />
-                <div class="form-label-title">滑块颜色</div>
+                <div class="form-label-title">渐变颜色</div>
               </div>
               <input type="color" value="${settings.rangeColor}" id="color-input">
             </label>
@@ -1039,8 +1041,7 @@ document.getElementById('install').addEventListener('click', () => {
      */
     const updateFormText = async (fieldName, newText) => {
       webView.evaluateJavaScript(
-        `const div = document.querySelector('.form-item[data-name="${fieldName}"] .form-item-right-desc');
-        div.innerText = ${JSON.stringify(newText)}`
+        `document.querySelector('.form-item[data-name="${fieldName}"] .form-item-right-desc').innerText = ${JSON.stringify(newText)}`, false
       )
     };
     
@@ -1106,7 +1107,7 @@ document.getElementById('install').addEventListener('click', () => {
           }
           break;
         case 'background':
-          importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
+          await importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
           break;
         case 'store':
           importModule(await webModule('store.js', 'https://gitcode.net/4qiao/framework/raw/master/mian/module_95du_storeScript.js')).main();
@@ -1218,13 +1219,13 @@ document.getElementById('install').addEventListener('click', () => {
         items: [
           {
             name: "textLightColor",
-            label: "文字白天",
+            label: "白天文字",
             type: "color",
             icon: `${rootUrl}img/symbol/title.png`
           },
           {
             name: "textDarkColor",
-            label: "文字夜间",
+            label: "夜间文字",
             type: "color",
             icon: {
               name: 'textformat',
@@ -1249,6 +1250,17 @@ document.getElementById('install').addEventListener('click', () => {
         ]
       },
       {
+        label: '渐变角度、颜色',
+        type: 'group',
+        items: [
+          {
+            type: 'range',
+            name: 'range',
+            color: 'rangeColor'
+          }
+        ]
+      },
+      {
         type: 'group',
         items: [
           {
@@ -1262,7 +1274,7 @@ document.getElementById('install').addEventListener('click', () => {
             name: 'gradualColor',
             type: 'select',
             multiple: true,
-            icon: `${rootUrl}img/symbol/abc.png`,
+            icon: `${rootUrl}img/symbol/gradientBackground.png`,
             options: [
               {
                 values: [
@@ -1295,40 +1307,6 @@ document.getElementById('install').addEventListener('click', () => {
                     label: '备用',
                     value: 'f',
                     disabled: true
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            label: '渐变方向',
-            name: 'angle',
-            type: 'select',
-            multiple: false,
-            icon: `${rootUrl}img/symbol/gradientBackground.png`,
-            options: [
-              {
-                values: [
-                  { 
-                    label: '由上往下',
-                    value: 'topBot'
-                  },
-                  {
-                    label: '由下往上',
-                    value: 'botTop'
-                  }
-                ]
-              },
-              {
-                label: 'Single Selection',
-                values: [
-                  { 
-                    label: '从左往右',
-                    value: 'leftRig'
-                  },
-                  {
-                    label: '从右往左',
-                    value: 'rigLeft'
                   }
                 ]
               }
@@ -1391,17 +1369,6 @@ document.getElementById('install').addEventListener('click', () => {
               color: '#FF6800'
             },
             default: true
-          }
-        ]
-      },
-      {
-        label: '滑块备用',
-        type: 'group',
-        items: [
-          {
-            type: 'range',
-            name: 'range',
-            color: 'rangeColor'
           }
         ]
       },
