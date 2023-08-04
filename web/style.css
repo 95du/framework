@@ -48,6 +48,20 @@ td, th {
   overflow-y: auto; /* 纵向滑动 */
 }
 
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 62px;
+  top: -5%;
+}
+
+@media screen and (max-width: 925px) {
+  .modal-dialog {
+    margin: 78px;
+    top: -11%;
+  }
+}
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -341,7 +355,7 @@ a:focus,a:hover {
 }
 /** 彩色昵称结束 **/
 
-/* 预览图片 */
+/* 预览的图片 */
 .preview-img {
   display: block;
   padding: 10px 0 2px 0;
