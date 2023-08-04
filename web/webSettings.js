@@ -113,19 +113,6 @@ async function main() {
   };
   
   /**
-   * 弹出一个通知
-   * @param {string} title
-   * @param {string} body
-   * @param {string} url
-   * @param {string} sound
-   */  
-  const notify = async (title, body, url, opts = {}) => {
-    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
-    if (url) n.openURL = url;
-    return await n.schedule();
-  };
-  
-  /**
    * 指定模块页面
    * @param { string } time
    * @param { string } color
@@ -153,7 +140,6 @@ async function main() {
       settings.version = version;
       writeSettings(settings);
     };
-    
     // refresh time
     if (settings.refresh) {  
       const widget = new ListWidget();
@@ -164,9 +150,11 @@ async function main() {
     return null;
   };
   
-  // download store
+  /**
+   * download store
+   */
   const myStore = async () => {
-    const script = await new Request('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js').loadString();
+    const script = await getString('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js');
     const fm = FileManager.iCloud();
     fm.writeString(fm.documentsDirectory() + '/95du_ScriptStore.js', script);
    };
@@ -200,8 +188,7 @@ async function main() {
   
   const updateString = async () => {
     const modulePath = fm.joinPath(mainPath, scrName);
-    const reqUpdate = new Request(scrUrl);
-    const codeString = await reqUpdate.loadString();
+    const codeString = await getString(scrUrl);
     if (codeString.indexOf('95度茅台') == -1) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
     } else {
@@ -211,19 +198,97 @@ async function main() {
   };
   
   /**
+   * 获取css及js字符串和图片并使用缓存
+   * @param {string} File Extension
+   * @param {Image} Base64 
+   * @returns {string} - Request
+   */
+  const cache = fm.joinPath(mainPath, 'cache_path');
+  fm.createDirectory(cache, true);
+  
+  const useFileManager = ({ cacheTime } = {}) => {
+    return {
+      readString: (fileName) => {
+        const filePath = fm.joinPath(cache, fileName);
+        const currentTime = (new Date()).getTime();
+        if (fm.fileExists(filePath) && cacheTime && ((currentTime - fm.creationDate(filePath).getTime()) / ( 60 * 60 * 1000 )) <= cacheTime) {
+          return fm.readString(filePath);
+        }
+        return null;
+      },
+      writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),  
+      // cache Image
+      readImage: (filePath) => {
+        const imgPath = fm.joinPath(cache, filePath);
+        return fm.fileExists(imgPath) ? fm.readImage(imgPath) : null;
+      },
+      writeImage: (filePath, image) => fm.writeImage(fm.joinPath(cache, filePath), image)
+    }
+  };
+  
+  /**
+   * 获取css，js字符串并使用缓存
+   * @param {string} string
+   */
+  const getString = async (url) => {
+    return await new Request(url).loadString();
+  };
+  
+  const getCacheString = async (cssFileName, cssFileUrl) => {
+    const cache = useFileManager({ cacheTime: settings.bufferTime });
+    const cssString = cache.readString(cssFileName);
+    if (cssString) {
+      return cssString;
+    }
+    const response = await getString(cssFileUrl);
+    cache.writeString(cssFileName, response);
+    return response;
+  };
+  
+  /** 
+   * toBase64(img) string
+   * SFIcon蒙版后转base64
+   */
+  const toBase64 = (img) => {
+    return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
+  };
+  
+  /**
+   * 获取网络图片并使用缓存
+   * @param {Image} url
+   */
+  const getImage = async (url) => {
+    return await new Request(url).loadImage();
+  };
+  
+  const getCacheImage = async (name, url) => {
+    const cache = useFileManager();
+    const image = cache.readImage(name);
+    if ( image ) {
+      return toBase64(image);
+    }
+    const img = await getImage(url);
+    cache.writeImage(name, img);
+    return toBase64(img);
+  };
+  
+  /**
    * Setting drawTableIcon
    * @param { Image } image
    * @param { string } string
    */  
-  const loadSF2B64 = async (
-    icon = 'square.grid.2x2',
-    color = '#56A8D6',
-    cornerWidth = 39
-  ) => {
-    const sfSymbolImg = await drawTableIcon(icon, color, cornerWidth);
-    return toBase64(sfSymbolImg);
+  const getCacheMaskSFIcon = async (name, color) => {
+    const cache = useFileManager();
+    const image = cache.readImage(name);
+    if ( image ) {
+      return toBase64(image);
+    }
+    const img = await drawTableIcon(name, color);
+    cache.writeImage(name, img);
+    return toBase64(img);
   };
   
+  // drawTableIcon
   const drawTableIcon = async (
     icon = 'square.grid.2x2',
     color = '#e8e8e8',
@@ -285,6 +350,7 @@ async function main() {
     return ctx.getImage();
   };
   
+  
   /**
    * drawSquare
    * @param { Image } image
@@ -316,8 +382,9 @@ async function main() {
     return await new Request(base64Image).loadImage();  
   };
   
+  
   /**
-   * SFIcon转换为base64
+   * SFIcon 转换为base64
    * @param {*} icon SFicon
    * @returns base64 string
    */
@@ -327,21 +394,36 @@ async function main() {
     sf.applyFont(
       Font.mediumSystemFont(30)
     );
-    return toBase64(sf.image);
+    return sf.image;
   };
   
-  /** 
-   * toBase64(img) string
-   * SFIcon蒙版后转base64
-   */
-  const toBase64 = async (img) => {
-    return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
+  // 缓存并读取
+  const getCacheDrawSFIcon = async (name) => {
+    const cache = useFileManager();
+    const image = cache.readImage(name);
+    if ( image ) {
+      return toBase64(image);
+    }
+    const img = await drawSFIcon(name);
+    cache.writeImage(name, img);
+    return toBase64(img);
   };
   
-  const gpsIcon = await loadSF2B64('car.rear.fill', '#0FC4EA');
-  const weiChat = await drawSFIcon("message");
-  const map = await drawSFIcon("pin");
-  const loginDevice = await drawSFIcon('externaldrive.badge.plus');
+  // 折叠列表 SFSymbol icon
+  const [weiChat, map, loginDevice] = await Promise.all(['message', 'pin', 'externaldrive.badge.plus'].map(getCacheDrawSFIcon));
+
+  /**
+   * 弹出一个通知
+   * @param {string} title
+   * @param {string} body
+   * @param {string} url
+   * @param {string} sound
+   */  
+  const notify = async (title, body, url, opts = {}) => {
+    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
+    if (url) n.openURL = url;
+    return await n.schedule();
+  };
 
   /**
    * 弹出输入框
@@ -381,74 +463,6 @@ async function main() {
     return await alert.presentAlert();
   };
   
-  /**
-   * 获取css及js字符串和图片并使用缓存
-   * @param {string} File Extension
-   * @param {Image} Base64 
-   * @returns {string} - Request
-   */
-  const cache = fm.joinPath(mainPath, 'cache_path');
-  fm.createDirectory(cache, true);
-  
-  const useFileManager = ({ cacheTime } = {}) => {
-    return {
-      readString: (fileName) => {
-        const filePath = fm.joinPath(cache, fileName);
-        const currentTime = (new Date()).getTime();
-        if (fm.fileExists(filePath) && cacheTime && ((currentTime - fm.creationDate(filePath).getTime()) / ( 60 * 60 * 1000 )) <= cacheTime) {
-          return fm.readString(filePath);
-        }
-        return null;
-      },
-      writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),  
-      // cache Image
-      readImage: (filePath) => {
-        const imgPath = fm.joinPath(cache, filePath);
-        return fm.fileExists(imgPath) ? fm.readImage(imgPath) : null;
-      },
-      writeImage: (filePath, image) => fm.writeImage(fm.joinPath(cache, filePath), image)
-    }
-  };
-  
-  /**
-   * 获取css，js字符串并使用缓存
-   * @param {string} string
-   */
-  const getString = async (url) => {
-    return await new Request(url).loadString();
-  };
-  
-  const getCacheString = async (cssFileName, cssFileUrl) => {
-    const cache = useFileManager({ cacheTime: settings.bufferTime });
-    const cssString = cache.readString(cssFileName);
-    if (cssString) {
-      return cssString;
-    }
-    const response = await getString(cssFileUrl);
-    cache.writeString(cssFileName, response);
-    return response;
-  };
-  
-  /**
-   * 获取网络图片并使用缓存
-   * @param {Image} url
-   */
-  const getImage = async (url) => {
-    return await new Request(url).loadImage();
-  };
-  
-  const getCacheImage = async (name, url) => {
-    const cache = useFileManager();
-    const image = cache.readImage(name);
-    if ( image ) {
-      return image;
-    }
-    const img = await getImage(url);
-    cache.writeImage(name, img);
-    return img;
-  };
-  // ======= 基础类结束 ======= //
-  
   
   // ====== web start ======= //
   const renderAppView = async (options) => {
@@ -461,19 +475,19 @@ async function main() {
     } = options;
     
     // themeColor
-    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
+    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark-theme', 'white'] : ['white-theme', 'black'];
 
-    const appleHub = await toBase64(await getCacheImage(
+    const appleHub = await getCacheImage(
       `${logoColor}.png`,
       `${rootUrl}img/picture/appleHub_${logoColor}.png`
-    ));
+    );
     
-    const rangeColorImg = await loadSF2B64('arrowshape.turn.up.left.2.fill', '#F6C534');
+    const rangeColorImg = await getCacheMaskSFIcon('arrowshape.turn.up.left.2.fill', '#F6C534');
     
-    const authorAvatar = await toBase64(fm.fileExists(getAvatarImg()) ? fm.readImage(getAvatarImg()) : await getCacheImage(
+    const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage(
       'author.png',
       `${rootUrl}img/icon/4qiao.png`
-    ));
+    );
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
@@ -486,11 +500,11 @@ async function main() {
         const { icon } = item;
         if (typeof icon === 'object' && icon.name) {
           const {name, color} = icon;
-          item.icon = await loadSF2B64(name, color);
+          item.icon = await getCacheMaskSFIcon(name, color);
         } else if (typeof icon === 'string') {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
           const image = await getCacheImage(name, icon);
-          item.icon = await toBase64(image);
+          item.icon = image;
         }
       }
     };
@@ -631,12 +645,13 @@ async function main() {
               switchDrawerMenu();
               break;
             case 'recover':
+              resetContent();
               alertWindow();
+              updateCountdown(4);
               break;
           };
           
-          const methodName = (name === 'preference' || name === 'infoPage') ? 'itemClick' : name;
-          invoke(methodName, item);
+          invoke(item.type === 'page' ? 'itemClick' : name, item);
         });
       } else if (item.type === 'number') {
         const inputCntr = document.createElement("div");
@@ -971,8 +986,6 @@ document.getElementById('install').addEventListener('click', () => {
         )
       };
     
-      const message = '组件功能: 通过GPS设备制作的小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的链接。'
-    
       function switchDrawerMenu() {
         const popup = document.querySelector(".popup-container");
         const chatMsg = document.querySelector(".chat-message");
@@ -986,10 +999,12 @@ document.getElementById('install').addEventListener('click', () => {
           popup.style.height = "";
         }
         
+        // ChatGPT 打字动画
         function typeNextChar() {
+          const message = '组件功能: 通过GPS设备制作的小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的链接。'
           chatMsg.textContent = "";
           let currentChar = 0;
-      
+          
           function appendNextChar() {
             if (currentChar < message.length) {
               chatMsg.textContent += message[currentChar++];
@@ -1018,47 +1033,67 @@ document.getElementById('install').addEventListener('click', () => {
     };
     
     /**
-     * 清除缓存时弹出提示窗
-     * @returns {string} 
+     * 恢复设置时弹出提示窗
+     * @returns {string}
+     * countdownEl.innerHTML = '<i class="fas fa-check"></i>'
      */
     const alertPopup = async () => {
       return `
       <div class="popup" id="popup">
-        <p class="countdown" id="countdown">3</p>
-        <p>正在获取...</p>
+        <div class="countdown" id="countdown"></div>
+        <p id="status"></p>
       </div>
       <script>
-        let seconds = 3
-        const countdownEl = document.getElementById('countdown');
+        const updateCountdown = ( seconds ) => {
+          const countdownEl = document.getElementById('countdown');
+          if (seconds === 0) {
+            countdownEl.innerHTML =\`
+            <div class="svg-header">
+              <svg><circle class="circle" cx="10" cy="10" r="7.6" /> <polyline class="tick" points="6,10 8,12 12,6" /></svg>
+              <p class="svg-title">
+                恢复成功
+              </p>
+            </div>\`;
+            
+document.getElementById('status').textContent = '';
+          } else {
+            countdownEl.textContent = seconds;
+            setTimeout(() => updateCountdown(seconds - 1), 1000);
+          }
+        };
     
-        const interval = setInterval(() => {
-          countdownEl.textContent = seconds === 0 ? '✔️' : seconds--;
-        }, 1000);
+        const resetContent = () => {
+          const statusEl = document.getElementById('status').textContent = '正在恢复...';
+        };
         
-        function alertWindow() {
+        const alertWindow = () => {
           const popupTips = document.getElementById("popup")
-          .classList;
-          //setTimeout(() => popupTips.add("show", "fd"), 1000);
+            .classList;
           popupTips.add("show", "fd")
           setTimeout(() => {
             popupTips.remove("fd");
-            setTimeout(() => popupTips.remove("show"), 300);
-          }, 2800);
-        }
+            setTimeout(() => popupTips.remove("show"), 500);
+          }, 4800);
+        };
       </script>`;
     };
     
-    // 组件效果图预览
+    /**
+     * 组件效果图预览
+     * 图片左右轮播
+     * Preview Component Images
+     * This function displays images with left-right carousel effect.
+     */
     previewImgHtml = async () => {
       const previewImgUrl = [
-        `${rootUrl}img/picture/macaujc_black.png`,
-        `${rootUrl}img/picture/macaujc_white.png`
+        `${rootUrl}img/picture/gps_location_1.png`,
+        `${rootUrl}img/picture/gps_location_2.png`
       ];
       
       if ( settings.topStyle ) {
         const previewImgs = await Promise.all(previewImgUrl.map(async (item) => {
           const imgName = decodeURIComponent(item.substring(item.lastIndexOf("/") + 1));
-          const previewImg = await toBase64(await getCacheImage(imgName, item));
+          const previewImg = await getCacheImage(imgName, item);
           return previewImg;
         }));
         return `<div id="scrollBox">
@@ -1069,7 +1104,7 @@ document.getElementById('install').addEventListener('click', () => {
       } else {
         const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
         const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
-        const previewImg = await toBase64(await getCacheImage(imgName, randomUrl));
+        const previewImg = await getCacheImage(imgName, randomUrl);
         return `<img id="store" src="${previewImg}" class="preview-img">`
       }
     };
@@ -1083,11 +1118,11 @@ document.getElementById('install').addEventListener('click', () => {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       <style>${style}</style>
       </head>
-      <body class="${themeColor}-theme nav-fixed site-layout-1">
-        ${await alertPopup()}
+      <body class="${themeColor}">
         ${avatarInfo ? await mainMenuTop() : previewImage ? await previewImgHtml() : ''}
         ${head || ''}
-        <!-- 底部窗口 -->
+        <!-- 弹窗 -->
+        ${await alertPopup()}
         ${await buttonPopup()}
         <section id="settings">
         </section>
@@ -1100,7 +1135,7 @@ document.getElementById('install').addEventListener('click', () => {
     
     /**
      * 修改特定 form 表单项的文本
-     * @param {string} fieldName
+     * @param {string} elementId
      * @param {string} newText
      * @param {WebView} webView
      */
@@ -1121,7 +1156,7 @@ document.getElementById('install').addEventListener('click', () => {
       delAlert.addDestructiveAction('重置');
       delAlert.addCancelAction('取消')
       const action = await delAlert.presentAlert();
-      if ( action == 0 ) {
+      if ( action === 0 ) {
         fm.remove(mainPath);
         ScriptableRun();
       }
@@ -1134,13 +1169,13 @@ document.getElementById('install').addEventListener('click', () => {
         message = '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
         options = ['取消', '清除']
       );
-      if ( action == 1 ) {
+      if ( action === 1 ) {
         fm.remove(cache);
         ScriptableRun();
       }
     };
     
-    // 背景图innerText
+    // 背景图 innerText
     const innerTextBgImage = () => {
       const isSetBackground = fm.fileExists(getBgImage()) ? '已添加' : '';
       innerTextElementById(
@@ -1244,8 +1279,8 @@ document.getElementById('install').addEventListener('click', () => {
         settings.carHeight = Number(inputArr[3].value);
         settings.bottomSize = Number(inputArr[4].value);
         if (inputArr) {
-          await generateAlert('设置成功', '桌面组件稍后将自动刷新', ['完成']);
           writeSettings(settings);
+          await generateAlert('设置成功', '桌面组件稍后将自动刷新', ['完成']);
         }
       });
     };
@@ -1276,8 +1311,10 @@ document.getElementById('install').addEventListener('click', () => {
       } else if ( code === 'reset' && fm.fileExists(mainPath) ) {
         await removeData();
       } else if ( code === 'recover' ) {
-        //writeSettings(DEFAULT);
-        //Timer.schedule(3000, false, () => { ScriptableRun() });
+        Timer.schedule(5000, false, () => { 
+          //writeSettings(DEFAULT);
+          //ScriptableRun();
+        });
       } else if ( data?.input ) {
         await input(data);
       };
@@ -1326,7 +1363,7 @@ document.getElementById('install').addEventListener('click', () => {
           }
           break;
         case 'background':
-          importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
+          await importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
           break;
         case 'store':
           importModule(await webModule('store.js', 'https://gitcode.net/4qiao/framework/raw/master/mian/module_95du_storeScript.js')).main();
@@ -1688,15 +1725,19 @@ document.getElementById('install').addEventListener('click', () => {
             label: 'GPS定位',
             type: 'collapsible',
             name: 'user',
-            icon: gpsIcon,
+            icon: {
+              name: 'safari',
+              color: '#0FC4EA'
+            },
             item: [
               {
                 label: '登录设备',
                 name: 'login',
+                icon: loginDevice,
                 type: 'cell',
                 display: true,
                 desc: settings.password && settings.imei ? '已登录' : '未登录',
-                icon: loginDevice
+                message: '在设备上查看获取 imei 码\n原始密码为: 123456'
               },
               {
                 label: '静态地图',
