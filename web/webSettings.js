@@ -291,10 +291,11 @@ async function main() {
   // drawTableIcon
   const drawTableIcon = async (
     icon = 'square.grid.2x2',
-    color = '#e8e8e8',
+    color = '#ff6800',
     cornerWidth = 39
   ) => {
-    const sfi = SFSymbol.named(icon);
+    let sfi = SFSymbol.named(icon);
+    if (sfi == null) sfi = SFSymbol.named('scribble');
     sfi.applyFont(  
       Font.mediumSystemFont(30)
     );
@@ -503,8 +504,7 @@ async function main() {
           item.icon = await getCacheMaskSFIcon(name, color);
         } else if (typeof icon === 'string') {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
-          const image = await getCacheImage(name, icon);
-          item.icon = image;
+          item.icon = await getCacheImage(name, icon);
         }
       }
     };
@@ -531,12 +531,6 @@ async function main() {
       --typing-indicator: #000;
       --separ: var(--checkbox);
       --coll-color: hsl(0, 0%, 97%);
-    }
-    .modal-dialog {
-      position: relative;
-      width: auto;
-      margin: ${screenSize < 926 ? '62px' : '78px'};
-      top: ${screenSize < 926 ? '-5%' : '-11%'}; /* 弹窗位置 */
     }
     ${cssStyle}`;
     
@@ -619,27 +613,28 @@ async function main() {
         */
         
         label.appendChild(selCont);
-      } else if ( 
-        item.type === 'cell' ||
-        item.type === 'page'
-      ) {
+      } else if (['cell', 'page', 'file'].includes(item.type)) {
         const { name, display, isAdd } = item;
-        
+
         if ( item.desc ) {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
-          desc.id = \`\${name}-desc\`
-          desc.innerText = display ? item.desc : isAdd ? settings[\`\${name}_add\`] ?? item.desc : settings[name];
+          desc.id = \`\${name}-desc\`;
+          desc.innerText = isAdd ? (settings[\`\${name}_add\`] ?? item.desc) : settings[name];
           label.appendChild(desc);
-        }
-        
+        };
+      
         const icon = document.createElement('i');
-        icon.className = 'iconfont icon-arrow_right'
+        icon.className = 'iconfont icon-arrow_right';
         label.appendChild(icon);
         label.addEventListener('click', (e) => {
           switch (name) {
             case 'version':
               popupOpen();
+              break;
+            case 'setAvatar':
+              fileInput.click();
+              invoke(name, data);
               break;
             case 'widgetMsg':
               switchDrawerMenu();
@@ -650,8 +645,24 @@ async function main() {
               updateCountdown(4);
               break;
           };
-          
+      
           invoke(item.type === 'page' ? 'itemClick' : name, item);
+        });
+  
+        // 创建图片input元素并添加监听  
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".jpg,.jpeg,.png,.gif,.bmp";
+        fileInput.addEventListener("change", async (event) => {
+          const file = event.target.files[0];
+          if (file && file.type.includes("image")) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const imageData = e.target.result.split(',')[1];
+              invoke(name, imageData)
+            };
+            reader.readAsDataURL(file);
+          }
         });
       } else if (item.type === 'number') {
         const inputCntr = document.createElement("div");
@@ -747,7 +758,7 @@ async function main() {
           const toggleShowContent = () => {
             content.classList.toggle('show');
             isExpanded = !isExpanded;
-            icon.style.transition = 'transform 0.4s';
+            icon.style.transition = 'transform 0.35s';
             icon.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
           };
           range.querySelector('.collapsible-label').addEventListener('click', toggleShowContent);
@@ -823,7 +834,7 @@ async function main() {
           collapsible.querySelector('.collapsible-label').addEventListener('click', () => {
             content.classList.toggle('show');
             isExpanded = !isExpanded;
-            icon.style.transition = 'transform 0.4s';
+            icon.style.transition = 'transform 0.35s';
             icon.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
           });
           
@@ -888,7 +899,10 @@ document.getElementById('install').addEventListener('click', () => {
     })()`;
   
   
-    // 主菜单头像信息
+    /**
+     * 生成主菜单头像信息和弹窗的HTML内容
+     * @returns {string} 包含主菜单头像信息、弹窗和脚本标签的HTML字符串
+     */
     const mainMenuTop = async () => {
       const avatar = `
       <div class="avatarInfo">
@@ -941,7 +955,8 @@ document.getElementById('install').addEventListener('click', () => {
       const songId = [
         '8fk9B72BcV2',
         '8duPZb8BcV2',
-        '6pM373bBdV2'
+        '6pM373bBdV2',
+        '6NJHhd6BeV2'
       ];
       const randomId = songId[Math.floor(Math.random() * songId.length)];
       const music = `
@@ -1054,8 +1069,7 @@ document.getElementById('install').addEventListener('click', () => {
                 恢复成功
               </p>
             </div>\`;
-            
-document.getElementById('status').textContent = '';
+            document.getElementById('status').textContent = '';
           } else {
             countdownEl.textContent = seconds;
             setTimeout(() => updateCountdown(seconds - 1), 1000);
@@ -1322,9 +1336,9 @@ document.getElementById('status').textContent = '';
       // switch(code)
       switch (code) {
         case 'setAvatar':
-          const avatar = await Photos.fromLibrary();
+          const avatarImage = Image.fromData(Data.fromBase64String(data));
           fm.writeImage(
-            getAvatarImg(), await drawSquare(avatar)
+            getAvatarImg(), await drawSquare(avatarImage)
           );
           ScriptableRun();
           break;
@@ -1621,7 +1635,7 @@ document.getElementById('status').textContent = '';
           {
             label: '图片背景',
             name: 'chooseBgImg',
-            type: 'cell',
+            type: 'file',
             isAdd: true,
             icon: `${rootUrl}img/symbol/bgImage.png`,
             desc: fm.fileExists(getBgImage()) ? '已添加' : ' '
