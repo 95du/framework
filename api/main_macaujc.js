@@ -93,19 +93,6 @@ async function main() {
   };
   
   /**
-   * 弹出一个通知
-   * @param {string} title
-   * @param {string} body
-   * @param {string} url
-   * @param {string} sound
-   */  
-  const notify = async (title, body, url, opts = {}) => {
-    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
-    if (url) n.openURL = url;
-    return await n.schedule();
-  };
-  
-  /**
    * 指定模块页面
    * @param { string } time
    * @param { string } color
@@ -201,7 +188,7 @@ async function main() {
   
   // loadSF2B64
   const loadSF2B64 = async (
-    icon = 'square.grid.2x2',
+    icon = 'message.fill',
     color = '#56A8D6',
     cornerWidth = 39
   ) => {
@@ -210,11 +197,12 @@ async function main() {
   };
   
   const drawTableIcon = async (
-    icon = 'square.grid.2x2',
-    color = '#e8e8e8',
+    icon = 'message.fill',
+    color = '#ff6800',
     cornerWidth = 39
   ) => {
-    const sfi = SFSymbol.named(icon);
+    let sfi = SFSymbol.named(icon);
+    if (sfi == null) sfi = SFSymbol.named('scribble');
     sfi.applyFont(  
       Font.mediumSystemFont(30)
     );
@@ -302,53 +290,6 @@ async function main() {
   };
   
   /**
-   * 弹出输入框
-   * @param title 标题
-   * @param desc  描述
-   * @param opt   属性
-   * @returns { Promise<void> }
-   */
-  const generateInputAlert = async (options, confirm) => {  
-    const inputAlert = new Alert();
-    inputAlert.title = options.title;
-    inputAlert.message = options.message;
-    const fieldArr = options.options;
-    for (const option of fieldArr) {
-      inputAlert.addTextField(
-        option.hint,
-        option.value
-      );
-    }
-    inputAlert.addAction('取消');
-    inputAlert.addAction('确认');
-    let getIndex = await inputAlert.presentAlert();
-    if (getIndex == 1) {
-      const inputObj = [];
-      fieldArr.forEach((index) => {
-        let value = inputAlert.textFieldValue(index);
-        inputObj.push({index, value});
-      });
-      confirm(inputObj);
-    }
-    return getIndex;
-  };
-  
-  /**
-   * @param message 内容
-   * @param options 按键
-   * @returns { Promise<number> }
-   */
-  const generateAlert = async (title, message, options) => {
-    const alert = new Alert();
-    alert.title = title
-    alert.message = message
-    for (const option of options) {
-      alert.addAction(option)
-    }
-    return await alert.presentAlert();
-  };
-  
-  /**
    * 获取css及js字符串和图片并使用缓存
    * @param {string} File Extension
    * @param {Image} Base64 
@@ -419,6 +360,66 @@ async function main() {
     return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
   };
 
+  /**
+   * 弹出一个通知
+   * @param {string} title
+   * @param {string} body
+   * @param {string} url
+   * @param {string} sound
+   */  
+  const notify = async (title, body, url, opts = {}) => {
+    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
+    if (url) n.openURL = url;
+    return await n.schedule();
+  };
+  
+  /**
+   * 弹出输入框
+   * @param title 标题
+   * @param desc  描述
+   * @param opt   属性
+   * @returns { Promise<void> }
+   */
+  const generateInputAlert = async (options, confirm) => {  
+    const inputAlert = new Alert();
+    inputAlert.title = options.title;
+    inputAlert.message = options.message;
+    const fieldArr = options.options;
+    for (const option of fieldArr) {
+      inputAlert.addTextField(
+        option.hint,
+        option.value
+      );
+    }
+    inputAlert.addAction('取消');
+    inputAlert.addAction('确认');
+    let getIndex = await inputAlert.presentAlert();
+    if (getIndex == 1) {
+      const inputObj = [];
+      fieldArr.forEach((index) => {
+        let value = inputAlert.textFieldValue(index);
+        inputObj.push({index, value});
+      });
+      confirm(inputObj);
+    }
+    return getIndex;
+  };
+  
+  /**
+   * @param message 内容
+   * @param options 按键
+   * @returns { Promise<number> }
+   */
+  const generateAlert = async (title, message, options) => {
+    const alert = new Alert();
+    alert.title = title
+    alert.message = message
+    for (const option of options) {
+      alert.addAction(option)
+    }
+    return await alert.presentAlert();
+  };
+  
   
   // ====== web start ======= //
   
@@ -459,7 +460,7 @@ async function main() {
         if (typeof icon === 'object' && icon.name) {
           const {name, color} = icon;
           item.icon = await getCacheMaskSFIcon(name, color);
-        } else if (typeof icon === 'string') {
+        } else if (typeof icon === 'string' && icon && icon.startsWith('https')) {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
           const image = await getCacheImage(name, icon);
           item.icon = await toBase64(image);
@@ -489,12 +490,6 @@ async function main() {
       --list-header-color: rgba(60,60,67,0.6);
       --typing-indicator: #000;
       --separ: var(--checkbox);
-    }
-    .modal-dialog {
-      position: relative;
-      width: auto;
-      margin: ${screenSize < 926 ? '62px' : '78px'};
-      top: ${screenSize < 926 ? '-5%' : '-8%'}; /* 弹窗位置 */
     }
     ${cssStyle}
     `;
@@ -1096,7 +1091,7 @@ document.getElementById('install').addEventListener('click', () => {
           break;
         case 'chooseBgImg':
           const image = await Photos.fromLibrary();
-          await fm.writeImage(getBgImage(), image);
+          fm.writeImage(getBgImage(), image);
           notify('设置成功', '桌面组件稍后将自动刷新');
           break;
         case 'clearBgImg':
