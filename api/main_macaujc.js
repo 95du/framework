@@ -310,11 +310,11 @@ async function main() {
       },
       writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),  
       // cache Image
-      readImage: (filePath) => {
-        const imgPath = fm.joinPath(cache, filePath);
+      readImage: (fileName) => {
+        const imgPath = fm.joinPath(cache, fileName);
         return fm.fileExists(imgPath) ? fm.readImage(imgPath) : null;
       },
-      writeImage: (filePath, image) => fm.writeImage(fm.joinPath(cache, filePath), image)
+      writeImage: (fileName, image) => fm.writeImage(fm.joinPath(cache, fileName), image)
     }
   };
   
@@ -852,56 +852,51 @@ document.getElementById('install').addEventListener('click', () => {
       const js = `
       const menuMask = document.querySelector(".popup-mask");
   
-      const showMask = (callback, isFadeIn) => {
+      const showMask = async (callback, isFadeIn) => {
         const duration = isFadeIn ? 200 : 300;
         const startTime = performance.now();
-      
+        
         const animate = ( currentTime ) => {
           const elapsedTime = currentTime - startTime;
           menuMask.style.opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration;
           if (elapsedTime < duration) requestAnimationFrame(animate);
-          else if (callback) callback();
+          else callback?.();
         };
-        
+      
         menuMask.style.display = "block";
-        requestAnimationFrame(  
-          animate
-        )
+        await new Promise(requestAnimationFrame);
+        animate(performance.now());
       };
-    
-      const message = 'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice.--- 95度茅台 ---';
-    
+
       function switchDrawerMenu() {
         const popup = document.querySelector(".popup-container");
+        const isOpen = !popup.style.height || popup.style.height !== '255px';
+
+        showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
+        popup.style.height = isOpen ? '255px' : '';
+        isOpen && typeNextChar();
+      };
+
+      // ChatGPT 打字动画
+      const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
-      
-        if (!popup.style.height || popup.style.height !== '255px') {
-          showMask(null, true);
-          popup.style.height = '255px';
-          typeNextChar();
-        } else {
-          showMask(() => menuMask.style.display = "none", false);
-          popup.style.height = "";
-        }
-        
-        function typeNextChar() {
-          chatMsg.textContent = "";
-          let currentChar = 0;
-      
-          function appendNextChar() {
-            if (currentChar < message.length) {
-              chatMsg.textContent += message[currentChar++];
-              chatMsg.innerHTML += '<span class="typing-indicator"></span>';
-              chatMsg.scrollTop = chatMsg.scrollHeight;
-              setTimeout(appendNextChar, 30);
-            } else {
-              chatMsg.querySelectorAll(".typing-indicator").forEach(indicator => indicator.remove());
-            }
+        const message = 'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice. --- 95度茅台 ---';
+        chatMsg.textContent = "";
+        let currentChar = 0;
+
+        function appendNextChar() {
+          if (currentChar < message.length) {
+            chatMsg.textContent += message[currentChar++];
+            chatMsg.innerHTML += '<span class="typing-indicator"></span>';
+            chatMsg.scrollTop = chatMsg.scrollHeight;
+            setTimeout(appendNextChar, 30);
+          } else {
+            chatMsg.querySelectorAll(".typing-indicator").forEach(indicator => indicator.remove());
           }
-          appendNextChar();
         }
+        appendNextChar();
       }`;
-    
+
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
