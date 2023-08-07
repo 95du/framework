@@ -218,11 +218,11 @@ async function main() {
       },
       writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),  
       // cache Image
-      readImage: (filePath) => {
-        const imgPath = fm.joinPath(cache, filePath);
+      readImage: (fileName) => {
+        const imgPath = fm.joinPath(cache, fileName);
         return fm.fileExists(imgPath) ? fm.readImage(imgPath) : null;
       },
-      writeImage: (filePath, image) => fm.writeImage(fm.joinPath(cache, filePath), image)
+      writeImage: (fileName, image) => fm.writeImage(fm.joinPath(cache, fileName), image)
     }
   };
   
@@ -502,7 +502,7 @@ async function main() {
         if (typeof icon === 'object' && icon.name) {
           const {name, color} = icon;
           item.icon = await getCacheMaskSFIcon(name, color);
-        } else if (icon && typeof icon === 'string' && icon.startsWith('https') ) {
+        } else if (typeof icon === 'string' && icon && icon.startsWith('https') ) {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
           item.icon = await getCacheImage(name, icon);
         }
@@ -984,56 +984,51 @@ document.getElementById('install').addEventListener('click', () => {
       const js = `
       const menuMask = document.querySelector(".popup-mask");
   
-      const showMask = (callback, isFadeIn) => {
+      const showMask = async (callback, isFadeIn) => {
         const duration = isFadeIn ? 200 : 300;
         const startTime = performance.now();
-      
+        
         const animate = ( currentTime ) => {
           const elapsedTime = currentTime - startTime;
           menuMask.style.opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration;
           if (elapsedTime < duration) requestAnimationFrame(animate);
-          else if (callback) callback();
+          else callback?.();
         };
-        
+      
         menuMask.style.display = "block";
-        requestAnimationFrame(  
-          animate
-        )
+        await new Promise(requestAnimationFrame);
+        animate(performance.now());
       };
-    
+
       function switchDrawerMenu() {
         const popup = document.querySelector(".popup-container");
+        const isOpen = !popup.style.height || popup.style.height !== '255px';
+
+        showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
+        popup.style.height = isOpen ? '255px' : '';
+        isOpen && typeNextChar();
+      };
+
+      // ChatGPT 打字动画
+      const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
-      
-        if (!popup.style.height || popup.style.height !== '255px') {
-          showMask(null, true);
-          popup.style.height = '255px';
-          typeNextChar();
-        } else {
-          showMask(() => menuMask.style.display = "none", false);
-          popup.style.height = "";
-        }
-        
-        // ChatGPT 打字动画
-        function typeNextChar() {
-          const message = '组件功能: 通过GPS设备制作的小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的链接。'
-          chatMsg.textContent = "";
-          let currentChar = 0;
-          
-          function appendNextChar() {
-            if (currentChar < message.length) {
-              chatMsg.textContent += message[currentChar++];
-              chatMsg.innerHTML += '<span class="typing-indicator"></span>';
-              chatMsg.scrollTop = chatMsg.scrollHeight;
-              setTimeout(appendNextChar, 30);
-            } else {
-              chatMsg.querySelectorAll(".typing-indicator").forEach(indicator => indicator.remove());
-            }
+        const message = '组件功能: 通过GPS设备制作的小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的链接。';
+        chatMsg.textContent = "";
+        let currentChar = 0;
+
+        function appendNextChar() {
+          if (currentChar < message.length) {
+            chatMsg.textContent += message[currentChar++];
+            chatMsg.innerHTML += '<span class="typing-indicator"></span>';
+            chatMsg.scrollTop = chatMsg.scrollHeight;
+            setTimeout(appendNextChar, 30);
+          } else {
+            chatMsg.querySelectorAll(".typing-indicator").forEach(indicator => indicator.remove());
           }
-          appendNextChar();
         }
+        appendNextChar();
       }`;
-    
+
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
