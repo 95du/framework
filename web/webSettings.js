@@ -72,7 +72,7 @@ async function main() {
     update: true,
     topStyle: true,
     music: true,
-    bufferTime: 240,
+    bufferTime: 120,
     angle: 90,
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
@@ -290,12 +290,12 @@ async function main() {
   
   // drawTableIcon
   const drawTableIcon = async (
-    icon = 'square.grid.2x2',
+    icon = name,
     color = '#ff6800',
     cornerWidth = 39
   ) => {
     let sfi = SFSymbol.named(icon);
-    if (sfi == null) sfi = SFSymbol.named('scribble');
+    if (sfi == null) sfi = SFSymbol.named('message.fill');
     sfi.applyFont(  
       Font.mediumSystemFont(30)
     );
@@ -389,9 +389,9 @@ async function main() {
    * @param {*} icon SFicon
    * @returns base64 string
    */
-  const drawSFIcon = async (icon = 'square.grid.2x2') => {
+  const drawSFIcon = async ( icon = name ) => {
     let sf = SFSymbol.named(icon);
-    if (sf == null) sf = SFSymbol.named('scribble');
+    if (sf == null) sf = SFSymbol.named('message.fill');
     sf.applyFont(
       Font.mediumSystemFont(30)
     );
@@ -502,7 +502,7 @@ async function main() {
         if (typeof icon === 'object' && icon.name) {
           const {name, color} = icon;
           item.icon = await getCacheMaskSFIcon(name, color);
-        } else if (typeof icon === 'string') {
+        } else if (icon && typeof icon === 'string' && icon.startsWith('https') ) {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
           item.icon = await getCacheImage(name, icon);
         }
@@ -553,7 +553,7 @@ async function main() {
     
     const formData = {};
     const createFormItem = ( item ) => {
-      const value = settings[item.name] ?? item.default ?? null
+      const value = settings[item.name];
       formData[item.name] = value;
       
       const label = document.createElement("label");
@@ -614,12 +614,12 @@ async function main() {
         
         label.appendChild(selCont);
       } else if (['cell', 'page', 'file'].includes(item.type)) {
-        const { name, display, isAdd } = item;
+        const { name, isAdd } = item;
 
         if ( item.desc ) {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
-          desc.id = \`\${name}-desc\`;
+          desc.id = \`\${name}-desc\`
           desc.innerText = isAdd ? (settings[\`\${name}_add\`] ?? item.desc) : settings[name];
           label.appendChild(desc);
         };
@@ -856,8 +856,8 @@ async function main() {
             elBody = groupDiv.appendChild(document.createElement('div'))
             elBody.className = 'list__body'
           }
-          const label = createFormItem(item)
-          elBody.appendChild(label)
+          const label = createFormItem(item);
+          elBody.appendChild(label);
         }
       }
       return fragment
@@ -1212,7 +1212,7 @@ document.getElementById('install').addEventListener('click', () => {
         message: message,
         options: [
           {
-            hint: String(settings[name]) ? String(settings[name]) : name,
+            hint: String(settings[name]) ? String(settings[name]) : '请输入',
             value: String(settings[name]) ?? ''
           }
         ]
@@ -1221,11 +1221,11 @@ document.getElementById('install').addEventListener('click', () => {
         const result = /^\d+$/.test(value) ? settings[name] = Number(value) : /[\u4e00-\u9fa5]+/.test(value) ? '' : settings[name] = value;
         
         const isName = ['aMapkey', 'carLogo', 'carImg'].includes(name);
-        const addStatus = result ? '已添加' : display ? '未添加' : '默认';
+        const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
         
-        settings[`${name}_add`] = addStatus;
+        settings[`${name}_add`] = inputStatus;
         writeSettings(settings);
-        innerTextElementById(name, isName ? addStatus : result);
+        innerTextElementById(name, isName ? inputStatus : result);  
       });
     };
           
@@ -1243,10 +1243,9 @@ document.getElementById('install').addEventListener('click', () => {
         const [imei, password] = inputArr.map(({ value }) => value);
         settings.imei = !imei ? '' : Number(imei);
         settings.password = !password ? '' : Number(password);
-        if (inputArr) {
-          writeSettings(settings);
-          innerTextElementById(name, imei && password ? '已登录' : '未登录')
-        }
+        
+        writeSettings(settings);
+        innerTextElementById(name, imei && password ? '已登录' : '未登录')
       });
     };
     
@@ -1266,10 +1265,9 @@ document.getElementById('install').addEventListener('click', () => {
         settings.tokenUrl = tokenUrl ?? '';
         settings.touser = touser ? touser : '';
         settings.agentid = agentid ? agentid : '';
-        if (inputArr) {
-          writeSettings(settings);
-          innerTextElementById(name, tokenUrl && touser && agentid ? '已添加' : '未添加');
-        }
+          
+        writeSettings(settings);
+        innerTextElementById(name, tokenUrl && touser && agentid ? '已添加' : '未添加');
       });
     };
     
@@ -1292,10 +1290,9 @@ document.getElementById('install').addEventListener('click', () => {
         settings.carWidth = Number(inputArr[2].value);
         settings.carHeight = Number(inputArr[3].value);
         settings.bottomSize = Number(inputArr[4].value);
-        if (inputArr) {
-          writeSettings(settings);
-          await generateAlert('设置成功', '桌面组件稍后将自动刷新', ['完成']);
-        }
+        
+        writeSettings(settings);
+        await generateAlert('设置成功', '桌面组件稍后将自动刷新', ['完成']);
       });
     };
     
@@ -1668,8 +1665,7 @@ document.getElementById('install').addEventListener('click', () => {
             icon: {
               name: 'car.rear.fill',
               color: '#43CD80'
-            },
-            default: ''
+            }
           },
           {
             label: '更换车标',
@@ -1682,8 +1678,7 @@ document.getElementById('install').addEventListener('click', () => {
             icon: {
               name: 'checkerboard.shield',
               color: '#BD7DFF'
-            },
-            default: ''
+            }
           }
         ]
       },
