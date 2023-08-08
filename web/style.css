@@ -557,14 +557,12 @@ svg {
   z-index: 100;
   transition: height 0.3s ease;
   overflow: hidden; /* 防止内容溢出 */
-  transform-origin: right bottom;
 }
 
 .popup-widget {
   clear: both;
   padding: 15px;
   border-radius: var(--main-radius);
-  margin-bottom: 0.1px;
   height: 255px;
 }
 
