@@ -550,12 +550,14 @@ svg {
 .popup-container {
   text-align: center;
   position: fixed;
-  bottom: 0.1px;
+  bottom: 0;
   left: 0;
   right: 0;
   height: 0;
   z-index: 100;
   transition: height 0.3s ease;
+  overflow: hidden; /* 防止内容溢出 */
+  transform-origin: right bottom;
 }
 
 .popup-widget {
