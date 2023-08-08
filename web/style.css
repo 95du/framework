@@ -835,12 +835,23 @@ input[type='checkbox'][role='switch']:checked::before {
 .collapsible-content {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  transition: max-height 0.45s ease;
 }
 
 .collapsible-content.show {
   max-height: 100%;
-  transition: max-height 1s;
+  transition: max-height 1.5s;
+}
+
+.collapsible-range {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.collapsible-range.show {
+  max-height: 100%;
+  transition: max-height 1.2s;
 }
 
 .icon-right-down {
