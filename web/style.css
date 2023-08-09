@@ -293,26 +293,11 @@ a:focus,a:hover {
 }
 
 @keyframes light {
-
-  0% {
-    box-shadow: 0 0 4px #f00;
-  }
-
-  25% {
-    box-shadow: 0 0 16px #0f0;
-  }
-
-  50% {
-    box-shadow: 0 0 4px #00f;
-  }
-
-  75% {
-    box-shadow: 0 0 16px #0f0;
-  }
-
-  100% {
-    box-shadow: 0 0 4px #f00;
-  }
+  0% { box-shadow: 0 0 4px #f00; }
+  25% { box-shadow: 0 0 16px #0f0; }
+  50% { box-shadow: 0 0 4px #00f; }
+  75% { box-shadow: 0 0 16px #0f0; }
+  100% { box-shadow: 0 0 4px #f00; }
 }
 /** 头像呼吸光环旋转放大结束 **/
 
@@ -327,31 +312,20 @@ a:focus,a:hover {
 }
 
 /** 彩色昵称开始 **/
-@keyframes hue {
-  from {
-    filter: hue-rotate(0);
-  }
-
-  to {
-    filter: hue-rotate(360deg);
-  }
+@keyframes changeColor {
+  0%, 100% { color: rgb(0, 128, 255); }
+  16.66% { color: rgb(8, 0, 255); }
+  33.33% { color: rgb(128, 0, 255); }
+  50% { color: rgb(255, 0, 255); }
+  66.66% { color: rgb(255, 0, 128); }
+  83.33% { color: rgb(255, 128, 0); }
 }
 
 .rainbow-text {
   position: relative;
   font-weight: 500;
   font-size: 19px;
-  color: transparent;
-  animation: hue 3s linear infinite;
-  background-image: linear-gradient(to top, 
-    rgb(0,128,255),
-    rgb(8,0,255),
-    rgb(128,0,255),
-    rgb(255,0,255),
-    rgb(255,0,128),
-    rgb(255,128,0)
-  );
-  -webkit-background-clip: text;
+  animation: changeColor 3s linear infinite;
 }
 /** 彩色昵称结束 **/
 
