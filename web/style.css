@@ -539,6 +539,21 @@ svg {
   height: 255px;
 }
 
+/* App */
+.app-icon {
+  width: 75px;
+  height: 75px;
+  border-radius: 25px;
+  margin-bottom: 15px;
+  object-fit: cover;
+}
+    
+.app-desc {
+  font-size: 15px;
+  color: var(--desc-color);
+  margin-bottom: 25px;
+}
+
 /* 打字动画 */
 .chat-message {
   overflow: hidden;
@@ -593,14 +608,16 @@ input {
 }
 
 button {
-  font-size: 14.5px;
-  background: var(--color-primary);
+  font-size: 16px;
+  background: #0D82FF;
   color: #fff;
   font-weight: 500;
   border-radius: 25px;
   border: none;
-  padding: 0.5em 3em;
+  width: 100%;
+  padding: 0.45em 0;
 }
+
 
 button .iconfont {
   margin-right: 6px;
