@@ -71,7 +71,6 @@ async function main() {
     imgArr: [],
     update: true,
     topStyle: true,
-    music: true,
     bufferTime: 120,
     angle: 90,
     textLightColor: '#000000',
@@ -414,12 +413,12 @@ async function main() {
   const [weiChat, map, loginDevice] = await Promise.all(['message', 'pin', 'externaldrive.badge.plus'].map(getCacheDrawSFIcon));
 
   /**
-   * 弹出一个通知
+   * 弹出通知
    * @param {string} title
    * @param {string} body
    * @param {string} url
    * @param {string} sound
-   */  
+   */
   const notify = async (title, body, url, opts = {}) => {
     const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
     if (url) n.openURL = url;
@@ -499,10 +498,10 @@ async function main() {
     for (const i of formItems) {
       for (const item of i.items) {
         const { icon } = item;
-        if (typeof icon === 'object' && icon.name) {
+        if (icon?.name) {
           const {name, color} = icon;
           item.icon = await getCacheMaskSFIcon(name, color);
-        } else if (typeof icon === 'string' && icon && icon.startsWith('https') ) {
+        } else if (icon?.startsWith('https')) {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
           item.icon = await getCacheImage(name, icon);
         }
@@ -553,7 +552,7 @@ async function main() {
     
     const formData = {};
     const createFormItem = ( item ) => {
-      const value = settings[item.name];
+      const value = settings[item.name] ?? item.default;
       formData[item.name] = value;
       
       const label = document.createElement("label");
@@ -732,13 +731,13 @@ async function main() {
           range.innerHTML = \`
           <label class="collapsible-label" for="collapse-toggle">
             <div class="form-label">
-              <div class="collapsible-value">${settings.angle || 20}</div>
+              <div class="collapsible-value">${settings.angle || 90}</div>
             </div>
             <input id="_range" type="range" value="${settings.angle || 90}" min="0" max="360" step="5">
             <i class="fas fa-chevron-right icon-right-down"></i>
           </label>
           <!-- 折叠取色器 -->
-          <div class="collapsible-content" id="content">
+          <div class="collapsible-range" id="content">
             <hr class="range-separ">
             <label class="form-item">
               <div class="form-label">
@@ -750,7 +749,7 @@ async function main() {
           </div>\`;
           
           const icon = range.querySelector('.collapsible-label .icon-right-down');
-          const content = range.querySelector('.collapsible-content');
+          const content = range.querySelector('.collapsible-range');
           const colorInput = range.querySelector('#color-input');
           const rangeInput = range.querySelector('#_range');
           let isExpanded = false;
@@ -834,7 +833,7 @@ async function main() {
           collapsible.querySelector('.collapsible-label').addEventListener('click', () => {
             content.classList.toggle('show');
             isExpanded = !isExpanded;
-            icon.style.transition = 'transform 0.35s';
+            icon.style.transition = 'transform 0.4s';
             icon.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
           });
           
@@ -888,6 +887,9 @@ async function main() {
     document.querySelectorAll('.form-item').forEach((btn) => {
       btn.addEventListener('click', (e) => { toggleLoading(e) });
     });
+    document.getElementById('getKey').addEventListener('click', () => {
+      invoke('getKey');
+    });
     document.getElementById('store').addEventListener('click', () => {
       invoke('store');
     });
@@ -911,7 +913,9 @@ document.getElementById('install').addEventListener('click', () => {
         </span>
         <div class="interval"></div>
         <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img"><br>
-        <a id="store" class="rainbow-text but">Script Store</a>
+        <div id="store">
+          <a class="rainbow-text but">Script Store</a>
+        </div>
       </div>`;
       
       const popup = `      
@@ -1012,7 +1016,7 @@ document.getElementById('install').addEventListener('click', () => {
       // ChatGPT 打字动画
       const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
-        const message = '组件功能: 通过GPS设备制作的小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的链接。';
+        const message = '组件功能: 通过GPS设备制作的小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的Api信息。';
         chatMsg.textContent = "";
         let currentChar = 0;
 
@@ -1033,8 +1037,11 @@ document.getElementById('install').addEventListener('click', () => {
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
         <div class="popup-widget blur-bg">
-          <div id="appleHub" class="box-body sign-logo">
-            <img src="${appleHub}">
+          <div class="box-body">
+            ${avatarInfo
+              ? `<button id="getKey" type="button" class="but jb-yellow">获取高德地图Key</button>`
+              : `<div class="sign-logo"><img src="${appleHub}"></div>`
+            }
           </div>
           <div class="chat-message"></div>
         </div>
@@ -1054,7 +1061,7 @@ document.getElementById('install').addEventListener('click', () => {
         <p id="status"></p>
       </div>
       <script>
-        const updateCountdown = ( seconds ) => {
+        const updateCountdown = (seconds) => {
           const countdownEl = document.getElementById('countdown');
           if (seconds === 0) {
             countdownEl.innerHTML =\`
@@ -1318,8 +1325,8 @@ document.getElementById('install').addEventListener('click', () => {
         await removeData();
       } else if ( code === 'recover' ) {
         Timer.schedule(5000, false, () => { 
-          //writeSettings(DEFAULT);
-          //ScriptableRun();
+          writeSettings(DEFAULT);
+          ScriptableRun();
         });
       } else if ( data?.input ) {
         await input(data);
@@ -1336,6 +1343,9 @@ document.getElementById('install').addEventListener('click', () => {
           break;
         case 'telegram':
           Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
+          break;
+        case 'getKey':
+          Safari.openInApp('https://lbs.amap.com/api/webservice/guide/create-project/get-key', false);
           break;
         case 'changeSettings':
           Object.assign(settings, data);
@@ -1655,7 +1665,7 @@ document.getElementById('install').addEventListener('click', () => {
             type: 'cell',
             input: true,
             isAdd: true,
-            message: '填入png格式图片的链接',
+            message: '填入png格式图片的URL',
             desc: settings.carImg ? '已添加' : '默认',
             icon: {
               name: 'car.rear.fill',
@@ -1668,7 +1678,7 @@ document.getElementById('install').addEventListener('click', () => {
             type: 'cell',
             input: true,
             isAdd: true,
-            message: '填入png格式图标的链接',
+            message: '填入png格式的图标URL',
             desc: settings.carLogo ? '已添加' : '默认',
             icon: {
               name: 'checkerboard.shield',
@@ -1693,7 +1703,8 @@ document.getElementById('install').addEventListener('click', () => {
             icon: {
               name: 'music.note',  
               color: '#FF6800'
-            }
+            },
+            default: true
           }
         ]
       },
