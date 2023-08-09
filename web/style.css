@@ -325,7 +325,7 @@ a:focus,a:hover {
   position: relative;
   font-weight: 500;
   font-size: 19px;
-  animation: changeColor 3s linear infinite;
+  animation: changeColor 6s linear infinite;
 }
 /** 彩色昵称结束 **/
 
