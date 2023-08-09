@@ -317,7 +317,7 @@ a:focus,a:hover {
   20% { color: rgb(8, 0, 255); }
   40% { color: rgb(128, 0, 255); }
   60% { color: rgb(255, 0, 255); }
-  80% { color: rgb(255, 165, 0); }
+  80% { color: rgb(255, 0, 128); }
 }
 
 .rainbow-text {
