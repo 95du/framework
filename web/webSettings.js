@@ -71,7 +71,9 @@ async function main() {
     imgArr: [],
     update: true,
     topStyle: true,
-    bufferTime: 120,
+    music: true,
+    animation: true,
+    fadeInUp: 0.7,
     angle: 90,
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
@@ -205,15 +207,11 @@ async function main() {
   const cache = fm.joinPath(mainPath, 'cache_path');
   fm.createDirectory(cache, true);
   
-  const useFileManager = ({ cacheTime } = {}) => {
+  const useFileManager = () => {
     return {
       readString: (fileName) => {
         const filePath = fm.joinPath(cache, fileName);
-        const currentTime = (new Date()).getTime();
-        if (fm.fileExists(filePath) && cacheTime && ((currentTime - fm.creationDate(filePath).getTime()) / ( 60 * 60 * 1000 )) <= cacheTime) {
-          return fm.readString(filePath);
-        }
-        return null;
+        return fm.readString(filePath);
       },
       writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),  
       // cache Image
@@ -234,7 +232,7 @@ async function main() {
   };
   
   const getCacheString = async (cssFileName, cssFileUrl) => {
-    const cache = useFileManager({ cacheTime: settings.bufferTime });
+    const cache = useFileManager();
     const cssString = cache.readString(cssFileName);
     if (cssString) {
       return cssString;
@@ -482,6 +480,8 @@ async function main() {
       `${rootUrl}img/picture/appleHub_${logoColor}.png`
     );
     
+    const aMapAppImage = await getCacheImage('aMapAppImage.png', `${rootUrl}img/icon/aMap.png`);
+    
     const rangeColorImg = await getCacheMaskSFIcon('arrowshape.turn.up.left.2.fill', '#F6C534');
     
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage(
@@ -531,6 +531,11 @@ async function main() {
       --separ: var(--checkbox);
       --coll-color: hsl(0, 0%, 97%);
     }
+    
+    ${settings.animation ? `
+    .list {
+      animation: fadeInUp ${settings.fadeInUp}s ease-in-out;
+    }` : ''}
     ${cssStyle}`;
     
     // Java Script
@@ -1010,7 +1015,7 @@ document.getElementById('install').addEventListener('click', () => {
 
         showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
         popup.style.height = isOpen ? '255px' : '';
-        isOpen && typeNextChar();
+        ${!avatarInfo ? 'isOpen && typeNextChar()' : ''}
       };
 
       // ChatGPT 打字动画
@@ -1039,7 +1044,10 @@ document.getElementById('install').addEventListener('click', () => {
         <div class="popup-widget blur-bg">
           <div class="box-body">
             ${avatarInfo
-              ? `<button id="getKey" type="button" class="but jb-yellow">获取高德地图Key</button>`
+              ? `<img class="app-icon" src="${aMapAppImage}">  
+                 <div class="app-desc">如果没有开发者账号，请注册开发者  
+                 </div>
+                 <button id="getKey" class="but">获取 Key</button>`
               : `<div class="sign-logo"><img src="${appleHub}"></div>`
             }
           </div>
@@ -1154,14 +1162,13 @@ document.getElementById('install').addEventListener('click', () => {
      * @param {string} elementId
      * @param {string} newText
      * @param {WebView} webView
-     */
+     */  
     const innerTextElementById = (elementId, newText) => {
       webView.evaluateJavaScript(
-        `document.getElementById("${elementId}-desc").innerHTML=\`${newText}\`;`,
-        false
-      ).catch((err) => {
-        console.error(err);
-      });
+        `var element = document.getElementById("${elementId}-desc");
+        if (element) element.innerHTML = \`${newText}\`;
+        `, false
+      ).catch(console.error);
     };
     
     // 重置所有
@@ -1220,7 +1227,7 @@ document.getElementById('install').addEventListener('click', () => {
         ]
       }, 
       async ([{ value }]) => {
-        const result = /^\d+$/.test(value) ? settings[name] = Number(value) : /[\u4e00-\u9fa5]+/.test(value) ? '' : settings[name] = value;
+        const result = settings[name] = value === '0' ? value : value.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? Number(value) : !/[\u4e00-\u9fa5]+/.test(value) ? value : '';
         
         const isName = ['aMapkey', 'carLogo', 'carImg'].includes(name);
         const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
@@ -1324,7 +1331,7 @@ document.getElementById('install').addEventListener('click', () => {
       } else if ( code === 'reset' && fm.fileExists(mainPath) ) {
         await removeData();
       } else if ( code === 'recover' ) {
-        Timer.schedule(5000, false, () => { 
+        Timer.schedule(5000, false, () => {
           writeSettings(DEFAULT);
           ScriptableRun();
         });
@@ -1345,7 +1352,7 @@ document.getElementById('install').addEventListener('click', () => {
           Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
           break;
         case 'getKey':
-          Safari.openInApp('https://lbs.amap.com/api/webservice/guide/create-project/get-key', false);
+          Timer.schedule(400, false, () => { Safari.openInApp('https://lbs.amap.com/api/webservice/guide/create-project/get-key', false)});
           break;
         case 'changeSettings':
           Object.assign(settings, data);
@@ -1442,16 +1449,26 @@ document.getElementById('install').addEventListener('click', () => {
             }
           },
           {
-            label: '缓存时间',
-            name: 'bufferTime',
+            label: '列表动画',
+            name: 'animation',
+            type: 'switch',
+            icon: {
+              name: 'rotate.right.fill',  
+              color: '#BD7DFF'
+            },
+            default: true
+          },
+          {
+            label: '动画时间',
+            name: 'fadeInUp',
             type: 'cell',
             input: true,
             icon: {
               name: 'clock',
               color: '#0096FF'
             },
-            message: '设置缓存离线内容及图片的时长\n( 单位: 小时 )',
-            desc: settings.bufferTime
+            message: '设置时长为0时，列表将无动画效果\n( 单位: 秒 )',
+            desc: settings.fadeInUp
           },
           {
             label: '组件简介',
