@@ -298,15 +298,11 @@ async function main() {
   const cache = fm.joinPath(mainPath, 'cache_path');
   fm.createDirectory(cache, true);
   
-  const useFileManager = ({ cacheTime } = {}) => {
+  const useFileManager = () => {
     return {
       readString: (fileName) => {
         const filePath = fm.joinPath(cache, fileName);
-        const currentTime = (new Date()).getTime();
-        if (fm.fileExists(filePath) && cacheTime && ((currentTime - fm.creationDate(filePath).getTime()) / ( 60 * 60 * 1000 )) <= cacheTime) {
-          return fm.readString(filePath);
-        }
-        return null;
+        return fm.readString(filePath);
       },
       writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),  
       // cache Image
@@ -327,7 +323,7 @@ async function main() {
   };
   
   const getCacheString = async (cssFileName, cssFileUrl) => {
-    const cache = useFileManager({ cacheTime: settings.bufferTime });
+    const cache = useFileManager();
     const cssString = cache.readString(cssFileName);
     if (cssString) {
       return cssString;
@@ -460,7 +456,7 @@ async function main() {
         if (typeof icon === 'object' && icon.name) {
           const {name, color} = icon;
           item.icon = await getCacheMaskSFIcon(name, color);
-        } else if (typeof icon === 'string' && icon && icon.startsWith('https')) {
+        } else if (typeof icon === 'string' && icon?.startsWith('https')) {
           const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
           const image = await getCacheImage(name, icon);
           item.icon = await toBase64(image);
@@ -779,7 +775,9 @@ document.getElementById('install').addEventListener('click', () => {
         </span>
         <div class="interval"></div>
         <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img"><br>
-        <a id="store" class="rainbow-text but">Script Store</a>
+        <div id="store">
+          <a class="rainbow-text but">Script Store</a>
+        </div>
       </div>`;
       
       const popup = `      
