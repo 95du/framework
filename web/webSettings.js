@@ -1227,11 +1227,12 @@ document.getElementById('install').addEventListener('click', () => {
         ]
       }, 
       async ([{ value }]) => {
-        const result = settings[name] = value === '0' ? value : value.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? Number(value) : !/[\u4e00-\u9fa5]+/.test(value) ? value : '';
+        const result = value === '0' ? value : value === '' || /[\u4e00-\u9fa5]+/.test(value) ? '' : value.endsWith('.png') ? value : !isNaN(value) ? Number(value) : ''
         
         const isName = ['aMapkey', 'carLogo', 'carImg'].includes(name);
         const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
         
+        settings[name] = result;
         settings[`${name}_add`] = inputStatus;
         writeSettings(settings);
         innerTextElementById(name, isName ? inputStatus : result);  
