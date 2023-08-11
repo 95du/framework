@@ -26,8 +26,8 @@ if (!fm.fileExists(moduleDir)) {
 
 const modulePath = await downloadModule(scriptName, scriptUrl);
 if (modulePath != null) {
-  const importedModule = importModule(modulePath);
-  await importedModule.main();
+  const importedModule = await importModule(modulePath);
+  importedModule.main();
 }
 
 async function downloadModule(scriptName, scriptUrl) {
