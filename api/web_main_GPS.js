@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -1275,7 +1275,7 @@ async function main() {
         const [tokenUrl, touser, agentid] = inputArr.map(({ value }) => value);
         settings.tokenUrl = tokenUrl ?? '';
         settings.touser = touser ? touser : '';
-        settings.agentid = agentid ? agentid : '';
+        settings.agentid = agentid ? Number(agentid) : ''
           
         writeSettings(settings);
         innerTextElementById(name, tokenUrl && touser && agentid ? '已添加' : '未添加');
