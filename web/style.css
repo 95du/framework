@@ -561,7 +561,7 @@ svg {
 }
     
 .app-desc {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--desc-color);
   margin-bottom: 25px;
 }
