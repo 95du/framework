@@ -396,7 +396,7 @@ async function main() {
     return sf.image;
   };
   
-  // 缓存并读取
+  // 缓存并读取原生 SFSymbol icon
   const getCacheDrawSFIcon = async (name) => {
     const cache = useFileManager();
     const image = cache.readImage(name);
@@ -407,9 +407,6 @@ async function main() {
     cache.writeImage(name, img);
     return toBase64(img);
   };
-  
-  // 折叠列表 SFSymbol icon
-  const [weiChat, map, loginDevice] = await Promise.all(['message', 'pin', 'externaldrive.badge.plus'].map(getCacheDrawSFIcon));
 
   /**
    * 弹出通知
@@ -496,8 +493,14 @@ async function main() {
       return `<script>${content}</script>`;
     }));
     
+    // Convert SFicon
     for (const i of formItems) {
       for (const item of i.items) {
+        if ( item.item ) {
+          for (const subItem of item.item) {
+            subItem.icon = await getCacheDrawSFIcon(subItem.icon);
+          }
+        };
         const { icon } = item;
         if (icon?.name) {
           const {name, color} = icon;
@@ -1767,11 +1770,11 @@ async function main() {
               {
                 label: '登录设备',
                 name: 'login',
-                icon: loginDevice,
                 type: 'cell',
                 display: true,
                 desc: settings.password && settings.imei ? '已登录' : '未登录',
-                message: '在设备上查看获取 imei 码\n原始密码为: 123456'
+                message: '在设备上查看获取 imei 码\n原始密码为: 123456',
+                icon: 'externaldrive.badge.plus'
               },
               {
                 label: '静态地图',
@@ -1781,7 +1784,7 @@ async function main() {
                 display: true,
                 desc: settings.aMapkey ? '已添加' : '未添加',
                 message: '高德地图web服务 API 类型 Key\n用于获取模拟电子围栏及静态地图',
-                icon: map
+                icon: 'pin'
               },
               {
                 label: '推送微信',
@@ -1790,7 +1793,7 @@ async function main() {
                 display: true,
                 desc: settings.tokenUrl && settings.touser && settings.agentid ? '已添加' : '未添加',
                 message: '创建企业微信中的应用，获取access_token的链接，touser成员ID，agentid企业应用的ID',
-                icon: weiChat
+                icon: 'message'
               }
             ]
           },
