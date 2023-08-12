@@ -1,16 +1,16 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: teal; icon-glyph: cog;
+// icon-color: deep-brown; icon-glyph: cog;
 main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
-  const updateDate = '2023年07月26日'
+  const updateDate = '2023年08月12日'
   
-  const pathName = '95du_GPS';
+  const pathName = '95du_settings';
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   
-  const [scrName, scrUrl] = ['gps_locating.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/gps_locating.js'];
+  const [scrName, scrUrl] = ['gps_locating.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/web_gps_locating.js'];
 
   /**
    * 创建，获取存储路径
@@ -67,8 +67,9 @@ async function main() {
     refresh: 20,
     transparency: 0.5,
     masking: 0.3,
-    picture: [],
+    gradient: ['#82B1FF'],
     imgArr: [],
+    picture: [],
     update: true,
     topStyle: true,
     music: true,
@@ -205,7 +206,9 @@ async function main() {
    * @returns {string} - Request
    */
   const cache = fm.joinPath(mainPath, 'cache_path');
-  fm.createDirectory(cache, true);
+  if (!fm.fileExists(cache)) {
+    fm.createDirectory(cache);
+  }
   
   const useFileManager = () => {
     return {
@@ -482,8 +485,6 @@ async function main() {
     
     const aMapAppImage = await getCacheImage('aMapAppImage.png', `${rootUrl}img/icon/aMap.png`);
     
-    const rangeColorImg = await getCacheMaskSFIcon('arrowshape.turn.up.left.2.fill', '#F6C534');
-    
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage(
       'author.png',
       `${rootUrl}img/icon/4qiao.png`
@@ -746,7 +747,7 @@ async function main() {
             <hr class="range-separ">
             <label class="form-item">
               <div class="form-label">
-                <img class="form-label-img" src="${rangeColorImg}"/>
+                <img class="form-label-img" src="\${item.icon}"/>
                 <div class="form-label-title">渐变颜色</div>
               </div>
               <input type="color" value="${settings.rangeColor}" id="color-input">
@@ -892,15 +893,9 @@ async function main() {
     document.querySelectorAll('.form-item').forEach((btn) => {
       btn.addEventListener('click', (e) => { toggleLoading(e) });
     });
-    document.getElementById('getKey').addEventListener('click', () => {
-      invoke('getKey');
-    });
-    document.getElementById('store').addEventListener('click', () => {
-      invoke('store');
-    });
     
-document.getElementById('install').addEventListener('click', () => {
-      invoke('install');
+    ['getKey', 'store', 'install'].forEach(id => {
+      const elementById = document.getElementById(id).addEventListener('click', () => invoke(id));
     });
     
     })()`;
@@ -992,39 +987,38 @@ document.getElementById('install').addEventListener('click', () => {
     const buttonPopup = async () => {
       const js = `
       const menuMask = document.querySelector(".popup-mask");
-  
+    
       const showMask = async (callback, isFadeIn) => {
         const duration = isFadeIn ? 200 : 300;
         const startTime = performance.now();
-        
+    
         const animate = ( currentTime ) => {
           const elapsedTime = currentTime - startTime;
           menuMask.style.opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration;
           if (elapsedTime < duration) requestAnimationFrame(animate);
           else callback?.();
         };
-      
+    
         menuMask.style.display = "block";
         await new Promise(requestAnimationFrame);
         animate(performance.now());
       };
-
+    
       function switchDrawerMenu() {
         const popup = document.querySelector(".popup-container");
         const isOpen = !popup.style.height || popup.style.height !== '255px';
-
+    
         showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
         popup.style.height = isOpen ? '255px' : '';
         ${!avatarInfo ? 'isOpen && typeNextChar()' : ''}
       };
-
-      // ChatGPT 打字动画
+    
       const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
         const message = '组件功能: 通过GPS设备制作的小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的Api信息。';
         chatMsg.textContent = "";
         let currentChar = 0;
-
+    
         function appendNextChar() {
           if (currentChar < message.length) {
             chatMsg.textContent += message[currentChar++];
@@ -1037,18 +1031,18 @@ document.getElementById('install').addEventListener('click', () => {
         }
         appendNextChar();
       }`;
-
+    
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
-        <div class="popup-widget blur-bg">
+        <div class="popup-widget blur-bg" />
           <div class="box-body">
             ${avatarInfo
               ? `<img class="app-icon" src="${aMapAppImage}">  
                  <div class="app-desc">如果没有开发者账号，请注册开发者  
                  </div>
                  <button id="getKey" class="but">获取 Key</button>`
-              : `<div class="sign-logo"><img src="${appleHub}"></div>`
+              : `<div class="sign-logo"><img src="${appleHub}"></div>`  
             }
           </div>
           <div class="chat-message"></div>
@@ -1227,7 +1221,13 @@ document.getElementById('install').addEventListener('click', () => {
         ]
       }, 
       async ([{ value }]) => {
-        const result = value === '0' ? value : value === '' || /[\u4e00-\u9fa5]+/.test(value) ? '' : value.endsWith('.png') ? value : !isNaN(value) ? Number(value) : ''
+        if ( isAdd ) {
+          result = value.endsWith('.png') ? value : ''
+        } else if ( display ) {
+          result = /[a-z]+/.test(value) && /\d+/.test(value) ? value : ''
+        } else {
+          result = value === '0' ? value : !isNaN(value) ? Number(value) : settings[name];
+        };
         
         const isName = ['aMapkey', 'carLogo', 'carImg'].includes(name);
         const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
@@ -1563,7 +1563,11 @@ document.getElementById('install').addEventListener('click', () => {
           {
             type: 'range',
             name: 'angle',
-            color: 'rangeColor'
+            color: 'rangeColor',
+            icon: {
+              name: 'arrowshape.turn.up.left.2.fill',
+              color: '#F6C534'
+            }
           }
         ]
       },
@@ -1581,7 +1585,7 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             label: '精选渐变',
-            name: 'ScreeningColor',
+            name: 'gradient',
             type: 'select',
             multiple: true,
             icon: {
@@ -1692,12 +1696,12 @@ document.getElementById('install').addEventListener('click', () => {
           },
           {
             label: '更换车标',
-            name: 'carLogo',
+            name: 'logo',
             type: 'cell',
             input: true,
             isAdd: true,
             message: '填入png格式的图标URL',
-            desc: settings.carLogo ? '已添加' : '默认',
+            desc: settings.logo ? '已添加' : '默认',
             icon: {
               name: 'checkerboard.shield',
               color: '#BD7DFF'
