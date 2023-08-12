@@ -1015,7 +1015,7 @@ async function main() {
     
       const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
-        const message = '组件功能: 通过GPS设备制作的小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的Api信息。';
+        const message = '组件功能: 通过GPS设备制作的中小号小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的Api信息。';
         chatMsg.textContent = "";
         let currentChar = 0;
     
