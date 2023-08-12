@@ -480,8 +480,6 @@ async function main() {
     
     const aMapAppImage = await getCacheImage('aMapAppImage.png', `${rootUrl}img/icon/aMap.png`);
     
-    const rangeColorImg = await getCacheMaskSFIcon('arrowshape.turn.up.left.2.fill', '#F6C534');
-    
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage(
       'author.png',
       `${rootUrl}img/icon/4qiao.png`
@@ -750,7 +748,7 @@ async function main() {
             <hr class="range-separ">
             <label class="form-item">
               <div class="form-label">
-                <img class="form-label-img" src="${rangeColorImg}"/>
+                <img class="form-label-img" src="\${item.icon}"/>
                 <div class="form-label-title">渐变颜色</div>
               </div>
               <input type="color" value="${settings.rangeColor}" id="color-input">
@@ -1567,7 +1565,11 @@ async function main() {
           {
             type: 'range',
             name: 'angle',
-            color: 'rangeColor'
+            color: 'rangeColor',
+            icon: {
+              name: 'arrowshape.turn.up.left.2.fill',
+              color: '#F6C534'
+            }
           }
         ]
       },
