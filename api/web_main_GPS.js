@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-main()
+
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -291,7 +291,7 @@ async function main() {
   const drawTableIcon = async (
     icon = name,
     color = '#ff6800',
-    cornerWidth = 40
+    cornerWidth = 42
   ) => {
     let sfi = SFSymbol.named(icon);
     if (sfi == null) sfi = SFSymbol.named('message.fill');
@@ -1485,7 +1485,7 @@ async function main() {
             name: 'widgetMsg',
             type: 'cell',
             icon: {
-              name: 'person.crop.circle',
+              name: 'doc.text.image',
               color: '#43CD80'
             }
           }
