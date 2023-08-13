@@ -487,6 +487,13 @@ async function main() {
       --typing-indicator: #000;
       --separ: var(--checkbox);
     }
+    
+    .modal-dialog {
+      position: relative;
+      width: auto;
+      margin: ${Device.screenSize().height < 926 ? '62px' : '78px'};
+      top: ${Device.screenSize().height < 926 ? '-2%' : '-8%'};
+    }
     ${cssStyle}
     `;
     
