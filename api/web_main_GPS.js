@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -158,8 +158,9 @@ async function main() {
   const myStore = async () => {
     const script = await getString('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js');
     const fm = FileManager.iCloud();
-    fm.writeString(fm.documentsDirectory() + '/95du_ScriptStore.js', script);
-   };
+    fm.writeString(
+      fm.documentsDirectory() + '/95du_ScriptStore.js', script);
+  };
   
   /**
    * 版本更新时弹出窗口
@@ -290,7 +291,7 @@ async function main() {
   const drawTableIcon = async (
     icon = name,
     color = '#ff6800',
-    cornerWidth = 39
+    cornerWidth = 40
   ) => {
     let sfi = SFSymbol.named(icon);
     if (sfi == null) sfi = SFSymbol.named('message.fill');
@@ -371,6 +372,12 @@ async function main() {
       canvas.width = canvas.height = size;
       ctx.drawImage(sourceImg, (sourceImg.width - size) / 2, (sourceImg.height - size) / 2, size, size, 0, 0, size, size);
       
+      // 压缩图像
+      const compressedCanvas = document.createElement("canvas");
+      const compressedCtx = compressedCanvas.getContext('2d');
+      compressedCanvas.width = compressedCanvas.height = 400;
+      compressedCtx.drawImage(canvas, 0, 0, size, size, 0, 0, 400, 400);
+      
       silhouetteImg.src = canvas.toDataURL();
       output = canvas.toDataURL();
     `;
@@ -390,7 +397,7 @@ async function main() {
   const drawSFIcon = async ( icon = name ) => {
     let sf = SFSymbol.named(icon);
     if (sf == null) sf = SFSymbol.named('message.fill');
-    sf.applyFont(
+    sf.applyFont(  
       Font.mediumSystemFont(30)
     );
     return sf.image;
