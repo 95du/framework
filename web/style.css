@@ -48,25 +48,6 @@ td, th {
   overflow-y: auto; /* 纵向滑动 */
 }
 
-.modal-dialog {
-  position: relative;
-  width: auto;
-}
-
-@media screen and (min-width: 925px) {
-  .modal-dialog {
-    margin: 62px;
-    top: -5%;
-  }
-}
-
-@media screen and (max-width: 926px) {
-  .modal-dialog {
-    margin: 78px;
-    top: -11%;
-  }
-}
-
 .modal-backdrop {
   position: fixed;
   top: 0;
