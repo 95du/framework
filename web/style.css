@@ -56,14 +56,14 @@ td, th {
 @media screen and (min-width: 925px) {
   .modal-dialog {
     margin: 62px;
-    top: -129.6%;
+    top: -5%;
   }
 }
 
 @media screen and (max-width: 926px) {
   .modal-dialog {
     margin: 78px;
-    top: -119.6%;
+    top: -11%;
   }
 }
 
