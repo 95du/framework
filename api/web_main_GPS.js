@@ -396,7 +396,7 @@ async function main() {
    */
   const drawSFIcon = async ( icon = name ) => {
     let sf = SFSymbol.named(icon);
-    if (sf == null) sf = SFSymbol.named('message.fill');
+    if (sf == null) sf = SFSymbol.named('message');
     sf.applyFont(  
       Font.mediumSystemFont(30)
     );
@@ -539,6 +539,13 @@ async function main() {
       --typing-indicator: #000;
       --separ: var(--checkbox);
       --coll-color: hsl(0, 0%, 97%);
+    }
+    
+    .modal-dialog {
+      position: relative;
+      width: auto;
+      margin: ${Device.screenSize().height < 926 ? '62px' : '78px'};
+      top: ${Device.screenSize().height < 926 ? '-5%' : '-11%'};
     }
     
     ${settings.animation ? `
