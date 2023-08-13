@@ -51,14 +51,19 @@ td, th {
 .modal-dialog {
   position: relative;
   width: auto;
-  margin: 62px;
-  top: -5%;
 }
 
-@media screen and (max-width: 925px) {
+@media screen and (min-width: 925px) {
+  .modal-dialog {
+    margin: 62px;
+    top: -129.6%;
+  }
+}
+
+@media screen and (max-width: 926px) {
   .modal-dialog {
     margin: 78px;
-    top: -11%;
+    top: -119.6%;
   }
 }
 
