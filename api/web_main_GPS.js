@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -99,6 +99,11 @@ async function main() {
     Safari.open('scriptable:///run/' + encodeURIComponent(Script.name()));
   }
   
+  // 预览组件
+  const previewWidget = async () => {
+    await importModule(await webModule(scrName, scrUrl)).main();
+  }
+  
   /**
    * 获取背景图片存储目录路径
    * @returns {string} - 目录路径
@@ -148,7 +153,7 @@ async function main() {
       widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(settings.refresh));
     }
     
-    await importModule(await webModule(scrName, scrUrl)).main();  
+    await previewWidget();
     return null;
   };
   
@@ -1270,8 +1275,8 @@ async function main() {
         settings.password = !password ? '' : Number(password);
         
         writeSettings(settings);
-        importModule(await webModule(scrName, scrUrl)).main();
         innerTextElementById(name, imei && password ? '已登录' : '未登录')
+        await previewWidget();
       });
     };
     
@@ -1388,18 +1393,20 @@ async function main() {
           await layout(data);
           break;
         case 'preview':
-          await importModule(await webModule(scrName, scrUrl)).main();
+          await previewWidget();
           break;
         case 'chooseBgImg':
           const image = await Photos.fromLibrary();
           fm.writeImage(getBgImage(), image);
           innerTextBgImage();
+          await previewWidget();
           break;
         case 'clearBgImg':
           const bgImagePath = fm.fileExists(getBgImage());
           if ( bgImagePath ) {
             fm.remove(getBgImage());
             innerTextBgImage();
+            await previewWidget();
           }
           break;
         case 'background':
