@@ -186,8 +186,8 @@ async function main() {
    */
   const updateVersion = async () => {
     const index = await generateAlert(
-      title = '更新代码',
-      message = '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复',
+      '更新代码',
+      '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复',
       options = ['取消', '确认']
     );
     if (index == 0) return;
@@ -1090,7 +1090,7 @@ async function main() {
             <div class="svg-header">
               <svg><circle class="circle" cx="10" cy="10" r="7.6" /> <polyline class="tick" points="6,10 8,12 12,6" /></svg>
               <p class="svg-title">
-                恢复成功
+                读取完成
               </p>
             </div>\`;
             document.getElementById('status').textContent = '';
@@ -1101,7 +1101,7 @@ async function main() {
         };
     
         const resetContent = () => {
-          const statusEl = document.getElementById('status').textContent = '正在恢复...';
+          const statusEl = document.getElementById('status').textContent = '正在读取...';
         };
         
         const alertWindow = () => {
@@ -1187,12 +1187,12 @@ async function main() {
     
     // 重置所有
     const removeData = async () => {
-      const delAlert = new Alert();
-      delAlert.title = '清空所有数据';
-      delAlert.message = '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据';
-      delAlert.addDestructiveAction('重置');
-      delAlert.addCancelAction('取消')
-      const action = await delAlert.presentAlert();
+      const reset = new Alert();
+      reset.title = '清空所有数据';
+      reset.message = '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据';
+      reset.addDestructiveAction('重置');
+      reset.addCancelAction('取消')
+      const action = await reset.presentAlert();
       if ( action === 0 ) {
         fm.remove(mainPath);
         ScriptableRun();
@@ -1202,8 +1202,7 @@ async function main() {
     // 清除缓存
     const clearCache = async () => {
       const action = await generateAlert(
-        title = '清除缓存',
-        message = '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
+        '清除缓存', '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
         options = ['取消', '清除']
       );
       if ( action === 1 ) {
@@ -1353,7 +1352,9 @@ async function main() {
       } else if ( code === 'reset' && fm.fileExists(mainPath) ) {
         await removeData();
       } else if ( code === 'recover' ) {
-        Timer.schedule(5000, false, () => {
+        Timer.schedule(5000, false, async () => {
+          const index = await generateAlert('是否恢复设置 ？', '用户登录的信息将重置\n设置的数据将会恢复为默认', options = ['取消', '确认']);
+          if (index === 0) return;
           writeSettings(DEFAULT);
           ScriptableRun();
         });
