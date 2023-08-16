@@ -51,7 +51,11 @@ if (!fm.fileExists(runPath)) fm.createDirectory(runPath);
 if (!fm.fileExists(moduleDir)) fm.createDirectory(moduleDir);
 
 const downloadModule = async () => {
-  const moduleFilename = `${new Date().toISOString().slice(0, 13)}.js`;
+  const date = new Date();
+  const df = new DateFormatter();
+  df.dateFormat = 'yyyyMMddHH';
+  
+  const moduleFilename = df.string(date).toString() + '.js';
   const modulePath = fm.joinPath(moduleDir, moduleFilename);
 
   if (fm.fileExists(modulePath)) return modulePath;
@@ -91,5 +95,5 @@ const getModuleVersions = () => {
 const modulePath = await downloadModule();
 if (modulePath) {
   const importedModule = await importModule(modulePath);
-  importedModule.main();
+  await importedModule.main();
 };
