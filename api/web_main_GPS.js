@@ -105,6 +105,19 @@ async function main() {
   }
   
   /**
+   * 弹出通知
+   * @param {string} title
+   * @param {string} body
+   * @param {string} url
+   * @param {string} sound
+   */
+  const notify = async (title, body, url, opts = {}) => {
+    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
+    if (url) n.openURL = url;
+    return await n.schedule();
+  };
+  
+  /**
    * 获取背景图片存储目录路径
    * @returns {string} - 目录路径
    */
@@ -139,22 +152,6 @@ async function main() {
         return modulePath;
       }
     }
-  };
-  
-  if (config.runsInWidget) {
-    if ( version !== settings.version && settings.update === false ) {
-      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
-      settings.version = version;
-      writeSettings(settings);
-    };
-    // refresh time
-    if (settings.refresh) {  
-      const widget = new ListWidget();
-      widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(settings.refresh));
-    }
-    
-    await previewWidget();
-    return null;
   };
   
   /**
@@ -197,11 +194,27 @@ async function main() {
   const updateString = async () => {
     const modulePath = fm.joinPath(mainPath, scrName);
     const codeString = await getString(scrUrl);
-    if (codeString.indexOf('95度茅台') == -1) {
+    if (codeString.indexOf('95度茅台') === -1) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
     } else {
       fm.writeString(modulePath, codeString);
       ScriptableRun();
+    }
+  };
+  
+  const appleOS = async () => {
+    const startHour = settings.startTime || 4;
+    const endHour = settings.endTime || 6;
+    const currentHour = new Date().getHours();
+
+    if (settings.appleOS && currentHour >= startHour && currentHour <= endHour) {
+      const html = await new Request(atob('aHR0cHM6Ly9kZXZlbG9wZXIuYXBwbGUuY29tL25ld3MvcmVsZWFzZXMvcnNzL3JlbGVhc2VzLnJzcw==')).loadString();
+      const iOS = html.match(/<title>(iOS.*?)<\/title>/)[1];
+      if (settings.push !== iOS) {
+        notify('AppleOS 更新通知 🔥', '新版本发布: ' + iOS)
+        settings.push = iOS
+        writeSettings(settings);
+      }
     }
   };
   
@@ -419,20 +432,7 @@ async function main() {
     cache.writeImage(name, img);
     return toBase64(img);
   };
-
-  /**
-   * 弹出通知
-   * @param {string} title
-   * @param {string} body
-   * @param {string} url
-   * @param {string} sound
-   */
-  const notify = async (title, body, url, opts = {}) => {
-    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
-    if (url) n.openURL = url;
-    return await n.schedule();
-  };
-
+  
   /**
    * 弹出输入框
    * @param title 标题
@@ -461,14 +461,37 @@ async function main() {
    * @param options 按键
    * @returns { Promise<number> }
    */
-  const generateAlert = async (title, message, options) => {
+  const generateAlert = async (title, message = '', options) => {
     const alert = new Alert();
     alert.title = title
-    alert.message = message
+    alert.message = message ?? ''
     for (const option of options) {
       alert.addAction(option)
     }
     return await alert.presentAlert();
+  };
+    
+  /**
+   * Widget 小组件逻辑
+   * 处理版本更新、定时刷新以及预览和系统
+   * @param {string} scriptName
+   * @param {string} version
+   */
+  if (config.runsInWidget) {
+    if ( version !== settings.version && settings.update === false ) {
+      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
+      settings.version = version;
+      writeSettings(settings);
+    };
+    
+    if (settings.refresh) {  
+      const widget = new ListWidget();
+      widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(settings.refresh));
+    };
+    
+    await appleOS();
+    await previewWidget();
+    return null;
   };
   
   
@@ -1234,7 +1257,7 @@ async function main() {
         message: message,
         options: [
           {
-            hint: String(settings[name]) ? String(settings[name]) : '请输入',
+            hint: String(settings[name]) || '请输入',
             value: String(settings[name]) ?? ''
           }
         ]
@@ -1252,7 +1275,7 @@ async function main() {
         const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
         
         settings[name] = result;
-        settings[`${name}_add`] = inputStatus;
+        settings[`${name}_status`] = inputStatus;
         writeSettings(settings);
         innerTextElementById(name, isName ? inputStatus : result);  
       });
@@ -1322,7 +1345,29 @@ async function main() {
         settings.bottomSize = Number(inputArr[4].value);
         
         writeSettings(settings);
-        await generateAlert('设置成功', '桌面组件稍后将自动刷新', ['完成']);
+        await generateAlert('设置成功', '桌面组件稍后自动刷新', ['完成']);
+      });
+    };
+    
+    // appleOS 推送时段
+    const period = async ({ label, name, message, desc } = data) => {
+      await generateInputAlert({
+        title: label,
+        message: message,
+        options: [
+          { hint: '开始时间 4', value: String(settings['startTime']) },
+          { hint: '结束时间 6', value: String(settings['endTime']) }
+        ]
+      }, 
+      async (inputArr) => {
+        const [startTime, endTime] = inputArr.map(({ value }) => value);
+        settings.startTime = !startTime ? '' : Number(startTime);
+        settings.endTime = !endTime ? '' : Number(endTime);
+        
+        const inputStatus = startTime || endTime ? '已设置' : '默认'
+        settings[`${name}_status`] = inputStatus;
+        writeSettings(settings);
+        innerTextElementById(name, inputStatus);
       });
     };
     
@@ -1392,6 +1437,9 @@ async function main() {
           break;
         case 'layout':
           await layout(data);
+          break;
+        case 'period':
+          await period(data);
           break;
         case 'preview':
           await previewWidget();
@@ -1489,7 +1537,7 @@ async function main() {
             type: 'cell',
             input: true,
             icon: {
-              name: 'clock',
+              name: 'clock.fill',
               color: '#0096FF'
             },
             message: '设置时长为0时，列表将无动画效果\n( 单位: 秒 )',
@@ -1503,6 +1551,30 @@ async function main() {
               name: 'doc.text.image',
               color: '#43CD80'
             }
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: 'AppleOS',
+            name: 'appleOS',
+            type: 'switch',
+            icon: `${rootUrl}img/symbol/notice.png`,
+            default: true
+          },
+          {
+            label: '推送时段',
+            name: 'period',
+            type: 'cell',
+            isAdd: true,
+            icon: {
+              name: 'deskclock.fill',
+              color: '#0096FF'
+            },
+            message: '设置 iOS 最新系统版本的推送时段',
+            desc: settings.startTime && settings.endTime ? '已设置' : '默认'
           }
         ]
       },
