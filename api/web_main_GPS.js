@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -180,6 +180,9 @@ async function main() {
   /**
    * Download Update Script
    * @param { string } string
+   * 
+   * 检查苹果操作系统更新
+   * @returns {Promise<void>}
    */
   const updateVersion = async () => {
     const index = await generateAlert(
