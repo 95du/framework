@@ -64,7 +64,7 @@ async function main() {
   const modulePath = await downloadModule();
   if (modulePath) {
     const importedModule = await importModule(modulePath);
-    await importedModule.main();
+    importedModule.main();
   }
 };
 module.exports = { main }
