@@ -21,14 +21,12 @@ const moduleDir = fm.joinPath(runPath, 'Running');
 if (!fm.fileExists(runPath)) fm.createDirectory(runPath);
 if (!fm.fileExists(moduleDir)) fm.createDirectory(moduleDir);
 
-const modulePath = await downloadModule();
-if (modulePath) {
-  const importedModule = await importModule(modulePath);
-  importedModule.main();
-}
-
-async function downloadModule() {
-  const moduleFilename = `${new Date().toISOString().slice(0, 13)}.js`;
+const downloadModule = async () => {
+  const date = new Date();
+  const df = new DateFormatter();
+  df.dateFormat = 'yyyyMMddHH';
+  
+  const moduleFilename = df.string(date).toString() + '.js';
   const modulePath = fm.joinPath(moduleDir, moduleFilename);
 
   if (fm.fileExists(modulePath)) return modulePath;
@@ -48,9 +46,9 @@ async function downloadModule() {
   } catch (e) {
     return moduleLatestFile ? fm.joinPath(moduleDir, moduleLatestFile) : null;
   }
-}
+};
 
-function getModuleVersions() {
+const getModuleVersions = () => {
   const dirContents = fm.listContents(moduleDir);
   if (dirContents.length > 0) {
     const versions = dirContents.map(x => parseInt(x.replace('.js', '')));
@@ -63,4 +61,10 @@ function getModuleVersions() {
     }
   }
   return [null, null];
-}
+};
+
+const modulePath = await downloadModule();
+if (modulePath) {
+  const importedModule = await importModule(modulePath);
+  await importedModule.main();
+};
