@@ -6,7 +6,7 @@
  * 小组件作者：95度茅台
  * 获取Token作者: @FoKit
  * 版本: Version 1.2.0
- * Telegram 交流群 https://t.me/+ViT7uEUrIUV0B_iy
+ * Telegram 交流群 https://t.me/+CpAbO_q_SGo2ZWE1
 
 获取Token重写:
 https://gitcode.net/4qiao/scriptable/raw/master/quanX/getToken_12123.sgmodule
@@ -42,68 +42,54 @@ hostname = %APPEND% miniappcsfw.122.gov.cn
 
 const scriptName = '95du12123';
 const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbjEyMTIzX1VJVGFibGUuanM=');
+
 const fm = FileManager.local();
 const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
-if (!fm.fileExists(runPath)) {
-  fm.createDirectory(runPath);
-}
+const moduleDir = fm.joinPath(runPath, 'Running');
 
-const moduleDir = fm.joinPath(fm.documentsDirectory(), `${scriptName}/Running`);
-if (!fm.fileExists(moduleDir)) {
-  fm.createDirectory(moduleDir);
-}
+if (!fm.fileExists(runPath)) fm.createDirectory(runPath);
+if (!fm.fileExists(moduleDir)) fm.createDirectory(moduleDir);
 
-const modulePath = await downloadModule(scriptName, scriptUrl);
-if (modulePath != null) {
-  const importedModule = importModule(modulePath);
-  await importedModule.main();
-}
-
-async function downloadModule(scriptName, scriptUrl) {
-  const date = new Date();
-  const df = new DateFormatter();
-  df.dateFormat = 'yyyyMMddHH';
-  const moduleFilename = df.string(date).toString() + '.js';
+const downloadModule = async () => {
+  const moduleFilename = `${new Date().toISOString().slice(0, 13)}.js`;
   const modulePath = fm.joinPath(moduleDir, moduleFilename);
-  if (fm.fileExists(modulePath)) {
-    return modulePath;
-  } else {
-    const [moduleFiles, moduleLatestFile] = getModuleVersions(scriptName);
+
+  if (fm.fileExists(modulePath)) return modulePath;
+
+  const [moduleFiles, moduleLatestFile] = getModuleVersions();
+
+  try {
     const req = new Request(scriptUrl);
-    const moduleJs = await req.load().catch(() => {
-      return null;
-    });
+    const moduleJs = await req.load();
     if (moduleJs) {
       fm.write(modulePath, moduleJs);
-      if (moduleFiles != null) {
-        moduleFiles.map(x => {
-          fm.remove(fm.joinPath(moduleDir, x));
-        });
-      }
+      if (moduleFiles) moduleFiles.forEach(file => fm.remove(fm.joinPath(moduleDir, file)));
       return modulePath;
     } else {
-      console.log('Failed to download new module. Using latest local version: ' + moduleLatestFile);
-      return (moduleLatestFile != null) ? fm.joinPath(moduleDir, moduleLatestFile) : null;
+      return moduleLatestFile ? fm.joinPath(moduleDir, moduleLatestFile) : null;
     }
+  } catch (e) {
+    return moduleLatestFile ? fm.joinPath(moduleDir, moduleLatestFile) : null;
   }
-}
+};
 
-function getModuleVersions(scriptName) {
+const getModuleVersions = () => {
   const dirContents = fm.listContents(moduleDir);
   if (dirContents.length > 0) {
-    const versions = dirContents.map(x => {
-      if (x.endsWith('.js')) return parseInt(x.replace('.js', ''));
-    });
-    versions.sort(function(a, b) {
-      return b - a;
-    });
+    const versions = dirContents.map(x => parseInt(x.replace('.js', '')));
+    versions.sort((a, b) => b - a);
+
     if (versions.length > 0) {
-      const moduleFiles = versions.map(x => {
-        return x + '.js';
-      });
-      moduleLatestFile = versions[0] + '.js';
+      const moduleFiles = versions.map(x => `${x}.js`);
+      const moduleLatestFile = `${versions[0]}.js`;
       return [moduleFiles, moduleLatestFile];
     }
   }
   return [null, null];
-}
+};
+
+const modulePath = await downloadModule();
+if (modulePath) {
+  const importedModule = await importModule(modulePath);
+  importedModule.main();
+};
