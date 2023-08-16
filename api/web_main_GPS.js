@@ -1576,7 +1576,7 @@ async function main() {
               name: 'deskclock.fill',
               color: '#0096FF'
             },
-            message: '设置 iOS 最新系统版本的推送时段',
+            message: 'iOS 最新系统版本更新通知\n默认 04:00 至 06:00',
             desc: settings.startTime && settings.endTime ? '已设置' : '默认'
           }
         ]
