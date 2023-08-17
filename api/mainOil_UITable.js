@@ -403,9 +403,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年01月04日\n使用UITable样式框架',
-        val: '1.0.0',
-        ver: 'Version 1.0.0'
+        desc: '2023年08月17日\n修复已知错误，增加渐变角度',
+        val: '1.0.1',
+        ver: 'Version 1.0.1'
       },
       {
         icon: {
