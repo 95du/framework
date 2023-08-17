@@ -671,7 +671,7 @@ async function main() {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
           desc.id = \`\${name}-desc\`
-          desc.innerText = isAdd ? (settings[\`\${name}_add\`] ?? item.desc) : settings[name];
+          desc.innerText = isAdd ? (settings[\`\${name}_status\`] ?? item.desc) : settings[name];
           label.appendChild(desc);
         };
       
@@ -1577,7 +1577,7 @@ async function main() {
               color: '#0096FF'
             },
             message: 'iOS 最新系统版本更新通知\n默认 04:00 至 06:00',
-            desc: settings.startTime && settings.endTime ? '已设置' : '默认'
+            desc: settings.startTime || settings.endTime ? '已设置' : '默认'
           }
         ]
       },
