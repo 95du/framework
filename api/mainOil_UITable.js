@@ -6,10 +6,10 @@ async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duOilPrice");
-  if (!F_MGR.fileExists(path)) {
-    F_MGR.createDirectory(path);
-  }
+  
+  if (!F_MGR.fileExists(path)) F_MGR.createDirectory(path);
   const cacheFile = F_MGR.joinPath(path, 'setting.json');
+  
   // Background image Path
   const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duBackground");
   const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
@@ -21,11 +21,11 @@ async function main() {
     gradient: [],
     province: '海南',
     update: 'true',
-    appleOS: 'true'
+    appleOS: 'true',
+    angle: '90'
   };
   
   const getSettings = (file) => {
-    let setting = {};
     if (F_MGR.fileExists(file)) {
       const data = F_MGR.readString(file);
       return JSON.parse(data);
@@ -35,7 +35,7 @@ async function main() {
     }
     return setting;
   }
-  const setting = getSettings(cacheFile);
+  setting = await getSettings(cacheFile);
   
   // Background Color
   const bgColor = Color.dynamic(
@@ -307,6 +307,13 @@ async function main() {
               title: '渐变透明',
               desc: '深色透明度，完全透明设置为 0',
               val: 'transparency'
+            },
+            {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking_2.png',
+              type: 'input',
+              title: '渐变角度',
+              desc: '0-360，90度（ 从上往下渐变 ）',
+              val: 'angle'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
