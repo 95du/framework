@@ -48,6 +48,7 @@ async function main() {
     imgArr: [],
     transparency: '0.5',
     masking: '0.3',
+    angle: '90',
     gradient: [],
     update: 'true',
     appleOS: "true",
@@ -383,6 +384,13 @@ async function main() {
               title: '渐变透明',
               desc: '深色透明度，完全透明设置为 0',
               val: 'transparency'
+            },
+            {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking_2.png',
+              type: 'input',
+              title: '渐变角度',
+              desc: '0-360，90度（ 从上往下渐变 ）',
+              val: 'angle'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
