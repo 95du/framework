@@ -74,6 +74,7 @@ async function main() {
     topStyle: true,
     music: true,
     animation: true,
+    appleOS: true,
     fadeInUp: 0.7,
     angle: 90,
     textLightColor: '#000000',
@@ -154,9 +155,7 @@ async function main() {
     }
   };
   
-  /**
-   * download store
-   */
+  /** download store **/
   const myStore = async () => {
     const script = await getString('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js');
     const fm = FileManager.iCloud();
@@ -180,7 +179,6 @@ async function main() {
   /**
    * Download Update Script
    * @param { string } string
-   * 
    * 检查苹果操作系统更新
    * @returns {Promise<void>}
    */
@@ -1564,8 +1562,7 @@ async function main() {
             label: 'AppleOS',
             name: 'appleOS',
             type: 'switch',
-            icon: `${rootUrl}img/symbol/notice.png`,
-            default: true
+            icon: `${rootUrl}img/symbol/notice.png`
           },
           {
             label: '推送时段',
