@@ -37,7 +37,7 @@ hostname = miniappcsfw.122.gov.cn
 12123_Token = type=http-request,pattern=^https:\/\/miniappcsfw\.122\.gov\.cn:8443\/openapi\/invokeApi\/business\/biz,requires-body=1,max-size=0,timeout=1000,script-path=https://gitcode.net/4qiao/scriptable/raw/master/quanX/getToken_12123.js,script-update-interval=0
 
 [MITM]
-hostname = %APPEND% miniappcsfw.122.gov.cn
+hostname = %APPEND% miniappcsfw.122.gov.cn:8443 surge
 */
 
 const scriptName = '95du12123';
