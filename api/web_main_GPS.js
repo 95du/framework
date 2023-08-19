@@ -79,8 +79,8 @@ async function main() {
     angle: 90,
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
-    titleColor: '#3F8BFF',
-    solidColor: '#BCBBBB',
+    titleColor: '#000000',
+    solidColor: '#FFFFFF',
     rangeColor: '#ff6800'
   };
   
@@ -663,13 +663,13 @@ async function main() {
         
         label.appendChild(selCont);
       } else if (['cell', 'page', 'file'].includes(item.type)) {
-        const { name, isAdd } = item;
+        const { name } = item;
 
         if ( item.desc ) {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
           desc.id = \`\${name}-desc\`
-          desc.innerText = isAdd ? (settings[\`\${name}_status\`] ?? item.desc) : settings[name];
+          desc.innerText = settings[name] ?? settings[\`\${name}_status\`] ?? item.desc;
           label.appendChild(desc);
         };
       
@@ -691,7 +691,7 @@ async function main() {
             case 'recover':
               resetContent();
               alertWindow();
-              updateCountdown(4);
+              updateCountdown(3);
               break;
           };
       
@@ -1135,7 +1135,7 @@ async function main() {
           setTimeout(() => {
             popupTips.remove("fd");
             setTimeout(() => popupTips.remove("show"), 500);
-          }, 4800);
+          }, 3600);
         };
       </script>`;
     };
@@ -1258,7 +1258,7 @@ async function main() {
         message: message,
         options: [
           {
-            hint: String(settings[name]) || '请输入',
+            hint: settings[name] ? String(settings[name]) : '请输入',
             value: String(settings[name]) ?? ''
           }
         ]
@@ -1398,7 +1398,7 @@ async function main() {
       } else if ( code === 'reset' && fm.fileExists(mainPath) ) {
         await removeData();
       } else if ( code === 'recover' ) {
-        Timer.schedule(5000, false, async () => {
+        Timer.schedule(4000, false, async () => {
           const index = await generateAlert('是否恢复设置 ？', '用户登录的信息将重置\n设置的数据将会恢复为默认', options = ['取消', '确认']);
           if (index === 0) return;
           writeSettings(DEFAULT);
@@ -1778,6 +1778,18 @@ async function main() {
             icon: `${rootUrl}img/symbol/layout.png`
           },
           {
+            label: '推送通知',
+            name: 'interval',
+            type: 'cell',
+            input: true,
+            message: '车辆静止超过10分钟后，车辆未行驶则默认每4小时推送一次车辆状态通知\n（ 单位: 分钟 ）',
+            desc: settings.interval ?? '默认',
+            icon: {
+              name: 'text.bubble.fill',
+              color: '#F9A825'
+            }
+          },
+          {
             label: '车辆图片',
             name: 'carImg',
             type: 'cell',
@@ -1801,18 +1813,6 @@ async function main() {
             icon: {
               name: 'checkerboard.shield',
               color: '#BD7DFF'
-            }
-          },
-          {
-            label: '推送通知',
-            name: 'interval',
-            type: 'cell',
-            input: true,
-            message: '车辆静止超过10分钟后，车辆未行驶则默认每4小时推送一次通知\n（ 单位: 分钟 ）',
-            desc: settings.interval ? '已设置' : '默认',
-            icon: {
-              name: 'text.bubble.fill',
-              color: '#F9A825'
             }
           }
         ]
