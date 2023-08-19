@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -79,7 +79,7 @@ async function main() {
     angle: 90,
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
-    titleLightColor: '#3F8BFF',
+    titleColor: '#3F8BFF',
     solidColor: '#BCBBBB',
     rangeColor: '#ff6800'
   };
@@ -1642,7 +1642,7 @@ async function main() {
             }
           },
           {
-            name: "titleLightColor",
+            name: "titleColor",
             label: "车牌颜色",
             type: "color",
             icon: {
