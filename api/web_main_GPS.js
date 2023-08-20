@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -1715,6 +1715,10 @@ async function main() {
                   { 
                     label: '#BCBBBB',
                     value: '#BCBBBB'
+                  },
+                  { 
+                    label: '#A0BACB',
+                    value: '#A0BACB'
                   },
                   {
                     label: '#FF6800',
