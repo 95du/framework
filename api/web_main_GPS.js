@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -491,7 +491,7 @@ async function main() {
     };
     
     await appleOS();
-    await previewWidget();
+    await previewWidget()
     return null;
   };
   
@@ -536,7 +536,7 @@ async function main() {
           }
         };
         const { icon } = item;
-        if (icon?.name) {
+        if ( icon?.name ) {
           const {name, color} = icon;
           item.icon = await getCacheMaskSFIcon(name, color);
         } else if (icon?.startsWith('https')) {
@@ -573,8 +573,8 @@ async function main() {
     .modal-dialog {
       position: relative;
       width: auto;
-      margin: ${Device.screenSize().height < 926 ? '62px' : '78px'};
-      top: ${Device.screenSize().height < 926 ? '-5%' : '-11%'};
+      margin: ${screenSize < 926 ? '62px' : '78px'};
+      top: ${screenSize < 926 ? '-5%' : '-11%'};
     }
     
     ${settings.animation ? `
@@ -654,12 +654,6 @@ async function main() {
         const selCont = document.createElement('div');
         selCont.classList.add('form-item__input__select');
         selCont.appendChild(select);
-      
-        /**
-        const icon = document.createElement('i');
-        icon.className = 'iconfont icon-arrow_right';
-        selCont.appendChild(icon);
-        */
         
         label.appendChild(selCont);
       } else if (['cell', 'page', 'file'].includes(item.type)) {
@@ -807,7 +801,7 @@ async function main() {
           const toggleShowContent = () => {
             content.classList.toggle('show');
             isExpanded = !isExpanded;
-            icon.style.transition = 'transform 0.35s';
+            icon.style.transition = 'transform 0.4s';
             icon.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
           };
           range.querySelector('.collapsible-label').addEventListener('click', toggleShowContent);
@@ -898,11 +892,11 @@ async function main() {
             const groupDiv = fragment.appendChild(document.createElement('div'));
             groupDiv.className = 'list'
             if ( title ) {
-              const elTitle = groupDiv.appendChild(document.createElement('div'))
+              const elTitle = groupDiv.appendChild(document.createElement('div'));
               elTitle.className = 'list__header'
               elTitle.textContent = title;
             }
-            elBody = groupDiv.appendChild(document.createElement('div'))
+            elBody = groupDiv.appendChild(document.createElement('div'));
             elBody.className = 'list__body'
           }
           const label = createFormItem(item);
@@ -1107,6 +1101,8 @@ async function main() {
         <p id="status"></p>
       </div>
       <script>
+        const statusEl = document.getElementById('status');
+        
         const updateCountdown = (seconds) => {
           const countdownEl = document.getElementById('countdown');
           if (seconds === 0) {
@@ -1117,16 +1113,14 @@ async function main() {
                 读取完成
               </p>
             </div>\`;
-            document.getElementById('status').textContent = '';
+            statusEl.textContent = ''
           } else {
             countdownEl.textContent = seconds;
             setTimeout(() => updateCountdown(seconds - 1), 1000);
           }
         };
     
-        const resetContent = () => {
-          const statusEl = document.getElementById('status').textContent = '正在读取...';
-        };
+        const resetContent = () => statusEl.textContent = '正在读取...'
         
         const alertWindow = () => {
           const popupTips = document.getElementById("popup")
@@ -1362,14 +1356,14 @@ async function main() {
       }, 
       async (inputArr) => {
         const [startTime, endTime] = inputArr.map(({ value }) => value);
-        settings.startTime = !startTime ? '' : Number(startTime);
-        settings.endTime = !endTime ? '' : Number(endTime);
+        settings.startTime = startTime ? Number(startTime) : ''
+        settings.endTime = endTime ? Number(endTime) : ''
         
         const inputStatus = startTime || endTime ? '已设置' : '默认'
         settings[`${name}_status`] = inputStatus;
         writeSettings(settings);
         innerTextElementById(name, inputStatus);
-      });
+      })
     };
     
     // 注入监听器
