@@ -1123,13 +1123,10 @@ async function main() {
         const resetContent = () => statusEl.textContent = '正在读取...'
         
         const alertWindow = () => {
-          const popupTips = document.getElementById("popup")
+          const popupTips = document.getElementById("popup")  
             .classList;
           popupTips.add("show", "fd")
-          setTimeout(() => {
-            popupTips.remove("fd");
-            setTimeout(() => popupTips.remove("show"), 500);
-          }, 3600);
+          setTimeout(() => popupTips.remove("show", "fd"), 4000)
         };
       </script>`;
     };
@@ -1269,11 +1266,13 @@ async function main() {
         const isName = ['aMapkey', 'carLogo', 'carImg'].includes(name);
         const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
         
-        settings[name] = result;
-        settings[`${name}_status`] = inputStatus;
-        writeSettings(settings);
-        innerTextElementById(name, isName ? inputStatus : result);  
-      });
+        if ( result ) {
+          settings[name] = result;
+          settings[`${name}_status`] = inputStatus;
+          writeSettings(settings);
+          innerTextElementById(name, isName ? inputStatus : result);  
+        };
+      })
     };
           
     // 登录设备
