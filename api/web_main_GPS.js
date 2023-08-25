@@ -657,13 +657,13 @@ async function main() {
         
         label.appendChild(selCont);
       } else if (['cell', 'page', 'file'].includes(item.type)) {
-        const { name } = item;
+        const { name, isAdd } = item
 
         if ( item.desc ) {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
           desc.id = \`\${name}-desc\`
-          desc.innerText = settings[name] ?? settings[\`\${name}_status\`] ?? item.desc;
+          desc.innerText = isAdd ? settings[\`\${name}_status\`] ?? item.desc : settings[name];
           label.appendChild(desc);
         };
       
@@ -1263,15 +1263,13 @@ async function main() {
           result = value === '0' ? value : !isNaN(value) ? Number(value) : settings[name];
         };
         
-        const isName = ['aMapkey', 'carLogo', 'carImg'].includes(name);
+        const isName = ['aMapkey', 'logo', 'carImg'].includes(name);
         const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
         
-        if ( result ) {
-          settings[name] = result;
-          settings[`${name}_status`] = inputStatus;
-          writeSettings(settings);
-          innerTextElementById(name, isName ? inputStatus : result);  
-        };
+        settings[name] = result;
+        settings[`${name}_status`] = inputStatus;
+        writeSettings(settings);
+        innerTextElementById(name, isName ? inputStatus : result);
       })
     };
           
