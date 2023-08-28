@@ -153,9 +153,9 @@ async function main() {
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
     const topImg = [
-      'http://mtw.so/60beTD',
-      'http://mtw.so/6ukhtm',
-      'http://mtw.so/6fhTYO'
+    'https://sweixinfile.hisense.com/media/M00/75/30/Ch4FyWQpJXKARoWaAAcACqtbVx4959.png',
+    'https://sweixinfile.hisense.com/media/M00/75/73/Ch4FyGQpJiCADwQBAAbrP_P1o48411.png',
+    'https://sweixinfile.hisense.com/media/M00/75/73/Ch4FyGQpJkOAMv8qAALgjoFrWow853.png'
     ];
     const items = topImg[Math.floor(Math.random() * topImg.length)];
     const effectImage = effectRow.addImageAtURL(items);
