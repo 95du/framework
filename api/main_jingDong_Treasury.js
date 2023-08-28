@@ -111,9 +111,9 @@ async function main() {
     // Header effectImage Row
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
-    const topImg = ['aHR0cDovL210dy5zby81RHZrZEk=', 'aHR0cDovL210dy5zby81U3hJMDA=']
+    const topImg = ['https://sweixinfile.hisense.com/media/M00/74/CA/Ch4FyWQWIeGAFlShAAS8P7s_LlA616.png', 'https://sweixinfile.hisense.com/media/M00/75/0C/Ch4FyGQWJHaASWoeAATSqBBJmWY659.png']
     const items = topImg[Math.floor(Math.random() * topImg.length)];
-    const effectImage = effectRow.addImageAtURL(atob(items));
+    const effectImage = effectRow.addImageAtURL(items);
     effectImage.widthWeight = 0.4;
     effectImage.centerAligned();
     effectRow.backgroundColor = topBgColor
