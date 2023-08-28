@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -57,7 +57,7 @@ async function main() {
       carStackWidth: 225,
       carWidth: 225,
       carHeight: 100,
-      bottomSize: 225
+      bottomSize: 22
     }
   };
   
@@ -188,7 +188,7 @@ async function main() {
       '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复',
       options = ['取消', '确认']
     );
-    if (index == 0) return;
+    if (index === 0) return;
     await updateString();
   };
   
@@ -313,7 +313,7 @@ async function main() {
     cornerWidth = 42
   ) => {
     let sfi = SFSymbol.named(icon);
-    if (sfi == null) sfi = SFSymbol.named('message.fill');
+    if (sfi === null) sfi = SFSymbol.named('message.fill');
     sfi.applyFont(  
       Font.mediumSystemFont(30)
     );
@@ -415,7 +415,7 @@ async function main() {
    */
   const drawSFIcon = async ( icon = name ) => {
     let sf = SFSymbol.named(icon);
-    if (sf == null) sf = SFSymbol.named('message');
+    if (sf === null) sf = SFSymbol.named('message');
     sf.applyFont(  
       Font.mediumSystemFont(30)
     );
@@ -663,7 +663,7 @@ async function main() {
           const desc = document.createElement("div");
           desc.className = 'form-item-right-desc';
           desc.id = \`\${name}-desc\`
-          desc.innerText = isAdd ? settings[\`\${name}_status\`] ?? item.desc : settings[name];
+          desc.innerText = isAdd ? (settings[\`\${name}_status\`] ?? item.desc) : settings[name];
           label.appendChild(desc);
         };
       
@@ -1460,25 +1460,12 @@ async function main() {
         case 'install':
           await updateString();
           break;
-        case 'itemClick':
-          if (data.type === 'page') {
-            const item = (() => {
-              const find = (i) => {
-                for (const el of i) {
-                  if (el.name === data.name) return el
-                  if (el.type === 'group') {
-                    const r = find(el.items);
-                    if (r) return r
-                  }
-                }
-                return null
-              };
-              return find(formItems)
-            })();
-            await renderAppView(item, false, { settings });
-          } else {
-            await onItemClick?.(data, { settings });
-          }
+        case 'itemClick':      
+          const findItem = (items, name) => items.reduce((found, item) => found || (item.name === name ? item : (item.type === 'group' && findItem(item.items, name))), null);
+          
+          const item = data.type === 'page' ? findItem(formItems, data.name) : data;
+          
+          (data.type === 'page' ? await renderAppView(item, false, { settings }) : onItemClick?.(data, { settings }));
           break;
       };
       // Remove Event Listener
