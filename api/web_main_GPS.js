@@ -57,7 +57,7 @@ async function main() {
       carStackWidth: 225,
       carWidth: 225,
       carHeight: 100,
-      bottomSize: 22
+      bottomSize: 225
     }
   };
   
