@@ -1465,7 +1465,7 @@ async function main() {
           
           const item = data.type === 'page' ? findItem(formItems, data.name) : data;
           
-          (data.type === 'page' ? await renderAppView(item, false, { settings }) : onItemClick?.(data, { settings }));
+          data.type === 'page' ? await renderAppView(item, false, { settings }) : onItemClick?.(data, { settings });
           break;
       };
       // Remove Event Listener
