@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-main()
+
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -1765,7 +1765,7 @@ async function main() {
             type: 'cell',
             input: true,
             message: '车辆静止超过10分钟后，车辆未行驶则默认每4小时推送一次车辆状态通知\n（ 单位: 分钟 ）',
-            desc: settings.interval ?? '默认',
+            desc: settings.interval,
             icon: {
               name: 'text.bubble.fill',
               color: '#F9A825'
