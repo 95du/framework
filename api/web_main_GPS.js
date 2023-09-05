@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -234,7 +234,7 @@ async function main() {
         const filePath = fm.joinPath(cache, fileName);
         return fm.readString(filePath);
       },
-      writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),  
+      writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),
       // cache Image
       readImage: (fileName) => {
         const imgPath = fm.joinPath(cache, fileName);
@@ -392,13 +392,15 @@ async function main() {
       ctx.drawImage(sourceImg, (sourceImg.width - size) / 2, (sourceImg.height - size) / 2, size, size, 0, 0, size, size);
       
       // 压缩图像
+      const maxFileSize = 200 * 1024
+      const quality = Math.min(1, Math.sqrt(maxFileSize / (canvas.toDataURL('image/jpeg', 1).length * 0.75)));
       const compressedCanvas = document.createElement("canvas");
       const compressedCtx = compressedCanvas.getContext('2d');
       compressedCanvas.width = compressedCanvas.height = 400;
       compressedCtx.drawImage(canvas, 0, 0, size, size, 0, 0, 400, 400);
       
       silhouetteImg.src = canvas.toDataURL();
-      output = canvas.toDataURL();
+      output = compressedCanvas.toDataURL('image/jpeg', quality);
     `;
     
     const wv = new WebView();
@@ -406,7 +408,6 @@ async function main() {
     const base64Image = await wv.evaluateJavaScript(js);
     return await new Request(base64Image).loadImage();  
   };
-  
   
   /**
    * SFIcon 转换为base64
@@ -500,7 +501,6 @@ async function main() {
   const renderAppView = async (options) => {
     const {
       formItems = [],
-      head,
       $ = 'https://www.imarkr.com',
       avatarInfo,
       previewImage
@@ -692,7 +692,7 @@ async function main() {
           invoke(item.type === 'page' ? 'itemClick' : name, item);
         });
   
-        // 创建图片input元素并添加监听  
+        // 创建图片input元素
         const fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.accept = ".jpg,.jpeg,.png,.gif,.bmp";
@@ -1173,7 +1173,6 @@ async function main() {
       </head>
       <body class="${themeColor}">
         ${avatarInfo ? await mainMenuTop() : previewImage ? await previewImgHtml() : ''}
-        ${head || ''}
         <!-- 弹窗 -->
         ${await alertPopup()}
         ${await buttonPopup()}
@@ -1228,7 +1227,7 @@ async function main() {
     
     // 背景图 innerText
     const innerTextBgImage = () => {
-      const isSetBackground = fm.fileExists(getBgImage()) ? '已添加' : '';
+      const isSetBackground = fm.fileExists(getBgImage()) ? '已添加' : ''
       innerTextElementById(
         'chooseBgImg',
         isSetBackground
