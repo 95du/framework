@@ -136,12 +136,12 @@ async function main() {
    * @returns {String} string
    */
   const updateVersionNotice = () => {
-    const newVersion = version !== settings.version ? '.signin-loader' : undefined;
-    if (newVersion) {
+    if ( version !== settings.version ) {
       settings.version = version;
       writeSettings(settings);
+      return '.signin-loader';
     }
-    return newVersion;
+    return null
   };
   
   /**
@@ -279,8 +279,16 @@ async function main() {
       canvas.width = canvas.height = size;
       ctx.drawImage(sourceImg, (sourceImg.width - size) / 2, (sourceImg.height - size) / 2, size, size, 0, 0, size, size);
       
+      // 压缩图像
+      const maxFileSize = 200 * 1024
+      const quality = Math.min(1, Math.sqrt(maxFileSize / (canvas.toDataURL('image/jpeg', 1).length * 0.75)));
+      const compressedCanvas = document.createElement("canvas");
+      const compressedCtx = compressedCanvas.getContext('2d');
+      compressedCanvas.width = compressedCanvas.height = 400;
+      compressedCtx.drawImage(canvas, 0, 0, size, size, 0, 0, 400, 400);
+      
       silhouetteImg.src = canvas.toDataURL();
-      output = canvas.toDataURL();
+      output = compressedCanvas.toDataURL('image/jpeg', quality);
     `;
     
     const wv = new WebView();
@@ -516,7 +524,7 @@ async function main() {
     
     const formData = {};
     const createFormItem = ( item ) => {
-      const value = settings[item.name] ?? item.default ?? null
+      const value = settings[item.name] ?? item.default
       formData[item.name] = value;
       
       const label = document.createElement("label");
