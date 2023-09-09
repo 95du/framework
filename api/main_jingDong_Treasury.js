@@ -85,8 +85,8 @@ async function main() {
     const sign = new Request('https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld');
     sign.method = 'POST'
     sign.headers = { Referer: 'https://h5.m.jd.com/' }
-    const res = await sign.loadJSON();
-    if (res.code === '0') {
+    const { code } = await sign.loadJSON();
+    if (code === '0') {
       setting.cookie = cookie.join(';');
       setting.code = 0;
       notify('Cookie获取/更新成功', setting.cookie);
