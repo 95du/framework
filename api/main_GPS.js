@@ -99,7 +99,7 @@ async function main() {
       setting.version = version;
       await saveSettings();
     }
-    importModule(await downloadModule()).main(); return;
+    await importModule(await downloadModule()).main(); return;
   }
   
   async function downloadModule() {
@@ -134,10 +134,10 @@ async function main() {
     // Header effectImage Row
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
-    const topImg = ['aHR0cDovL210dy5zby81TEdyaVA=', 'aHR0cDovL210dy5zby82dVJUV3M=',
-'aHR0cDovL210dy5zby82OG5TVDc=']
+    const topImg = ['https://sweixinfile.hisense.com/media/M00/76/45/Ch4FyWRZ6yOAT3s7AASLcPEvtHw441.png', 'https://sweixinfile.hisense.com/media/M00/76/86/Ch4FyGRZTOKAUjATAAR0NCweJbM650.png',
+'https://sweixinfile.hisense.com/media/M00/76/43/Ch4FyWRZTJ-ABVwrAAQpbyMAaHw907.png']
     const items = topImg[Math.floor(Math.random()*topImg.length)];
-    const effectImage = effectRow.addImageAtURL(atob(items));
+    const effectImage = effectRow.addImageAtURL(items);
     effectImage.widthWeight = 0.4;
     effectImage.centerAligned();
     effectRow.backgroundColor = topBgColor
@@ -179,7 +179,7 @@ async function main() {
         interval: 26
       },
       {
-        url: 'http://mtw.so/6fPefm',
+        url: 'https://sweixinfile.hisense.com/media/M00/76/85/Ch4FyGRY7WGABozOAACaxRmomkI918.png',
         type: 'web',
         title: '商务 QQ',
         val: '>',
