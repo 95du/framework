@@ -98,7 +98,7 @@ async function main() {
   }
   
   if (config.runsInWidget) {
-    importModule(await downloadModule()).main();
+    await importModule(await downloadModule()).main();
   }
   
   async function downloadModule() {
