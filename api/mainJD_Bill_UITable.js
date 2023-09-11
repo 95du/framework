@@ -39,7 +39,8 @@ async function main() {
     appleOS: 'true',
     isPlus: 'true',
     randomIndex: 0,
-    statistics: 1
+    statistics: 1,
+    angle: 90
   };
   
   const getSettings = ( file ) => {
@@ -379,6 +380,13 @@ async function main() {
               title: '渐变透明',
               desc: '深色透明度，完全透明设置为 0',
               val: 'transparency'
+            },
+            {
+              url: 'https://gitcode.net/4qiao/framework/raw/master/img/icon/angle.png',
+              type: 'input',
+              title: '渐变角度',
+              desc: '输入 0 至 360，90度为从上往下',
+              val: 'angle'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
