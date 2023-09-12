@@ -1,13 +1,13 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-main()
+
 async function main() {
   const scriptName = '全国彩开奖结果'
   const version = '1.0.0'
   const updateDate = '2023年09月13日'
   
-  const pathName = '95du_macaujc_2';
+  const pathName = '95du_lottery';
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   
   const [scrName, scrUrl] = ['lottery.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/web_lottery.js'];
