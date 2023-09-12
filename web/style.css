@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: blue; icon-glyph: cannabis;
+// icon-color: blue; icon-glyph: angle-double-left;
 td, th {
   padding: 0;
 }
@@ -693,7 +693,7 @@ button .iconfont {
 .form-item input select,
   .form-item select {
     outline: none;
-    font-size: 15px;
+    font-size: 16px;
     border: var(--select);
     border-radius: 11px;
     background-color: var(--card-background);
