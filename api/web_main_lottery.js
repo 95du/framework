@@ -75,6 +75,7 @@ async function main() {
     music: true,
     animation: true,
     appleOS: true,
+    useCache: false,
     fadeInUp: 0.7,
     angle: 90,
     radius: 10,
@@ -1660,6 +1661,16 @@ async function main() {
             },
             message: 'iOS 14 系统设置值为 18 即可显示圆形',
             desc: settings.radius
+          },
+          {
+            label: '使用缓存',
+            name: 'useCache',
+            type: 'switch',
+            icon: {
+              name: 'externaldrive.fill', 
+              color: '#F9A825'
+            },
+            default: false
           }
         ]
       },
