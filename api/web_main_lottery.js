@@ -1835,7 +1835,7 @@ async function main() {
             multiple: false,
             icon: {
               name: '8.circle',
-              color: '#CB64FF'
+              color: '#00B9FF'
             },
             options: [
               {
