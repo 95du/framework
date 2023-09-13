@@ -77,6 +77,7 @@ async function main() {
     appleOS: true,
     fadeInUp: 0.7,
     angle: 90,
+    agentShortName: '0',
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
     titleColor: '#000000',
@@ -1411,7 +1412,7 @@ async function main() {
           Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
           break;
         case 'getKey':
-          Timer.schedule(400, false, () => { Safari.openInApp('https://lbs.amap.com/api/webservice/guide/create-project/get-key', false)});
+          Timer.schedule(400, false, () => { Safari.openInApp('https://gitcode.net/4qiao/framework/raw/master/img/picture/lottery_Screenshot.png', false)});
           break;
         case 'changeSettings':
           Object.assign(settings, data);
