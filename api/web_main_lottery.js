@@ -77,6 +77,7 @@ async function main() {
     appleOS: true,
     fadeInUp: 0.7,
     angle: 90,
+    radius: 10,
     agentShortName: '0',
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
@@ -1642,6 +1643,23 @@ async function main() {
               name: 'lock.rotation.open',
               color: '289CF4'
             }
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '彩种弧度',
+            name: 'radius',
+            type: 'cell',
+            input: true,
+            icon: {
+              name: 'rotate.right.fill',  
+              color: '#BD7DFF'
+            },
+            message: 'iOS 14 系统设置值为 18 即可显示圆形',
+            desc: settings.radius
           }
         ]
       },
