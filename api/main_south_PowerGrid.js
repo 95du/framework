@@ -3,7 +3,7 @@
 // icon-color: light-brown; icon-glyph: tags;
 
 async function main() {
-  const version = '1.0.1'
+  const version = '1.0.2'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(
@@ -30,6 +30,7 @@ async function main() {
     minute: '10',
     masking: '0.1',
     transparency: '0.5',
+    radius: '50',
     gradient: [],
     update: 'true',
     appleOS: 'true',
@@ -38,7 +39,7 @@ async function main() {
     location: '1',
     loop: 0,
     updateTime: Date.now(),
-    avatarImage: 'http://mtw.so/6un5TI'
+    avatarImage: 'https://sweixinfile.hisense.com/media/M00/75/89/Ch4FyGQuZd-AdY4GAAFKkOj8d5w52.jpeg'
   };
   
   const getSettings = ( file ) => {
@@ -408,9 +409,9 @@ async function main() {
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/webColor.png',
-              type: 'web',
-              title: '颜色设置',
-              val: ' >'
+              type: 'input',
+              title: '头像弧度',
+              val: 'radius'
             },
             {
               url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
@@ -471,9 +472,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年04月18日\n增加缓存图片到本地24小时 ( 减少网络请求 )',
+        desc: '2023年09月14日\n增加设置头像弧度及已知问题',
         val: version,
-        ver: 'Version 1.0.1'
+        ver: 'Version 1.0.2'
       },
       {
         icon: {
@@ -613,9 +614,9 @@ async function main() {
       titleText.titleFont = Font.mediumSystemFont(30);
       
       const url = [
-        'http://mtw.so/5L1M8z',
-        'http://mtw.so/68kBSv',
-        'http://mtw.so/5DtXBK'
+        'https://image.fosunholiday.com/cl/image/comment/6415c08545fc7249fedb3a44_upload.png',
+        'https://image.fosunholiday.com/cl/image/comment/6415c0ac0ccf6c1e2791f274_upload.png',
+        'https://img30.360buyimg.com/cf/jfs/t1/168861/13/35573/4524/6406ba42F1c824763/9c95e827f66aa2e1.png'
       ];
       const items = url[parseInt(Math.random() * url.length)];
       const doudouImage = title.addImageAtURL(items);
@@ -704,9 +705,6 @@ async function main() {
             }
           } else if (type === 'background') {
             await importModule(await backgroundModule()).main();
-          } else if (type === 'web') {
-            await importModule(await webModule()).main();
-            return;
           }
           // Refresh Save
           await refreshAllRows();
@@ -721,39 +719,7 @@ async function main() {
       table.reload();
     }
     await loadAllRows();
-  }
-  
-  
-  /**
-   * 设置文字颜色( WebView )
-   * @param { string } time
-   * @param { string } color
-   * @param { string } title 
-   */
-  async function webModule() {
-    function getDuration( timer ) {
-      const timeAgo = new Date(Date.now() - timer);
-      const minutes = timeAgo.getUTCMinutes();
-      return minutes;
-    }
-    const duration = getDuration(setting.updateTime);
-    const modulePath = F_MGR.joinPath(path, 'webView.js');
-    if ( duration <= 10 && F_MGR.fileExists(modulePath) ) {
-      return modulePath;
-    } else {
-      const req = new Request('https://gitcode.net/4qiao/framework/raw/master/web/webSettings.js');
-      const moduleJs = await req.load().catch(() => {
-        return null;
-      });
-      if (moduleJs) {
-        setting.updateTime = Date.now()
-        await saveSettings()
-        F_MGR.write(modulePath, moduleJs);
-        return modulePath;
-      }
-    }
-  }
-  
+  };
   
   /**
    * 存储当前设置
