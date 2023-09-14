@@ -696,6 +696,8 @@ button .iconfont {
     font-size: 16px;
     border: var(--select);
     border-radius: 11px;
+    /* appearance: none; 原生外观 */
+    /* max-width: 75px; 添加最大宽度 */
     background-color: var(--card-background);
 }
 
