@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-main()
+
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -988,7 +988,8 @@ async function main() {
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
         }, 1200);
-        window._win = { uri: 'https://zibll.com/wp-content/themes/zibll', loading: '95du' };
+        // https://zibll.com
+        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll', loading: '95du' };
       </script>
       `
       // music
