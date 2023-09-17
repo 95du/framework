@@ -570,8 +570,8 @@ async function main() {
     ${cssStyle}
     
     .app-icon {
-      width: 70px;
-      height: 70px;
+      width: 68px;
+      height: 68px;
       border-radius: 50px;
       border: 5px solid #fff;
       margin-bottom: 15px;
