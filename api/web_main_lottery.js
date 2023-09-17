@@ -444,12 +444,12 @@ async function main() {
    * @param options 按键
    * @returns { Promise<number> }
    */
-  const generateAlert = async (title, message = '', options) => {
+  const generateAlert = async (title, message = '', options, destructive) => {
     const alert = new Alert();
-    alert.title = title
-    alert.message = message ?? ''
+    alert.title = title;
+    alert.message = message ?? '';
     for (const option of options) {
-      alert.addAction(option)
+      option === destructive ? alert.addDestructiveAction(option) : alert.addAction(option);
     }
     return await alert.presentAlert();
   };
@@ -1205,13 +1205,12 @@ async function main() {
     
     // 重置所有
     const removeData = async () => {
-      const reset = new Alert();
-      reset.title = '清空所有数据';
-      reset.message = '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据';
-      reset.addDestructiveAction('重置');
-      reset.addCancelAction('取消')
-      const action = await reset.presentAlert();
-      if ( action === 0 ) {
+      const action = await generateAlert(
+        '清空所有数据', 
+        '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据', 
+        ['取消', '重置'], '重置'
+      );
+      if ( action === 1 ) {
         fm.remove(mainPath);
         ScriptableRun();
       }
