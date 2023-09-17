@@ -94,7 +94,7 @@ async function main() {
    * @param {string} sound
    */
   const notify = async (title, body, url, opts = {}) => {
-    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
+    const n = Object.assign(new Notification(), { title, body, sound: 'event', ...opts });
     if (url) n.openURL = url;
     return await n.schedule();
   };
