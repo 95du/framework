@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-main()
+
 async function main() {
   const scriptName = '全国彩开奖结果'
   const version = '1.0.2'
@@ -150,8 +150,6 @@ async function main() {
    */
   const updateVersionNotice = () => {
     if ( version !== settings.version ) {
-      settings.version = version;
-      writeSettings(settings);
       return '.signin-loader';
     }
     return null
@@ -180,6 +178,8 @@ async function main() {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
     } else {
       fm.writeString(modulePath, codeString);
+      settings.version = version;
+      writeSettings(settings);
       ScriptableRun();
     }
   };
@@ -461,10 +461,12 @@ async function main() {
    * @param {string} version
    */
   if (config.runsInWidget) {
-    if ( version !== settings.version && settings.update === false ) {
-      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
-      settings.version = version;
+    const hours = Math.floor((Date.now() - settings.updateTime) % (24 * 3600 * 1000) / (3600 * 1000));
+    
+    if ( version !== settings.version && settings.update === false && hours >= 12 || !settings.updateTime ) {
+      settings.updateTime = Date.now();
       writeSettings(settings);
+      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     if (settings.refresh) {  
@@ -495,7 +497,9 @@ async function main() {
       `${rootUrl}img/picture/appleHub_${logoColor}.png`
     );
     
-    const aMapAppImage = await getCacheImage('lottery.png', `${rootUrl}img/icon/lottery_2.png`);
+    const lotteryType = ['i64_ssq', 'i64_dlt', 'i48_pl3', 'i48_fc3d', 'i48_qxc', 'i48_7lc', 'i48_pl5'];
+    const randomItem = lotteryType[Math.floor(Math.random() * lotteryType.length)];
+    const appImage = await getCacheImage(`${randomItem}.png`, `https://r.ttyingqiu.com/r/images/kjgg/cpdt/${randomItem}.png`);
     
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage(
       'author.png',
@@ -563,7 +567,16 @@ async function main() {
     .list {
       animation: fadeInUp ${settings.fadeInUp}s ease-in-out;
     }` : ''}
-    ${cssStyle}`;
+    ${cssStyle}
+    
+    .app-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50px;
+      border: 5px solid #fff;
+      margin-bottom: 15px;
+      object-fit: cover;
+    }`;
     
     // Java Script
     const js =`
@@ -980,7 +993,8 @@ async function main() {
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
         }, 1200);
-        window._win = { uri: 'https://zibll.com/wp-content/themes/zibll', loading: '95du' };
+        // https://zibll.com
+        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll', loading: '95du' };
       </script>
       `
       // music
@@ -1066,7 +1080,7 @@ async function main() {
         <div class="popup-widget blur-bg" />
           <div class="box-body">
             ${avatarInfo
-              ? `<img class="app-icon" src="${aMapAppImage}" id="shortcuts">  
+              ? `<img id="shortcuts" class="app-icon" src="${appImage}">  
                  <div class="app-desc">中国体育彩票，福利彩票
                  </div>
                  <button id="getKey" class="but">使用教程</button>`
@@ -1377,7 +1391,7 @@ async function main() {
           break;
         case 'getKey':
           Timer.schedule(400, false, () => { Safari.openInApp('https://gitcode.net/4qiao/framework/raw/master/img/picture/lottery_Screenshot.png', false)});
-          notify('全国彩开奖结果💥', '点击体彩图标安装快捷指令版');
+          notify('全国彩开奖结果💥', '点击彩种图标安装快捷指令版');
           break;
         case 'changeSettings':
           Object.assign(settings, data);
@@ -1902,7 +1916,7 @@ async function main() {
               name: 'externaldrive.fill', 
               color: '#F9A825'
             },
-            desc: version
+            desc: settings.version
           },
           {
             name: "updateCode",
