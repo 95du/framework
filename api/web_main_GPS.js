@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = 'GPS 定位器'
   const version = '1.0.0'
@@ -169,8 +169,6 @@ async function main() {
    */
   const updateVersionNotice = () => {
     if ( version !== settings.version ) {
-      settings.version = version;
-      writeSettings(settings);
       return '.signin-loader';
     }
     return null
@@ -199,6 +197,8 @@ async function main() {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
     } else {
       fm.writeString(modulePath, codeString);
+      settings.version = version;
+      writeSettings(settings);
       ScriptableRun();
     }
   };
@@ -481,9 +481,7 @@ async function main() {
    */
   if (config.runsInWidget) {
     if ( version !== settings.version && settings.update === false ) {
-      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
-      settings.version = version;
-      writeSettings(settings);
+      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     if (settings.refresh) {  
@@ -633,7 +631,7 @@ async function main() {
         select.style.width = '99px';
       
         item.options?.forEach(grp => {
-          const container = grp.label && (item.multiple || !item.multiple) ? document.createElement('optgroup') : select;
+          const container = document.createElement('optgroup');
           if ( grp.label ) container.label = grp.label;
       
           grp.values.forEach(opt => {
@@ -1336,7 +1334,7 @@ async function main() {
         settings.bottomSize = Number(inputArr[4].value);
         
         writeSettings(settings);
-        await generateAlert('设置成功', '桌面组件稍后自动刷新', ['完成']);
+        await generateAlert('设置成功', '桌面组件稍后将自动刷新', ['完成']);
       });
     };
     
@@ -1388,7 +1386,7 @@ async function main() {
       } else if ( code === 'reset' && fm.fileExists(mainPath) ) {
         await removeData();
       } else if ( code === 'recover' ) {
-        Timer.schedule(4000, false, async () => {
+        Timer.schedule(3800, false, async () => {
           const index = await generateAlert('是否恢复设置 ？', '用户登录的信息将重置\n设置的数据将会恢复为默认', options = ['取消', '确认']);
           if (index === 0) return;
           writeSettings(DEFAULT);
@@ -1398,7 +1396,7 @@ async function main() {
         await input(data);
       };
       
-      // switch(code)
+      // switch
       switch (code) {
         case 'setAvatar':
           const avatarImage = Image.fromData(Data.fromBase64String(data));
@@ -1638,8 +1636,8 @@ async function main() {
             name: 'angle',
             color: 'rangeColor',
             icon: {
-              name: 'arrowshape.turn.up.left.2.fill',
-              color: '#F6C534'
+              name: 'lock.rotation.open',
+              color: '289CF4'
             }
           }
         ]
@@ -1663,7 +1661,7 @@ async function main() {
             multiple: true,
             icon: {
               name: 'scribble.variable',
-              color: '#D671FF'
+              color: '#289CF4'
             },
             options: [
               {
