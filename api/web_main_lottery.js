@@ -1,11 +1,11 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: cog;
-
+main()
 async function main() {
   const scriptName = '全国彩开奖结果'
-  const version = '1.0.1'
-  const updateDate = '2023年09月13日'
+  const version = '1.0.2'
+  const updateDate = '2023年09月17日'
   
   const pathName = '95du_lottery';
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
@@ -42,34 +42,12 @@ async function main() {
    * @param {string} file - JSON
    * @returns {object} - JSON
    */
-  const screenSize = Device.screenSize().height;
-  if (screenSize < 926) {
-    layout = {
-      lrfeStackWidth: 105,
-      carStackWidth: 200,
-      carWidth: 200,
-      carHeight: 100,
-      bottomSize: 200
-    }
-  } else {
-    layout = {
-      lrfeStackWidth: 105,
-      carStackWidth: 225,
-      carWidth: 225,
-      carHeight: 100,
-      bottomSize: 225
-    }
-  };
-  
   const DEFAULT = {
-    ...layout,
     version,
     refresh: 20,
     transparency: 0.5,
     masking: 0.3,
     gradient: ['#82B1FF'],
-    imgArr: [],
-    picture: [],
     update: true,
     topStyle: true,
     music: true,
@@ -79,7 +57,7 @@ async function main() {
     fadeInUp: 0.7,
     angle: 90,
     radius: 10,
-    agentShortName: '0',
+    agentShortName: 0,
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
     titleColor: '#000000',
@@ -557,6 +535,7 @@ async function main() {
      * @param {string} js
      * @returns {string} html
      */
+    const screenSize = Device.screenSize().height;
     const cssStyle = await getCacheString('cssStyle.css', `${rootUrl}web/style.css`);  
 
     const style =`  
@@ -636,7 +615,7 @@ async function main() {
         select.style.width = '99px';
       
         item.options?.forEach(grp => {
-          const container = grp.label && (item.multiple || !item.multiple) ? document.createElement('optgroup') : select;
+          const container = document.createElement('optgroup')
           if ( grp.label ) container.label = grp.label;
       
           grp.values.forEach(opt => {
@@ -657,6 +636,14 @@ async function main() {
         const selCont = document.createElement('div');
         selCont.classList.add('form-item__input__select');
         selCont.appendChild(select);
+        
+        if (!item.multiple) {
+          select.style.appearance = 'none';
+          select.style.width = '68px';
+          const icon = document.createElement('i');
+          icon.className = 'iconfont icon-arrow_right form-item__icon';
+          selCont.appendChild(icon);
+        }
         
         label.appendChild(selCont);
       } else if (['cell', 'page', 'file'].includes(item.type)) {
@@ -935,7 +922,7 @@ async function main() {
       btn.addEventListener('click', (e) => { toggleLoading(e) });
     });
     
-    ['getKey', 'store', 'install'].forEach(id => {
+    ['getKey', 'store', 'install', 'shortcuts'].forEach(id => {
       const elementById = document.getElementById(id).addEventListener('click', () => invoke(id));
     });
     
@@ -1079,8 +1066,8 @@ async function main() {
         <div class="popup-widget blur-bg" />
           <div class="box-body">
             ${avatarInfo
-              ? `<img class="app-icon" src="${aMapAppImage}">  
-                 <div class="app-desc">中国体育彩票，福利彩票  
+              ? `<img class="app-icon" src="${aMapAppImage}" id="shortcuts">  
+                 <div class="app-desc">中国体育彩票，福利彩票
                  </div>
                  <button id="getKey" class="but">使用教程</button>`
               : `<div class="sign-logo"><img src="${appleHub}"></div>`  
@@ -1318,31 +1305,6 @@ async function main() {
       });
     };
     
-    // 修改组件布局
-    const layout = async ({ label, message, name } = data) => {
-      await generateInputAlert({
-        title: label,
-        message: message,
-        options: [
-          {hint: '左边容器宽度', value: String(settings['lrfeStackWidth'])},
-          {hint: '车图容器宽度', value: String(settings['carStackWidth'])},
-          {hint: '车图宽度', value: String(settings['carWidth'])},
-          {hint: '车图高度', value: String(settings['carHeight'])},
-          {hint: '图下尺寸', value: String(settings['bottomSize'])}
-        ]
-      },
-      async (inputArr) => {
-        settings.lrfeStackWidth = Number(inputArr[0].value);
-        settings.carStackWidth = Number(inputArr[1].value);
-        settings.carWidth = Number(inputArr[2].value);
-        settings.carHeight = Number(inputArr[3].value);
-        settings.bottomSize = Number(inputArr[4].value);
-        
-        writeSettings(settings);
-        await generateAlert('设置成功', '桌面组件稍后将自动刷新', ['完成']);
-      });
-    };
-    
     // appleOS 推送时段
     const period = async ({ label, name, message, desc } = data) => {
       await generateInputAlert({
@@ -1415,6 +1377,7 @@ async function main() {
           break;
         case 'getKey':
           Timer.schedule(400, false, () => { Safari.openInApp('https://gitcode.net/4qiao/framework/raw/master/img/picture/lottery_Screenshot.png', false)});
+          notify('全国彩开奖结果💥', '点击体彩图标安装快捷指令版');
           break;
         case 'changeSettings':
           Object.assign(settings, data);
@@ -1423,14 +1386,17 @@ async function main() {
         case 'updateCode':
           await updateVersion();
           break;
+        case 'shortcuts':
+          Safari.open(
+            'Shortcuts://shortcuts/9ce040b13448407586eb794af31cec1a',
+            false
+          );
+          break
         case 'login':
           await login(data);
           break;
         case 'weiChat':
           await weiChat(data);
-          break;
-        case 'layout':
-          await layout(data);
           break;
         case 'period':
           await period(data);
@@ -1713,7 +1679,7 @@ async function main() {
                 ]
               },
               {
-                label: 'select more',
+                label: 'more',
                 values: [
                   { 
                     label: '#99CCCC',
