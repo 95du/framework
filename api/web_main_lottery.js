@@ -935,7 +935,7 @@ async function main() {
       btn.addEventListener('click', (e) => { toggleLoading(e) });
     });
     
-    ['getKey', 'store', 'install', 'shortcuts'].forEach(id => {
+    ['store', 'install', 'shortcuts'].forEach(id => {
       const elementById = document.getElementById(id).addEventListener('click', () => invoke(id));
     });
     
@@ -1080,10 +1080,9 @@ async function main() {
         <div class="popup-widget blur-bg" />
           <div class="box-body">
             ${avatarInfo
-              ? `<img id="shortcuts" class="app-icon" src="${appImage}">  
-                 <div class="app-desc">中国体育彩票，福利彩票
-                 </div>
-                 <button id="getKey" class="but">使用教程</button>`
+              ? `<img class="app-icon" src="${appImage}">  
+                 <div class="app-desc">中国体育彩票，福利彩票</div>
+                 <button class="but" id="shortcuts">快捷指令</button>`
               : `<div class="sign-logo"><img src="${appleHub}"></div>`  
             }
           </div>
@@ -1379,9 +1378,8 @@ async function main() {
         case 'telegram':
           Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
           break;
-        case 'getKey':
-          Timer.schedule(400, false, () => { Safari.openInApp('https://gitcode.net/4qiao/framework/raw/master/img/picture/lottery_Screenshot.png', false)});
-          notify('全国彩开奖结果💥', '点击彩种图标安装快捷指令版');
+        case 'shortcuts':
+          Timer.schedule(400, false, () => { Safari.open('Shortcuts://shortcuts/9ce040b13448407586eb794af31cec1a', false) });
           break;
         case 'changeSettings':
           Object.assign(settings, data);
@@ -1390,12 +1388,6 @@ async function main() {
         case 'updateCode':
           await updateVersion();
           break;
-        case 'shortcuts':
-          Safari.open(
-            'Shortcuts://shortcuts/9ce040b13448407586eb794af31cec1a',
-            false
-          );
-          break
         case 'login':
           await login(data);
           break;
