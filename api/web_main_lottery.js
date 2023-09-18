@@ -1082,7 +1082,7 @@ async function main() {
             ${avatarInfo
               ? `<img class="app-icon" src="${appImage}">  
                  <div class="app-desc">中国体育彩票，福利彩票</div>
-                 <button class="but" id="shortcuts">快捷指令</button>`
+                 <button class="but" id="shortcuts">安装捷径</button>`
               : `<div class="sign-logo"><img src="${appleHub}"></div>`  
             }
           </div>
