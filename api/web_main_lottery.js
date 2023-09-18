@@ -444,13 +444,13 @@ async function main() {
    * @param options 按键
    * @returns { Promise<number> }
    */
-  const generateAlert = async (title, message = '', options, destructive) => {
+  const generateAlert = async ( title, message = '', options, destructiveAction ) => {
     const alert = new Alert();
     alert.title = title;
     alert.message = message ?? '';
-    for (const option of options) {
-      option === destructive ? alert.addDestructiveAction(option) : alert.addAction(option);
-    }
+    options.forEach(option => {
+      option === destructiveAction ? alert.addDestructiveAction(option) : alert.addAction(option);
+    });
     return await alert.presentAlert();
   };
     
@@ -1203,31 +1203,6 @@ async function main() {
       ).catch(console.error);
     };
     
-    // 重置所有
-    const removeData = async () => {
-      const action = await generateAlert(
-        '清空所有数据', 
-        '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据', 
-        ['取消', '重置'], '重置'
-      );
-      if ( action === 1 ) {
-        fm.remove(mainPath);
-        ScriptableRun();
-      }
-    };
-    
-    // 清除缓存
-    const clearCache = async () => {
-      const action = await generateAlert(
-        '清除缓存', '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
-        options = ['取消', '清除']
-      );
-      if ( action === 1 ) {
-        fm.remove(cache);
-        ScriptableRun();
-      }
-    };
-    
     // 背景图 innerText
     const innerTextBgImage = () => {
       const isSetBackground = fm.fileExists(getBgImage()) ? '已添加' : ''
@@ -1361,16 +1336,32 @@ async function main() {
       });
       
       const { code, data } = event;
-      if ( code === 'clearCache' && fm.fileExists(cache) ) {
-        await clearCache();
-      } else if ( code === 'reset' && fm.fileExists(mainPath) ) {
-        await removeData();
+      if (code === 'clearCache') {
+        const action = await generateAlert(  
+          '清除缓存', '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
+          options = ['取消', '清除']
+        );
+        if ( action === 1 ) {
+          fm.remove(cache);
+          ScriptableRun();
+        }
+      } else if (code === 'reset') {
+        const action = await generateAlert(
+          '清空所有数据', 
+          '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据', 
+          ['取消', '重置'], '重置'
+        );
+        if ( action === 1 ) {
+          fm.remove(mainPath);
+          ScriptableRun();
+        }
       } else if ( code === 'recover' ) {
         Timer.schedule(3800, false, async () => {
           const index = await generateAlert('是否恢复设置 ？', '用户登录的信息将重置\n设置的数据将会恢复为默认', options = ['取消', '确认']);
-          if (index === 0) return;
-          writeSettings(DEFAULT);
-          ScriptableRun();
+          if ( index === 1 ) {
+            writeSettings(DEFAULT);
+            ScriptableRun();
+          }
         });
       } else if ( data?.input ) {
         await input(data);
