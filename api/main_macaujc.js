@@ -8,17 +8,19 @@ async function main() {
   const version = '1.0.3'
   const updateDate = '2023年05月18日'
   
+  const pathName = '95du_macaujc';
+  const widgetMessage = 'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice.';
+  
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   
   const [scrName, scrUrl] = ['macaujc.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/macaujc.js'];
-
 
   /**
    * 创建，获取存储路径
    * @returns {string} - string
    */
   const fm = FileManager.local();
-  const mainPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
+  const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
   
   const getSettingPath = () => {
     if (!fm.fileExists(mainPath)) {
@@ -88,7 +90,7 @@ async function main() {
   
   // 获取头像图片
   const getAvatarImg = () => {
-    const avatarImgPath = fm.joinPath(fm.documentsDirectory(), '95du_macaujc');
+    const avatarImgPath = fm.joinPath(fm.documentsDirectory(), pathName);
     return fm.joinPath(avatarImgPath, 'userSetAvatar.png');
   };
   
@@ -116,9 +118,7 @@ async function main() {
   
   if (config.runsInWidget) {
     if ( version !== settings.version && settings.update === false ) {
-      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`);
-      settings.version = version;
-      writeSettings(settings);
+      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     await importModule(await webModule(scrName, scrUrl)).main();  
     return null;
@@ -137,8 +137,6 @@ async function main() {
    */
   const updateVersionNotice = () => {
     if ( version !== settings.version ) {
-      settings.version = version;
-      writeSettings(settings);
       return '.signin-loader';
     }
     return null
@@ -166,6 +164,8 @@ async function main() {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
     } else {
       fm.writeString(modulePath, codeString);
+      settings.version = version;
+      writeSettings(settings);
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
   };
@@ -414,12 +414,12 @@ async function main() {
    * @param options 按键
    * @returns { Promise<number> }
    */
-  const generateAlert = async (title, message, options) => {
+  const generateAlert = async ( title, message = '', options, destructiveAction ) => {
     const alert = new Alert();
-    alert.title = title
-    alert.message = message
+    alert.title = title;
+    alert.message = message ?? '';
     for (const option of options) {
-      alert.addAction(option)
+      option === destructiveAction ? alert.addDestructiveAction(option) : alert.addAction(option);
     }
     return await alert.presentAlert();
   };
@@ -893,7 +893,7 @@ document.getElementById('install').addEventListener('click', () => {
       // ChatGPT 打字动画
       const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
-        const message = 'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice. --- 95度茅台 ---';
+        const message = \`${widgetMessage}\`
         chatMsg.textContent = "";
         let currentChar = 0;
 
@@ -983,34 +983,6 @@ document.getElementById('install').addEventListener('click', () => {
     const webView = new WebView();
     await webView.loadHTML(html, $);
     
-    // 重置所有
-    const removeData = async () => {
-      const delAlert = new Alert();
-      delAlert.title = '清空所有数据';
-      delAlert.message = '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据';
-      delAlert.addDestructiveAction('重置');
-      delAlert.addCancelAction('取消')
-      const action = await delAlert.presentAlert();
-      if ( action == 0 ) {
-        fm.remove(mainPath);
-        Safari.open('scriptable:///run/' + encodeURIComponent(uri));
-      }
-    };
-    
-    // 清除缓存
-    const clearCache = async () => {
-      const action = await generateAlert(
-        title = '清除缓存',
-        message = '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
-        options = ['取消', '清除']
-      );
-      if ( action == 1 ) {
-        fm.remove(cache);
-        notify('清除成功', '正在重新获取数据，请耐心等待 5 秒。');  
-        Timer.schedule(1500, false, () => { Safari.open('scriptable:///run/' + encodeURIComponent(uri)) });
-      }
-    };
-    
     /**
      * Input window
      * @param data
@@ -1069,10 +1041,25 @@ document.getElementById('install').addEventListener('click', () => {
       });
       
       const { code, data } = event;
-      if (code === 'clearCache' && fm.fileExists(cache)) {
-        await clearCache();
-      } else if (code === 'reset' && fm.fileExists(mainPath)) {
-        await removeData();
+      if (code === 'clearCache') {
+        const action = await generateAlert(  
+          '清除缓存', '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
+          options = ['取消', '清除']
+        );
+        if ( action === 1 ) {
+          fm.remove(cache);
+          ScriptableRun();
+        }
+      } else if (code === 'reset') {
+        const action = await generateAlert(
+          '清空所有数据', 
+          '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据', 
+          ['取消', '重置'], '重置'
+        );
+        if ( action === 1 ) {
+          fm.remove(mainPath);
+          ScriptableRun();
+        }
       } else if (code === 'updateCode') {
         await updateVersion();
       } else if (code === 'bufferTime') {
@@ -1273,8 +1260,8 @@ document.getElementById('install').addEventListener('click', () => {
             icon: `${rootUrl}img/symbol/refresh.png`
           },
           {
-            label: '多项选择',
-            name: 'gradualColor',
+            label: '精选渐变',
+            name: 'gradient',
             type: 'select',
             multiple: true,
             icon: `${rootUrl}img/symbol/gradientBackground.png`,
@@ -1282,33 +1269,37 @@ document.getElementById('install').addEventListener('click', () => {
               {
                 values: [
                   { 
-                    label: 'One',
-                    value: 'a'
+                    label: '#82B1FF',
+                    value: '#82B1FF'
                   },
                   {
-                    label: 'Two',
-                    value: 'b'
+                    label: '#4FC3F7',
+                    value: '#4FC3F7'
                   },
                   { 
-                    label: 'Three',
-                    value: 'c'
+                    label: '#66CCFF',
+                    value: '#66CCFF'
                   }
                 ]
               },
               {
-                label: 'Multiple',
+                label: 'more',
                 values: [
                   { 
-                    label: 'Four',
-                    value: 'd'
+                    label: '#99CCCC',
+                    value: '#99CCCC'
                   },
                   { 
-                    label: 'Five',
-                    value: 'e'
+                    label: '#BCBBBB',
+                    value: '#BCBBBB'
+                  },
+                  { 
+                    label: '#A0BACB',
+                    value: '#A0BACB'
                   },
                   {
-                    label: '备用',
-                    value: 'f',
+                    label: '#FF6800',
+                    value: '#FF6800',
                     disabled: true
                   }
                 ]
