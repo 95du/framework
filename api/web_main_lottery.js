@@ -8,8 +8,10 @@ async function main() {
   const updateDate = '2023年09月17日'
   
   const pathName = '95du_lottery';
-  const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
+  const widgetMessage = '组件功能: 全国彩开奖结果，如果想显示多个彩票种类，在桌面小组件长按编辑小组件， 在 Parameter 添加参数 ( 例如双色球: 输入ssq ，七星彩: qxc ， 福彩3D: fc3d ， 排列五: pl5 ) 彩票名称的小写字母包括数字。';
   
+  const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
+
   const [scrName, scrUrl] = ['lottery.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/web_lottery.js'];
 
   /**
@@ -625,7 +627,7 @@ async function main() {
         select.name = item.name;
         select.classList.add('select-input');
         select.multiple = !!item.multiple;
-        select.style.width = '99px';
+        select.style.width = item.multiple ? '99px' : '68px';
       
         item.options?.forEach(grp => {
           const container = document.createElement('optgroup')
@@ -652,7 +654,6 @@ async function main() {
         
         if (!item.multiple) {
           select.style.appearance = 'none';
-          select.style.width = '68px';
           const icon = document.createElement('i');
           icon.className = 'iconfont icon-arrow_right form-item__icon';
           selCont.appendChild(icon);
@@ -1057,7 +1058,7 @@ async function main() {
     
       const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
-        const message = '组件功能: 全国彩开奖结果，如果想显示多个彩票种类，在桌面小组件长按编辑小组件， 在 Parameter 添加参数 ( 例如双色球: 输入ssq ，七星彩: qxc ， 福彩3D: fc3d ， 排列五: pl5 ) 彩票名称的小写字母包括数字。';
+        const message = \`${widgetMessage}\`
         chatMsg.textContent = "";
         let currentChar = 0;
     
