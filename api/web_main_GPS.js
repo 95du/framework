@@ -8,6 +8,8 @@ async function main() {
   const updateDate = '2023年08月12日'
   
   const pathName = '95du_GPS';
+  const widgetMessage = '组件功能: 通过GPS设备制作的中小号小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的Api信息。';
+  
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   
   const [scrName, scrUrl] = ['gps_locating.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/web_gps_locating.js'];
@@ -628,7 +630,7 @@ async function main() {
         select.name = item.name;
         select.classList.add('select-input');
         select.multiple = !!item.multiple;
-        select.style.width = '99px';
+        select.style.width = '99px'
       
         item.options?.forEach(grp => {
           const container = document.createElement('optgroup');
@@ -948,7 +950,7 @@ async function main() {
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img"><br>
+        <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img">
         <div id="store">
           <a class="rainbow-text but">Script Store</a>
         </div>
@@ -1052,7 +1054,7 @@ async function main() {
     
       const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
-        const message = '组件功能: 通过GPS设备制作的中小号小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的Api信息。';
+        const message = \`${widgetMessage}\`
         chatMsg.textContent = "";
         let currentChar = 0;
     
@@ -1072,13 +1074,13 @@ async function main() {
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
-        <div class="popup-widget blur-bg" />
+        <div class="popup-widget blur-bg">
           <div class="box-body">
             ${avatarInfo
               ? `<img class="app-icon" src="${aMapAppImage}">  
-                 <div class="app-desc">如果没有开发者账号，请注册开发者  
+                 <div class="app-desc">如果没有开发者账号，请注册开发者
                  </div>
-                 <button id="getKey" class="but">获取 Key</button>`
+                 <button id="getKey" onclick="switchDrawerMenu()" class="but">获取 Key</button>`
               : `<div class="sign-logo"><img src="${appleHub}"></div>`  
             }
           </div>
