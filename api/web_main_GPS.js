@@ -1051,7 +1051,11 @@ async function main() {
         popup.style.height = isOpen ? '255px' : '';
         ${!avatarInfo ? 'isOpen && typeNextChar()' : ''}
       };
-    
+      
+      function hidePopup() {
+        setTimeout(() => switchDrawerMenu(), 300);
+      };
+      
       const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
         const message = \`${widgetMessage}\`
@@ -1080,7 +1084,7 @@ async function main() {
               ? `<img class="app-icon" src="${aMapAppImage}">  
                  <div class="app-desc">如果没有开发者账号，请注册开发者
                  </div>
-                 <button id="getKey" onclick="switchDrawerMenu()" class="but">获取 Key</button>`
+                 <button id="getKey" class="but" onclick="hidePopup()">获取 Key</button>`
               : `<div class="sign-logo"><img src="${appleHub}"></div>`  
             }
           </div>
@@ -1402,7 +1406,7 @@ async function main() {
           Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
           break;
         case 'getKey':
-          Timer.schedule(400, false, () => { Safari.openInApp('https://lbs.amap.com/api/webservice/guide/create-project/get-key', false)});
+          Timer.schedule(650, false, () => { Safari.openInApp('https://lbs.amap.com/api/webservice/guide/create-project/get-key', false)});
           break;
         case 'changeSettings':
           Object.assign(settings, data);
