@@ -1078,12 +1078,12 @@ async function main() {
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
-        <div class="popup-widget blur-bg" />
+        <div class="popup-widget blur-bg">
           <div class="box-body">
             ${avatarInfo
               ? `<img class="app-icon" src="${appImage}">  
                  <div class="app-desc">中国体育彩票，福利彩票</div>
-                 <button class="but" id="shortcuts">安装捷径</button>`
+                 <button class="but" id="shortcuts">安装捷径版</button>`
               : `<div class="sign-logo"><img src="${appleHub}"></div>`  
             }
           </div>
@@ -1380,7 +1380,7 @@ async function main() {
           Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
           break;
         case 'shortcuts':
-          Timer.schedule(400, false, () => { Safari.open('Shortcuts://shortcuts/9ce040b13448407586eb794af31cec1a', false) });
+          Timer.schedule(400, false, () => { Safari.open('shortcuts://shortcuts/9ce040b13448407586eb794af31cec1a', false) });
           break;
         case 'changeSettings':
           Object.assign(settings, data);
