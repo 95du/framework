@@ -533,7 +533,7 @@ svg {
 .app-icon {
   width: 75px;
   height: 75px;
-  border-radius: 12px;
+  border-radius: 15px;
   margin-bottom: 15px;
   object-fit: cover;
 }
