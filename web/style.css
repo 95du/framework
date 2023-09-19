@@ -239,14 +239,6 @@ a:focus,a:hover {
   max-height: 60px;
 }
 
-.sign ul>li {
-  margin: 10px 0;
-}
-
-#sign-in,#sign-up {
-  padding: 0 10px;
-}
-
 .popup-title {
   text-align: center;
   font-size: 19px;
@@ -307,32 +299,6 @@ a:focus,a:hover {
   height: 40px;
   margin-bottom: 3px;
   animation: fadeInUp 0.6s ease-in-out;
-}
-
-/** 右边加载动画 **/
-.loading-cont {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-    
-.loading-right {
-  width: 20px;
-  height: 20px;
-  border: 1.5px solid #0D82FF;
-  border-top-color: transparent;
-  border-radius: 100%;
-  margin-bottom: 4.5px;
-  animation: circle 0.5s infinite linear;
-}
-
-@keyframes circle {
-  0% {
-    transform: rotate(0);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 /** 彩色昵称开始 **/
@@ -940,6 +906,32 @@ input[type="range"]:after {
 
   100% {
     transform: rotate(1turn);
+  }
+}
+
+/** 右边加载动画 **/
+.loading-cont {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+    
+.loading-right {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #0D82FF;
+  border-top-color: transparent;
+  border-radius: 100%;
+  margin-bottom: 4.5px;
+  animation: circle-loading 0.5s infinite linear;
+}
+
+@keyframes circle-loading {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
