@@ -468,7 +468,7 @@ async function main() {
     if ( version !== settings.version && settings.update === false && hours >= 12 || !settings.updateTime ) {
       settings.updateTime = Date.now();
       writeSettings(settings);
-      notify(scriptName, `新版本更新 Version ${version}  ( 可开启自动更新 )`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
+      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题。\n需清除缓存或重置所有再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     if (settings.refresh) {  
