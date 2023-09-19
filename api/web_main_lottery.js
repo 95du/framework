@@ -954,7 +954,10 @@ async function main() {
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img"><br>
+        <div class="loading-cont">
+          <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img">
+          <div class="loading-right"></div>
+        </div>
         <div id="store">
           <a class="rainbow-text but">Script Store</a>
         </div>
@@ -990,6 +993,10 @@ async function main() {
         </div>
       </div>
       <script type="text/javascript">
+        setTimeout(() => {
+          const loadingDiv = document.querySelector('.loading-right').style.display = 'none';
+        }, 1800);
+        
         const popupOpen = () => { $('.signin-loader').click() };
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
