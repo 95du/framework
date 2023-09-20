@@ -645,7 +645,6 @@ async function main() {
         select.addEventListener( 'change', (e) => {
           const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
           formData[item.name] = item.multiple ? selectedValues : selectedValues[0];
-          
           formData.solidColor = selectedValues.length > 0 ? false : true;
           invoke('changeSettings', formData);
         });
