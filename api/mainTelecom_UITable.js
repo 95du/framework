@@ -1,771 +1,341 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: pink; icon-glyph: phone-volume;
+// icon-color: cyan; icon-glyph: cog;
 
 async function main() {
-  const version = '1.0.5';
-  const uri = Script.name();
-  const F_MGR = FileManager.local();
+  const scriptName = 'GPS 定位器'
+  const version = '1.0.0'
+  const updateDate = '2023年08月12日'
   
-  const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duTelecom");
-  F_MGR.createDirectory(path, true);
+  const pathName = '95du_GPS';
+  const widgetMessage = '组件功能: 通过GPS设备制作的中小号小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的Api信息。';
   
-  const cacheFile = F_MGR.joinPath(path, 'setting.json');
+  const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   
-  const DEFAULT_SETTINGS = {
+  const [scrName, scrUrl] = ['gps_locating.js', 'https://gitcode.net/4qiao/scriptable/raw/master/table/web_gps_locating.js'];
+
+  /**
+   * 创建，获取存储路径
+   * @returns {string} - string
+   */
+  const fm = FileManager.local();
+  const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
+  
+  const getSettingPath = () => {
+    if (!fm.fileExists(mainPath)) {
+      fm.createDirectory(mainPath);
+    }
+    return fm.joinPath(mainPath, 'setting.json');
+  };
+
+  /**
+   * 存储当前设置
+   * @param { JSON } string
+   */
+  const writeSettings = async (settings) => {
+    fm.writeString(getSettingPath(), JSON.stringify(settings, null, 2));
+    console.log(JSON.stringify(
+      settings, null, 2)
+    );
+  };
+  
+  /**
+   * 读取储存的设置
+   * @param {string} file - JSON
+   * @returns {object} - JSON
+   */
+  const screenSize = Device.screenSize().height;
+  if (screenSize < 926) {
+    layout = {
+      lrfeStackWidth: 105,
+      carStackWidth: 200,
+      carWidth: 200,
+      carHeight: 100,
+      bottomSize: 200
+    }
+  } else {
+    layout = {
+      lrfeStackWidth: 105,
+      carStackWidth: 225,
+      carWidth: 225,
+      carHeight: 100,
+      bottomSize: 225
+    }
+  };
+  
+  const DEFAULT = {
+    ...layout,
     version,
-    minute: '10',
-    words: [],
-    transparency: '0.5',
-    masking: '0.3',
-    balanceColor: '#FF0000',
-    gradient: [],
-    update: 'true',
-    appleOS: "true",
-    init: false
+    refresh: 20,
+    transparency: 0.5,
+    masking: 0.3,
+    gradient: ['#82B1FF'],
+    imgArr: [],
+    picture: [],
+    update: true,
+    topStyle: true,
+    music: true,
+    animation: true,
+    appleOS: true,
+    fadeInUp: 0.7,
+    angle: 90,
+    rangeColor: '#FF6800',
+    textLightColor: '#000000',
+    textDarkColor: '#FFFFFF',
+    titleColor: '#000000',
+    solidColor: '#FFFFFF'
   };
   
   const getSettings = (file) => {
-    if (F_MGR.fileExists(file)) {
-      const data = F_MGR.readString(file);
-      return JSON.parse(data);
+    if (fm.fileExists(file)) {
+      return JSON.parse(fm.readString(file));
     } else {
-      setting = DEFAULT_SETTINGS;
-      saveSettings();
+      settings = DEFAULT;
+      writeSettings(settings);
     }
-    return setting;
+    return settings;
+  };
+  settings = await getSettings(getSettingPath());
+  
+  // ScriptableRun
+  const ScriptableRun = () => {
+    Safari.open('scriptable:///run/' + encodeURIComponent(Script.name()));
   }
-  setting = getSettings(cacheFile);
+  
+  // 预览组件
+  const previewWidget = async () => {
+    await importModule(await webModule(scrName, scrUrl)).main();
+  }
+  
+  /**
+   * 弹出通知
+   * @param {string} title
+   * @param {string} body
+   * @param {string} url
+   * @param {string} sound
+   */
+  const notify = async (title, body, url, opts = {}) => {
+    const n = Object.assign(new Notification(), { title, body, sound: 'piano_', ...opts });
+    if (url) n.openURL = url;
+    return await n.schedule();
+  };
   
   /**
    * 获取背景图片存储目录路径
    * @returns {string} - 目录路径
    */
-  const getBgImagePath = () => {
-    const bgPath = F_MGR.joinPath(F_MGR.documentsDirectory(), '95duBackground');
-    if (!F_MGR.fileExists(bgPath)) {
-      F_MGR.createDirectory(bgPath);
-    }
-    return F_MGR.joinPath(bgPath, Script.name() + '.jpg');
+  const getBgImage = () => {
+    const bgPath = fm.joinPath(fm.documentsDirectory(), '95duBackground');
+    return fm.joinPath(bgPath, Script.name() + '.jpg');
   };
   
-  // UITable Background Color
-  const bgColor = Color.dynamic(
-    new Color('#F5F5F5'), new Color('')
-  );
-  const topBgColor = Color.dynamic(
-    new Color('#DFDFDF'), new Color('')
-  );
+  // 获取头像图片
+  const getAvatarImg = () => {
+    const avatarImgPath = fm.joinPath(fm.documentsDirectory(), pathName);
+    return fm.joinPath(avatarImgPath, 'userSetAvatar.png');
+  };
   
-  // refresh time
-  if (setting.minute) {  
-    const widget = new ListWidget();
-    widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(setting.minute));
-  }
-  
-  if (config.runsInWidget) {
-    await importModule(await downloadModule()).main();
-  }
-  
-  async function downloadModule() {
-    const modulePath = F_MGR.joinPath(path, 'telecom.js');
-    if (setting.update === 'false' && F_MGR.fileExists(modulePath)) {
+  /**
+   * 指定模块页面
+   * @param { string } time
+   * @param { string } color
+   * @param { string } module
+   */
+  const webModule = async (scriptName, url) => {
+    const modulePath = fm.joinPath(mainPath, scriptName);
+    if (settings.update === false && await fm.fileExists(modulePath)) {
       return modulePath;
     } else {
-      const req = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/China_Telecom.js');
+      const req = new Request(url);
       const moduleJs = await req.load().catch(() => {
         return null;
       });
       if (moduleJs) {
-        F_MGR.write(modulePath, moduleJs);
+        fm.write(modulePath, moduleJs);
         return modulePath;
       }
     }
-  }
-  
-  async function userloginWeb() {  
-    const login = await generateAlert(  
-      title = '中国电信余量',
-      message = `登录天翼账号中心，登录成功 Cookie 将储存到 iCloud`,
-      options = ['取消', '登录']
-    );
-    if (login === 1) {
-      await webViewLogin('http://u3v.cn/5uwtIP');
-    }
-  }
-  
-  async function webViewLogin(url) {
-    const webview = new WebView();
-    await webview.loadURL(url);
-    await webview.present();
-    cookie = await webview.evaluateJavaScript('document.cookie');
-    setting.cookie = cookie.match(/(CZSSON=[a-zA-Z\d]+)/)[1];
-    if (cookie.indexOf('configurable') === -1) {
-      notify('Cookie获取/更新成功', setting.cookie);
-      await saveSettings();
-    }
-  }
-  
-  
-  /**
-   * 设置组件内容
-   * @returns { Promise<void> }
-   */
-  setWidgetConfig = async () => {
-    const table = new UITable();
-    table.showSeparators = true;
-    const enableSuggestions = true;
-    await renderTables(table);
-    await table.present();
   };
   
-  async function renderTables(table) {
-    // Header effectImage Row
-    const effectRow = new UITableRow();
-    effectRow.height = 70 * Device.screenScale();
-    const topImg = ['https://sweixinfile.hisense.com/media/M00/73/65/Ch4FyGPFzjmAcBDAAAL_8Ig8O7A616.png', 'https://sweixinfile.hisense.com/media/M00/73/65/Ch4FyGPFzoSAY7ElAALm2LkqUeI475.png']
-    const items = topImg[Math.floor(Math.random() * topImg.length)];
-    const effectImage = effectRow.addImageAtURL(items);
-    effectImage.widthWeight = 0.4;
-    effectImage.centerAligned();
-    effectRow.backgroundColor = topBgColor
-    table.addRow(effectRow);
-  
-    // Top Row
-    const topRow = new UITableRow();
-    topRow.height = 70;
-    const leftText = topRow.addButton('组件商店');
-    leftText.widthWeight = 0.3;
-    leftText.onTap = async () => {
-      importModule(await ScriptStore()).main();
-    };
-  
-    const authorImage = topRow.addImageAtURL('https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png');
-    authorImage.widthWeight = 0.4;
-    authorImage.centerAligned();
-  
-    const rightText = topRow.addButton('重置所有');
-    rightText.widthWeight = 0.3;
-    rightText.rightAligned();
-    rightText.onTap = async () => {
-      const delAlert = new Alert();
-      delAlert.title = '清空所有数据';
-      delAlert.message = '该操作将把用户储存的所有数据清除，已登录过的用户重置后点击菜单中天翼中心，即可自动获取/更新 Cookie'
-      delAlert.addDestructiveAction('重置');
-      delAlert.addCancelAction('取消');
-      const action = await delAlert.presentAlert();
-      if (action == 0) {
-        F_MGR.remove(path);
-        notify('已清空数据', '请重新运行或重新配置小组件');
-        Safari.open('scriptable:///run/' + encodeURIComponent(uri));
-      }
-    };
-    table.addRow(topRow);
-    
-    // Main Menu
-    const basic = [
-      {
-        interval: 26
-      },
-      {
-        url: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/NicegramLogo.png',
-        type: 'web',
-        title: 'Telegram',
-        val: '>',
-        onClick: async () => {
-          Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
-        }
-      },
-      {
-        icon: {
-          name: 'applelogo',
-          color: '#00BCD4'
-        },
-        title: 'AppleOS',
-        val: '>',
-        onClick: async () => {
-          const html = await new Request(atob('aHR0cHM6Ly9kZXZlbG9wZXIuYXBwbGUuY29tL25ld3MvcmVsZWFzZXMvcnNzL3JlbGVhc2VzLnJzcw==')).loadString();
-          const iOS = html.match(/<title>(iOS.*?)<\/title>/)[1];
-          const iPadOS = html.match(/<title>(iPadOS.*?)<\/title>/)[1];
-          const arr = html.split('<item>');
-          
-          let newArr =[];
-          for (const item of arr) {
-            const iOS = item.match(/<title>(.*?)<\/title>/)[1];
-            if (iOS.indexOf('iOS 16') > -1) {
-              newArr.push(iOS)
-            }
-          }
-          
-          let newArriPad = [];  
-          for (const item of arr) {
-            const iPadOS = item.match(/<title>(.*?)<\/title>/)[1];
-            if (iPadOS.indexOf('iPadOS 16') > -1) {
-              newArriPad.push(iPadOS)
-            }
-          }
-          
-          const actions = [
-            {
-              interval: 26
-            },
-            {
-              icon: {
-                name: 'applelogo',
-                color: '#43CD80'
-              },
-              type: 'OS',
-              title: (iOS.indexOf('beta') > -1 || iOS.indexOf('RC') > -1) ? iOS.match(/(iOS\s\d+\.?\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : iOS.match(/(iOS\s\d+\.\d*?\.?\d*?)\s\(/)[1],
-              val: iOS.match(/\((.*?)\)/)[1],
-              ios: iOS
-            },
-            {
-              icon: {
-                name: 'applelogo',
-                color: '#F57C00'
-              },
-              type: 'OS',
-              title: newArr[1].match(/(iOS\s\d+\.\d*?\.?\d*?)\s\(/)[1],
-              val: newArr[1].match(/\((.*?)\)/)[1]
-            },
-            {
-              icon: {
-                name: 'applelogo',
-                color: '#00BCD4'
-              },
-              type: 'OS',
-              title: html.match(/(iOS\s15\.\d*?\.?\d*?)\s\(/)[1],
-              val: html.match(/iOS\s15\.\d*?\.?\d*?\s\((.*?)\)/)[1]
-            },
-            {
-              interval: 26
-            },
-            {
-              icon: {
-                name: 'applelogo',
-                color: '#F9A825'
-              },
-              type: 'OS',
-              title: (iPadOS.indexOf('beta') > -1 || iPadOS.indexOf('RC') > -1) ? iPadOS.match(/(iPadOS\s\d+\.?\d*?\.?\d*?\s(beta\s?[\d*]?|RC\s?\d?))/)[1] : iPadOS.match(/(iPadOS\s\d+\.\d*?\.?\d*?)\s\(/)[1],
-              val: iPadOS.match(/\((.*?)\)/)[1]
-            },
-            {
-              icon: {
-                name: 'applelogo',
-                color: '#AB47BC'
-              },
-              type: 'OS',
-              title: newArriPad[1].match(/(iPadOS\s\d+\.\d*?\.?\d*?)\s\(/)[1],
-              val: newArriPad[1].match(/\((.*?)\)/)[1]
-            },
-            {
-              icon: {
-                name: 'applelogo',
-                color: '#42A5F5'
-              },
-              type: 'OS',
-              title: html.match(/(iPadOS\s15\.\d*?\.?\d*?)\s\(/)[1],
-              val: html.match(/iPadOS\s15\.\d*?\.?\d*?\s\((.*?)\)/)[1]
-            },
-            {
-              interval: 133.8 * Device.screenScale()
-            }
-          ];
-          const table = new UITable();
-          table.showSeparators = true;
-          await preferences(table, actions, 'Apple OS');
-          await table.present();
-        }
-      },
-      {
-        icon: {
-          name: 'network',
-          color: '#F57C00'
-        },
-        title: '天翼中心',
-        val: '>',
-        type: 'login'
-      },
-      {
-        icon: {
-          name: 'person.crop.circle',
-          color: '#43CD80'
-        },
-        type: 'sign',
-        title: '用户登录',
-        val: setting['cookie'] ? '已登录  >' : '未登录  >'
-      },
-      {
-        icon: {
-          name: 'gearshape.fill',
-          color: '#FF3B2F'
-        },
-        type: 'jumpSet',
-        title: '偏好设置',
-        val: '>',
-        onClick: async () => {
-          const assist = [
-            {
-              interval: 26
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/refresh.png',
-              type: 'input',
-              title: '刷新时间',
-              desc: '尝试改变刷新组件时间\n具体时间由系统判断，单位: 分钟',
-              val: 'minute'
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/textColor.png',
-              type: 'input',
-              title: '余额颜色',
-              desc: '输入Hex颜色代码',
-              val: 'balanceColor'
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/gradientBackground.png',
-              type: 'input',
-              title: '渐变背景',
-              desc: '深色由上往下渐变淡\n可添加多种颜色，组件随机切换\n',
-              val: 'gradient',
-              tips: '输入Hex颜色代码'
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking.png',
-              type: 'input',
-              title: '渐变透明',
-              desc: '深色透明度，完全透明设置为 0',
-              val: 'transparency'
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/transparent.png',
-              type: 'background',
-              title: '透明背景'
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/masking2.png',
-              type: 'input',
-              title: '遮罩透明',
-              desc: '给图片加一层半透明遮罩\n完全透明设置为 0',
-              val: 'masking'
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/bgImage.png',
-              type: 'bgImage',
-              title: '图片背景',
-              onClick: async () => {
-                const img = await Photos.fromLibrary();
-                await F_MGR.writeImage(getBgImagePath(), img);
-                notify('设置成功', '桌面组件稍后将自动刷新');
-              }
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/clearBg.png',
-              type: 'clear',
-              title: '清除背景',
-              desc: '删除背景图以及清空渐变背景代码'
-            },
-            {
-              interval: 26
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/open.png',
-              title: '颜色代码',
-              onClick: async () => {
-                const webView = new WebView();
-                const webHtml = await new Request('https://gitcode.net/4qiao/framework/raw/master/scriptable/colorFinder.js').loadString();
-                await webView.loadHTML(webHtml);
-                await webView.present()
-              }
-            },
-            {
-              interval: 26
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/update.png',
-              type: 'but',
-              title: '自动更新',
-              val: 'update'
-            },
-            {
-              url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/notice.png',
-              type: 'but',
-              title: 'AppleOS',
-              val: 'appleOS'
-            },
-            {
-              interval: 44.8 * Device.screenScale()
-            }
-          ];
-          const table = new UITable();
-          table.showSeparators = true;
-          await settingMenu(table, assist, '设置');
-          await table.present();
-        }
-      }
-    ];
-    await preferences(table, basic);
-    
-    // Preview And Version Info
-    const updateVersion = [
-      {
-        interval: 26
-      },
-      {
-        url: 'https://gitcode.net/4qiao/framework/raw/master/img/symbol/preview.png',
-        type: 'preview',
-        title: '预览组件',
-        val: '>'
-      },
-      {
-        interval: 26
-      },
-      {
-        icon: {
-          name: 'externaldrive.fill',
-          color: '#F9A825'
-        },
-        type: 'ver',
-        title: '当前版本',
-        desc: '2023年04月23日\n1，修复修复重置后错误问题\n2，增加图片缓存24小时',
-        val: version,
-        ver: 'Version 1.0.5'
-      },
-      {
-        icon: {
-          name: 'icloud.and.arrow.down',
-          color: '#42A5F5'
-        },
-        type: 'options',
-        title: '更新代码',
-        desc: '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复'
-      },
-      {
-        interval: 25.9 * Device.screenScale()
-      },
-    ];
-    await preferences(table, updateVersion, '预览|版本|更新');
-  }
-  
+  /** download store **/
+  const myStore = async () => {
+    const script = await getString('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js');
+    const fm = FileManager.iCloud();
+    fm.writeString(
+      fm.documentsDirectory() + '/95du_ScriptStore.js', script);
+  };
   
   /**
-   * Setting Main menu
-   * @param { Image } image
+   * 版本更新时弹出窗口
+   * @returns {String} string
+   */
+  const updateVersionNotice = () => {
+    if ( version !== settings.version ) {
+      return '.signin-loader';
+    }
+    return null
+  };
+  
+  /**
+   * Download Update Script
    * @param { string } string
+   * 检查苹果操作系统更新
+   * @returns {Promise<void>}
    */
-  async function preferences(table, arr, outfit) {
-    if (outfit === 'Apple OS') {
-      let header = new UITableRow();
-      header.height = 80;
-      let heading = header.addText(outfit);
-      heading.titleFont = Font.mediumSystemFont(30);
-      table.addRow(header);
-    }
-    for (const item of arr) {
-      const row = new UITableRow();
-      row.dismissOnSelect = !!item.dismissOnSelect;
-      if (item.url) {
-        const rowIcon = row.addImageAtURL(item.url);
-        rowIcon.widthWeight = 100;
-      } else if (item.icon) {
-        const icon = item.icon || {};
-        const image = await drawTableIcon(
-          icon.name,
-          icon.color,
-          item.cornerWidth
-        );
-        const imageCell = row.addImage(image);
-        imageCell.widthWeight = 100;
-      }
-      let rowTitle = row.addText(item['title']);
-      rowTitle.widthWeight = 400;
-      rowTitle.titleFont = Font.systemFont(16);
-      
-      if (item.val) {
-        let valText = row.addText(
-          `${item.val}`.toUpperCase()
-        );
-        const fontSize = !item.val ? 26 : 16;
-        valText.widthWeight = 500;
-        valText.rightAligned();
-        valText.titleColor = item.val == '>' || item.type == 'sign' ? new Color('#8E8E93', 0.8) : Color.blue();
-        valText.titleFont = Font.mediumSystemFont(fontSize);
-      } else if (item.interval) {
-        row.height = item.interval;
-        row.backgroundColor = bgColor;
-      } else {
-        const imgCell = UITableCell.imageAtURL('https://gitcode.net/4qiao/framework/raw/master/img/icon/button_false.png');
-        imgCell.rightAligned();
-        imgCell.widthWeight = 500;
-        row.addCell(imgCell);
-      }
-      table.addRow(row);
-      
-      // item.onClick
-      row.onSelect = item.onClick 
-      ? async () => {
-        try {
-          await item.onClick(item, table);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-      : async () => {
-        const type = item.type;
-        if (type == 'options') {
-          await updateVersion(
-            item['title'],
-            item['desc'],
-            item['val']
-          );
-        } else if (type == 'ver') {
-          await generateAlert(
-            title = item.ver,
-            message = item.desc,
-            options = ['完成']
-          );
-        } else if (type == 'OS') {
-          setting.iOS_push = item.ios
-          await saveSettings();
-          Safari.openInApp('https://developer.apple.com/news/releases', false);
-          if (item.ios) {
-            notify('订阅成功', item.ios + '\n将收到iOS最新开发者版或正式版通知');
-          }
-        } else if (type == 'input') {
-          await generateInputAlert ({
-            title: item.desc,
-            options: [{ 
-              hint: setting[item.inp],
-              value: setting[item.inp]
-            }]
-          }, 
-          async (inputArr) => {
-            setting[item.inp] = inputArr[0].value;
-            await saveSettings();
-            notify('设置成功', '桌面组件稍后将自动刷新');
-          });
-        } else if (type == 'preview') {
-          await importModule(await downloadModule()).main();
-        } else if (type == 'sign') {
-          await userloginWeb();
-        } else if (type == 'login') {
-          await webViewLogin('https://e.189.cn/store/wap/partner/stylehead/189Bill.do');
-        }
-      }
-    }
-    table.reload();
-  }
-  
-  
-  /**
-   * Setting Preferences
-   * @param { Image } image
-   * @param { string } string
-   */
-  async function settingMenu(table, assist, outfit) {
-    function loadAllRows() {
-      const title = new UITableRow()
-      title.isHeader = true;
-      title.height = 80;
-      const titleText = title.addText(outfit);
-      titleText.titleFont = Font.mediumSystemFont(30);
-      table.addRow(title);
-      
-      assist.forEach ((item) => {
-        const { title, url, val, desc, type, tips } = item;
-        const row = new UITableRow();
-        row.height = 45;
-        const rowIcon = row.addImageAtURL(url);
-        rowIcon.widthWeight = 100;
-        let rowTitle = row.addText(title);
-        rowTitle.widthWeight = 400;
-        rowTitle.titleFont = Font.systemFont(16);
-        
-        const isBoolValue = (setting[val] !== "true" && setting[val] !== "false") ? false : true
-        if (isBoolValue) {
-          const trueFalse = setting[val] === "true";
-          if (trueFalse) {
-            imgCell = UITableCell.imageAtURL('https://gitcode.net/4qiao/framework/raw/master/img/icon/button_false.png');
-          } else {
-            imgCell = UITableCell.imageAtURL('https://gitcode.net/4qiao/framework/raw/master/img/icon/button_true.png');
-          }
-          imgCell.rightAligned();
-          imgCell.widthWeight = 500;
-          row.addCell(imgCell);
-        } else if (item.interval) {
-          row.height = item.interval;
-          row.backgroundColor = bgColor;
-        } else {
-          const valText = row.addText(tips || !setting[val] ? '>' : setting[val]);
-          valText.widthWeight = 500;
-          valText.rightAligned();
-          valText.titleColor = type !== 'input' ? new Color('#8E8E93', 0.8) : Color.blue();
-          valText.titleFont = Font.mediumSystemFont(16);
-        }
-        
-        row.dismissOnSelect = false
-        row.onSelect = item.onClick 
-        ? async () => {
-          try {
-            await item.onClick(item, table);
-          } catch (e) {
-            console.log(e);
-          }
-        }
-        : async () => {
-          if (type === 'input') {
-            await generateInputAlert ({
-              title: title,
-              message: (val === 'gradient') ? desc + setting[val] : desc,
-              options: [
-                { hint: !tips ? setting[val] : tips, value: !tips ? setting[val] : null }
-              ]
-            }, 
-            async (inputArr) => {
-              const filedVal = inputArr[0].value;
-              if (val === 'gradient' || val === 'balanceColor') {
-                matchVal = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
-              } else {
-                filedVal.match(/(^\d+(\.?\d{1,2}$|$))/)[1] ? setting[val] = filedVal : setting[val]
-              }
-              // matchVal
-              if (tips && matchVal) {
-                arr = setting[val];
-                arr.push(matchVal);
-                let count = 0;  
-                for (let obj of arr) {
-                  count++
-                }
-                notify('添加成功', `当前数据库中已储存 ${count} 个数值`);
-              } else if (matchVal) {
-                matchVal ? setting[val] = filedVal : setting[val]
-              }
-            });
-          } else if (type === 'but') {
-            setting[val] = setting[val] === 'true' ? "false" : "true"
-            let n = new Notification();
-            n.sound = 'popup'
-            n.schedule();
-          } else if (type == 'clear') {
-            const clear = await generateAlert(title, desc, ['取消', '确认']);
-            if (clear === 1) {
-              setting.gradient = [];
-              F_MGR.remove(
-                getBgImagePath()
-              );
-              notify('删除成功', '桌面组件稍后将自动刷新');
-            }
-          } else if (type === 'background') {
-            await importModule(await backgroundModule()).main();
-          }
-          // Refresh Save
-          await refreshAllRows();
-          await saveSettings();
-        }
-        table.addRow(row);
-      });
-    }
-    function refreshAllRows() {
-      table.removeAllRows();
-      loadAllRows();
-      table.reload();
-    }
-    await loadAllRows();
-  }
-  
-  
-  /**
-   * 存储当前设置
-   * @param { JSON } string
-   */
-  async function saveSettings () {
-    typeof setting === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify(setting)) : null
-    console.log(JSON.stringify(setting, null, 2))
-  }
-  
-  
-  /**
-   * AppOS updateVersion
-   * Push Notification
-   * Developer & Official
-   */
-  if (config.runsInWidget) {  
-    if (setting.appleOS === 'true') {
-      const html = await new Request(atob('aHR0cHM6Ly9kZXZlbG9wZXIuYXBwbGUuY29tL25ld3MvcmVsZWFzZXMvcnNzL3JlbGVhc2VzLnJzcw==')).loadString();
-      const iOS = html.match(/<title>(iOS.*?)<\/title>/)[1];
-      if (setting.iOS_push !== iOS) {
-        notify('AppleOS 更新通知 🔥', '新版本发布: ' + iOS)
-        setting.iOS_push = iOS
-        await saveSettings();
-      }
-    }
-  }
-  
-  
-  /**
-   * Download Script
-   * @param { string } string
-   */
-  async function updateVersion(title, desc) {
+  const updateVersion = async () => {
     const index = await generateAlert(
-      title = title,
-      message = desc,
-      options = ['取消', '确认']
+      '更新代码',
+      '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复',
+      options = ['取消', '更新']
     );
     if (index === 0) return;
-    const modulePath = F_MGR.joinPath(path, 'telecom.js');
-    const reqUpdate = new Request('https://gitcode.net/4qiao/scriptable/raw/master/table/China_Telecom.js');
-    const codeString = await reqUpdate.loadString();
-    if (codeString.indexOf('95度茅台') == -1) {
-      notify('更新失败⚠️', '请检查网络或稍后再试');
+    await updateString();
+  };
+  
+  const updateString = async () => {
+    const modulePath = fm.joinPath(mainPath, scrName);
+    const codeString = await getString(scrUrl);
+    if (codeString.indexOf('95度茅台') === -1) {
+      notify('更新失败 ⚠️', '请检查网络或稍后再试');
     } else {
-      F_MGR.writeString(modulePath, codeString);
-      Safari.open('scriptable:///run/' + encodeURIComponent(uri));
+      fm.writeString(modulePath, codeString);
+      settings.version = version;
+      writeSettings(settings);
+      ScriptableRun();
     }
-  }
-  // Version Update Notice  
-  if ( version != setting.version && setting.update === 'false' ) {
-    notify('中国电信', `新版本更新 Version ${version}  ( 可开启自动更新 )`);
-    setting.version = version;
-    await saveSettings();
-  }
+  };
+  
+  const appleOS = async () => {
+    const startHour = settings.startTime || 4;
+    const endHour = settings.endTime || 6;
+    const currentHour = new Date().getHours();
+
+    if (settings.appleOS && currentHour >= startHour && currentHour <= endHour) {
+      const html = await new Request(atob('aHR0cHM6Ly9kZXZlbG9wZXIuYXBwbGUuY29tL25ld3MvcmVsZWFzZXMvcnNzL3JlbGVhc2VzLnJzcw==')).loadString();
+      const iOS = html.match(/<title>(iOS.*?)<\/title>/)[1];
+      if (settings.push !== iOS) {
+        notify('AppleOS 更新通知 🔥', '新版本发布: ' + iOS)
+        settings.push = iOS
+        writeSettings(settings);
+      }
+    }
+  };
+  
+  /**
+   * 获取css及js字符串和图片并使用缓存
+   * @param {string} File Extension
+   * @param {Image} Base64 
+   * @returns {string} - Request
+   */
+  const cache = fm.joinPath(mainPath, 'cache_path');
+  fm.createDirectory(cache, true);
+  
+  const useFileManager = () => {
+    return {
+      readString: (fileName) => {
+        const filePath = fm.joinPath(cache, fileName);
+        return fm.readString(filePath);
+      },
+      writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),
+      // cache Image
+      readImage: (fileName) => {
+        const imgPath = fm.joinPath(cache, fileName);
+        return fm.fileExists(imgPath) ? fm.readImage(imgPath) : null;
+      },
+      writeImage: (fileName, image) => fm.writeImage(fm.joinPath(cache, fileName), image)
+    }
+  };
+  
+  /**
+   * 获取css，js字符串并使用缓存
+   * @param {string} string
+   */
+  const getString = async (url) => {
+    return await new Request(url).loadString();
+  };
+  
+  const getCacheString = async (cssFileName, cssFileUrl) => {
+    const cache = useFileManager();
+    const cssString = cache.readString(cssFileName);
+    if (cssString) {
+      return cssString;
+    }
+    const response = await getString(cssFileUrl);
+    cache.writeString(cssFileName, response);
+    return response;
+  };
+  
+  /** 
+   * toBase64(img) string
+   * SFIcon蒙版后转base64
+   */
+  const toBase64 = (img) => {
+    return `data:image/png;base64,${Data.fromPNG(img).toBase64String()}`
+  };
+  
+  /**
+   * 获取网络图片并使用缓存
+   * @param {Image} url
+   */
+  const getImage = async (url) => {
+    return await new Request(url).loadImage();
+  };
+  
+  const getCacheImage = async (name, url) => {
+    const cache = useFileManager();
+    const image = cache.readImage(name);
+    if ( image ) {
+      return toBase64(image);
+    }
+    const img = await getImage(url);
+    cache.writeImage(name, img);
+    return toBase64(img);
+  };
   
   /**
    * Setting drawTableIcon
    * @param { Image } image
    * @param { string } string
-   */
-  drawTableIcon = async (
-    icon = 'square.grid.2x2',
-    color = '#e8e8e8',
-    cornerWidth = 39
-  ) => {
-    let sfi = SFSymbol.named('gearshape.fill');
-    try {
-      sfi = SFSymbol.named(icon);
-      sfi.applyFont(
-        Font.mediumSystemFont(30)
-      );
-    } catch (e) {
-      console.log(`Symbol图标(${icon})异常：` + e);
+   */  
+  const getCacheMaskSFIcon = async (name, color) => {
+    const cache = useFileManager();
+    const image = cache.readImage(name);
+    if ( image ) {
+      return toBase64(image);
     }
+    const img = await drawTableIcon(name, color);
+    cache.writeImage(name, img);
+    return toBase64(img);
+  };
+  
+  // drawTableIcon
+  const drawTableIcon = async (
+    icon = name,
+    color = '#ff6800',
+    cornerWidth = 42
+  ) => {
+    let sfi = SFSymbol.named(icon);
+    if (sfi === null) sfi = SFSymbol.named('message.fill');
+    sfi.applyFont(  
+      Font.mediumSystemFont(30)
+    );
     const imgData = Data.fromPNG(sfi.image).toBase64String();
     const html = `
       <img id="sourceImg" src="data:image/png;base64,${imgData}" />
       <img id="silhouetteImg" src="" />
-      <canvas id="mainCanvas" />
-      `;
+      <canvas id="mainCanvas" />`;
+      
     const js = `
-      var canvas = document.createElement("canvas");
-      var sourceImg = document.getElementById("sourceImg");
-      var silhouetteImg = document.getElementById("silhouetteImg");
-      var ctx = canvas.getContext('2d');
-      var size = sourceImg.width > sourceImg.height ? sourceImg.width : sourceImg.height;
+      const canvas = document.createElement("canvas");
+      const sourceImg = document.getElementById("sourceImg");
+      const silhouetteImg = document.getElementById("silhouetteImg");
+      const ctx = canvas.getContext('2d');
+      const size = sourceImg.width > sourceImg.height ? sourceImg.width : sourceImg.height;
       canvas.width = size;
       canvas.height = size;
       ctx.drawImage(sourceImg, (canvas.width - sourceImg.width) / 2, (canvas.height - sourceImg.height) / 2);
-      var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      var pix = imgData.data;
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pix = imgData.data;
       for (var i=0, n = pix.length; i < n; i+= 4){
         pix[i] = 255;
         pix[i+1] = 255;
@@ -775,7 +345,7 @@ async function main() {
       ctx.putImageData(imgData,0,0);
       silhouetteImg.src = canvas.toDataURL();
       output=canvas.toDataURL()
-      `;
+    `;
   
     let wv = new WebView();
     await wv.loadHTML(html);
@@ -803,61 +373,69 @@ async function main() {
   
   
   /**
-   * 制作透明背景
-   * 获取截图中的组件剪裁图
-   * @param { image } 储存 Png
-   * @param { string } title 
+   * drawSquare
+   * @param { Image } image
+   * @param { string } string
    */
-  async function backgroundModule() {
-    const modulePath = F_MGR.joinPath(path, 'image.js');
-    if (F_MGR.fileExists(modulePath)) {
-      return modulePath;
-    } else {
-      const req = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdmlwL21haW5UYWJsZUJhY2tncm91bmQuanM='));
-      const moduleJs = await req.load().catch(() => {
-        return null;
-      });
-      if (moduleJs) {
-        F_MGR.write(modulePath, moduleJs);
-        return modulePath;
-      }
-    }
-  }
-  
+  const drawSquare = async (img) => {
+    const imgData = Data.fromPNG(img).toBase64String();
+    const html = `
+      <img id="sourceImg" src="data:image/png;base64,${imgData}" />
+      <img id="silhouetteImg" src="" />
+      <canvas id="mainCanvas" />`;
+    const js = `
+      const canvas = document.createElement("canvas");
+      const sourceImg = document.getElementById("sourceImg");
+      const silhouetteImg = document.getElementById("silhouetteImg");
+      const ctx = canvas.getContext('2d');
+      // 裁剪成正方形
+      const size = Math.min(sourceImg.width, sourceImg.height);
+      canvas.width = canvas.height = size;
+      ctx.drawImage(sourceImg, (sourceImg.width - size) / 2, (sourceImg.height - size) / 2, size, size, 0, 0, size, size);
+      
+      // 压缩图像
+      const maxFileSize = 200 * 1024
+      const quality = Math.min(1, Math.sqrt(maxFileSize / (canvas.toDataURL('image/jpeg', 1).length * 0.75)));
+      const compressedCanvas = document.createElement("canvas");
+      const compressedCtx = compressedCanvas.getContext('2d');
+      compressedCanvas.width = compressedCanvas.height = 400;
+      compressedCtx.drawImage(canvas, 0, 0, size, size, 0, 0, 400, 400);
+      
+      silhouetteImg.src = canvas.toDataURL();
+      output = compressedCanvas.toDataURL('image/jpeg', quality);
+    `;
+    
+    const wv = new WebView();
+    await wv.loadHTML(html);
+    const base64Image = await wv.evaluateJavaScript(js);
+    return await new Request(base64Image).loadImage();  
+  };
   
   /**
-   * 弹出一个通知
-   * @param { string } title
-   * @param { string } body
-   * @param { string } url
-   * @param { string } sound
+   * SFIcon 转换为base64
+   * @param {*} icon SFicon
+   * @returns base64 string
    */
-  async function notify (title, body, url, opts = {}) {
-    let n = new Notification()
-    n = Object.assign(n, opts);
-    n.title = title
-    n.body = body
-    n.sound = 'accept'
-    if (url) n.openURL = url
-    return await n.schedule()
-  }
+  const drawSFIcon = async ( icon = name ) => {
+    let sf = SFSymbol.named(icon);
+    if (sf === null) sf = SFSymbol.named('message');
+    sf.applyFont(  
+      Font.mediumSystemFont(30)
+    );
+    return sf.image;
+  };
   
-  
-  /**
-   * @param message 内容
-   * @param options 按键
-   * @returns { Promise<number> }
-   */
-  async function generateAlert(title, message, options) {
-    let alert = new Alert();
-    alert.title = title
-    alert.message = message
-    for (const option of options) {
-      alert.addAction(option)
+  // 缓存并读取原生 SFSymbol icon
+  const getCacheDrawSFIcon = async (name) => {
+    const cache = useFileManager();
+    const image = cache.readImage(name);
+    if ( image ) {
+      return toBase64(image);
     }
-    return await alert.presentAlert();
-  }
-  
+    const img = await drawSFIcon(name);
+    cache.writeImage(name, img);
+    return toBase64(img);
+  };
   
   /**
    * 弹出输入框
@@ -866,58 +444,1515 @@ async function main() {
    * @param opt   属性
    * @returns { Promise<void> }
    */
-  async function generateInputAlert(opt, confirm) {  
+  const generateInputAlert = async (options, confirm) => {
+    const { title, message, options: fieldArr } = options;
     const inputAlert = new Alert();
-    inputAlert.title = opt.title;
-    inputAlert.message = opt.message;
-    const fieldArr = opt.options;
-    for (const option of fieldArr) {
-      inputAlert.addTextField(  
-        option.hint,
-        option.value
-      );
-    }
+    inputAlert.title = title;
+    inputAlert.message = message;
+    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value));
     inputAlert.addAction('取消');
     inputAlert.addAction('确认');
-    let getIndex = await inputAlert.presentAlert();
+    const getIndex = await inputAlert.presentAlert();
     if (getIndex === 1) {
-      const inputObj = [];
-      fieldArr.forEach((_, index) => {
-        let value = inputAlert.textFieldValue(index);
-        inputObj.push({index, value});
-      });
+      const inputObj = fieldArr.map(({ value }, index) => ({ index, value: inputAlert.textFieldValue(index) }));
       confirm(inputObj);
     }
     return getIndex;
-  }
-  
-  /** download store **/
-  const myStore = async () => {
-    const script = await new Request('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js').loadString()
-    const fm = FileManager.iCloud();
-    fm.writeString(
-      fm.documentsDirectory() + '/95du_ScriptStore.js', script);
   };
   
   /**
-   * Download Script
-   * author: @95度茅台
+   * @param message 内容
+   * @param options 按键
+   * @returns { Promise<number> }
    */
-  async function ScriptStore() {
-    const modulePath = F_MGR.joinPath(path, 'store.js');
-    if ( F_MGR.fileExists(modulePath) ) {
-      F_MGR.remove(modulePath);
+  const generateAlert = async ( title, message = '', options, destructiveAction ) => {
+    const alert = new Alert();
+    alert.title = title;
+    alert.message = message ?? '';
+    for (const option of options) {
+      option === destructiveAction ? alert.addDestructiveAction(option) : alert.addAction(option);
     }
-    const req = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdmlwL21haW45NWR1U3RvcmUuanM='));
-    const moduleJs = await req.load().catch(() => {
-      return null;
-    });
-    if ( moduleJs ) {
-      await myStore();
-      F_MGR.write(modulePath, moduleJs);
-      return modulePath;
-    }
+    return await alert.presentAlert();
   };
-  await setWidgetConfig();
+    
+  /**
+   * Widget 小组件逻辑
+   * 处理版本更新、定时刷新以及预览和系统
+   * @param {string} scriptName
+   * @param {string} version
+   */
+  if (config.runsInWidget) {
+    if ( version !== settings.version && settings.update === false ) {
+      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题。\n需清除缓存或重置所有再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
+    };
+    
+    if (settings.refresh) {  
+      const widget = new ListWidget();
+      widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(settings.refresh));
+    };
+    
+    await appleOS();
+    await previewWidget()
+    return null;
+  };
+  
+  
+  // ====== web start ======= //
+  const renderAppView = async (options) => {
+    const {
+      formItems = [],
+      $ = 'https://www.imarkr.com',
+      avatarInfo,
+      previewImage
+    } = options;
+    
+    // themeColor
+    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark-theme', 'white'] : ['white-theme', 'black'];
+
+    const appleHub = await getCacheImage(
+      `${logoColor}.png`,
+      `${rootUrl}img/picture/appleHub_${logoColor}.png`
+    );
+    
+    const aMapAppImage = await getCacheImage('aMapAppImage.png', `${rootUrl}img/icon/aMap.png`);
+    
+    const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage(
+      'author.png',
+      `${rootUrl}img/icon/4qiao.png`
+    );
+    
+    const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
+    const scriptTags = await Promise.all(scripts.map(async (script) => {
+      const content = await getCacheString(script, `${rootUrl}web/${script}`);
+      return `<script>${content}</script>`;
+    }));
+    
+    // Convert SFicon
+    for (const i of formItems) {
+      for (const item of i.items) {
+        if ( item.item ) {
+          for (const subItem of item.item) {
+            subItem.icon = await getCacheDrawSFIcon(subItem.icon);
+          }
+        };
+        const { icon } = item;
+        if ( icon?.name ) {
+          const {name, color} = icon;
+          item.icon = await getCacheMaskSFIcon(name, color);
+        } else if (icon?.startsWith('https')) {
+          const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
+          item.icon = await getCacheImage(name, icon);
+        }
+      }
+    };
+    
+    /**
+     * @param {string} style
+     * @param {string} themeColor
+     * @param {string} avatar
+     * @param {string} popup
+     * @param {string} js
+     * @returns {string} html
+     */
+    const cssStyle = await getCacheString('cssStyle.css', `${rootUrl}web/style.css`);  
+
+    const style =`  
+    :root {
+      --color-primary: #007aff;
+      --divider-color: rgba(60,60,67,0.36);
+      --card-background: #fff;
+      --card-radius: 10px;
+      --checkbox: #ddd;
+      --list-header-color: rgba(60,60,67,0.6);  
+      --desc-color: #888;
+      --typing-indicator: #000;
+      --separ: var(--checkbox);
+      --coll-color: hsl(0, 0%, 97%);
+    }
+    
+    .modal-dialog {
+      position: relative;
+      width: auto;
+      margin: ${screenSize < 926 ? '62px' : '78px'};
+      top: ${screenSize < 926 ? '-5%' : '-11%'};
+    }
+    
+    ${settings.animation ? `
+    .list {
+      animation: fadeInUp ${settings.fadeInUp}s ease-in-out;
+    }` : ''}
+    ${cssStyle}`;
+    
+    // Java Script
+    const js =`
+    (() => {
+    const settings = ${JSON.stringify({
+      ...settings
+    })}
+    const formItems = ${JSON.stringify(formItems)}
+    
+    window.invoke = (code, data) => {
+      window.dispatchEvent(
+        new CustomEvent(
+          'JBridge',
+          { detail: { code, data } }
+        )
+      )
+    }
+    
+    const formData = {};
+    const createFormItem = ( item ) => {
+      const value = settings[item.name] ?? item.default;
+      formData[item.name] = value;
+      
+      const label = document.createElement("label");
+      label.className = "form-item";
+      label.dataset.name = item.name;
+      
+      const div = document.createElement("div");
+      div.className = 'form-label';
+      label.appendChild(div);
+      
+      if ( item.icon ) {
+        const img = document.createElement("img");
+        img.src = item.icon;
+        img.className = 'form-label-img';
+        div.appendChild(img);
+      }
+          
+      const divTitle = document.createElement("div");
+      divTitle.className = 'form-label-title';
+      divTitle.innerText = item.label;
+      div.appendChild(divTitle);
+          
+      if (item.type === 'select') {
+        const select = document.createElement('select');
+        select.name = item.name;
+        select.classList.add('select-input');
+        select.multiple = !!item.multiple;
+        select.style.width = '99px'
+      
+        item.options?.forEach(grp => {
+          const container = document.createElement('optgroup');
+          if ( grp.label ) container.label = grp.label;
+      
+          grp.values.forEach(opt => {
+            const option = new Option(opt.label, opt.value);
+            option.disabled = opt.disabled || false;
+            option.selected = (item.multiple && Array.isArray(value)) ? value.includes(opt.value) : value === opt.value;
+            container.appendChild(option);
+          });
+          if (container !== select) select.appendChild(container);
+        });
+        
+        select.addEventListener( 'change', (e) => {
+          const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
+          formData[item.name] = item.multiple ? selectedValues : selectedValues[0];
+          invoke('changeSettings', formData);
+        });
+      
+        const selCont = document.createElement('div');
+        selCont.classList.add('form-item__input__select');
+        selCont.appendChild(select);
+        
+        label.appendChild(selCont);
+      } else if (['cell', 'page', 'file'].includes(item.type)) {
+        const { name, isAdd } = item
+
+        if ( item.desc ) {
+          const desc = document.createElement("div");
+          desc.className = 'form-item-right-desc';
+          desc.id = \`\${name}-desc\`
+          desc.innerText = isAdd ? (settings[\`\${name}_status\`] ?? item.desc) : settings[name];
+          label.appendChild(desc);
+        };
+      
+        const icon = document.createElement('i');
+        icon.className = 'iconfont icon-arrow_right';
+        label.appendChild(icon);
+        label.addEventListener('click', (e) => {
+          switch (name) {
+            case 'version':
+              popupOpen();
+              break;
+            case 'setAvatar':
+              fileInput.click();
+              invoke(name, data);
+              break;
+            case 'widgetMsg':
+              switchDrawerMenu();
+              break;
+            case 'recover':
+              resetContent();
+              alertWindow();
+              updateCountdown(3);
+              break;
+          };
+      
+          invoke(item.type === 'page' ? 'itemClick' : name, item);
+        });
+  
+        // 创建图片input元素
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".jpg,.jpeg,.png,.gif,.bmp";
+        fileInput.addEventListener("change", async (event) => {
+          const file = event.target.files[0];
+          if (file && file.type.includes("image")) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const imageData = e.target.result.split(',')[1];
+              invoke(name, imageData)
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      } else if (item.type === 'number') {
+        const inputCntr = document.createElement("div");
+        inputCntr.className = 'form-item__input-container'
+  
+        const input = document.createElement("input");
+        input.className = 'form-item__input'
+        input.name = item.name
+        input.type = 'number'
+        input.value = Number(value)
+        input.addEventListener("change", (e) => {
+          formData[item.name] = Number(e.target.value);
+          invoke('changeSettings', formData);
+        });
+        inputCntr.appendChild(input);
+  
+        const icon = document.createElement('i');
+        icon.className = 'iconfont icon-arrow_right'
+        inputCntr.appendChild(icon);
+        label.appendChild(inputCntr);
+      } else {
+        const input = document.createElement("input")
+        input.className = 'form-item__input'
+        input.name = item.name
+        input.type = item.type
+        input.enterKeyHint = 'done'
+        input.value = value
+        
+        if (item.type === 'switch') {
+          input.type = 'checkbox'
+          input.role = 'switch'
+          input.checked = value
+        }
+        input.addEventListener("change", (e) => {
+          formData[item.name] =
+            item.type === 'switch'
+            ? e.target.checked
+            : e.target.value;
+          invoke('changeSettings', formData);
+        });
+        label.appendChild(input);
+      }
+      return label
+    };
+    
+    /** 创建列表 **/
+    const createList = ( list, title ) => {
+      const fragment = document.createDocumentFragment();
+      let elBody;
+    
+      for (const item of list) {
+        if (item.type === 'group') {
+          const grouped = createList(item.items, item.label);
+          fragment.appendChild(grouped);
+        } else if (item.type === 'range') {
+          const groupDiv = fragment.appendChild(document.createElement('div'));
+          groupDiv.className = 'list'
+          
+          const elTitle = groupDiv.appendChild(document.createElement('div'));
+          elTitle.className = 'el__header';
+          elTitle.textContent = title
+          
+          elBody = groupDiv.appendChild(document.createElement('div'));
+          elBody.className = 'el__body';
+          
+          const range = elBody.appendChild(document.createElement('div'));
+          range.innerHTML = \`
+          <label class="collapsible-label" for="collapse-toggle">
+            <div class="form-label">
+              <div class="collapsible-value">${settings.angle || 90}</div>
+            </div>
+            <input id="_range" type="range" value="${settings.angle || 90}" min="0" max="360" step="5">
+            <i class="fas fa-chevron-right icon-right-down"></i>
+          </label>
+          <!-- 折叠取色器 -->
+          <div class="collapsible-range" id="content">
+            <hr class="range-separ">
+            <label class="form-item">
+              <div class="form-label">
+                <img class="form-label-img" src="\${item.icon}"/>
+                <div class="form-label-title">渐变颜色</div>
+              </div>
+              <input type="color" value="${settings.rangeColor}" id="color-input">
+            </label>
+          </div>\`;
+          
+          const icon = range.querySelector('.collapsible-label .icon-right-down');
+          const content = range.querySelector('.collapsible-range');
+          const colorInput = range.querySelector('#color-input');
+          const rangeInput = range.querySelector('#_range');
+          let isExpanded = false;
+          
+          const toggleShowContent = () => {
+            content.classList.toggle('show');
+            isExpanded = !isExpanded;
+            icon.style.transition = 'transform 0.4s';
+            icon.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+          };
+          range.querySelector('.collapsible-label').addEventListener('click', toggleShowContent);
+          
+          colorInput.addEventListener('change', (e) => {
+            const selectedColor = e.target.value;
+            settings.rangeColor = selectedColor;
+            updateRange();
+            formData[item.color] = selectedColor;
+            invoke('changeSettings', formData);
+          });
+          
+          const updateRange = () => {
+            const value = rangeInput.value;
+            const percent = ((value - rangeInput.min) / (rangeInput.max - rangeInput.min)) * 100;
+            rangeInput.dataset.value = value;
+            rangeInput.style.background = \`linear-gradient(90deg, \${settings.rangeColor} \${percent}%, var(--checkbox) \${percent}%)\`;
+            range.querySelector('.collapsible-value').textContent = value;
+          };
+          
+          rangeInput.addEventListener('input', updateRange);
+          rangeInput.addEventListener('change', (event) => {
+            formData[item.name] = event.target.value;
+            invoke('changeSettings', formData);
+          });
+          updateRange();
+        } else if (item.type === 'collapsible') {
+          const groupDiv = fragment.appendChild(document.createElement('div'));
+          groupDiv.className = 'list'
+          
+          const elTitle = groupDiv.appendChild(document.createElement('div'));
+          elTitle.className = 'el__header';
+          elTitle.textContent = title
+          
+          elBody = groupDiv.appendChild(document.createElement('div'));
+          elBody.className = 'el__body';
+          
+          const label = (item) => \`
+          <label id="\${item.name}" class="form-item">
+            <div class="form-label">
+              <img class="form-label-img collapsible-label-img" src="\${item.icon}"/>
+              <div class="form-label-title">\${item.label}</div>
+            </div>
+            \${item.desc ? \`
+            <div class="form-label">
+              <div id="\${item.name}-desc" class="form-item-right-desc">\${item.desc}</div>
+              <i class="iconfont icon-arrow_right"></i>
+            </div>\` : \`
+            <i class="iconfont icon-arrow_right"></i>\`}
+          </label>\`
+          
+          const collapsible = elBody.appendChild(document.createElement('div'));  
+          collapsible.innerHTML = \`
+          <label class="collapsible-label" for="collapse-toggle">
+            <div class="form-label">
+              <img class="form-label-img" src="\${item.icon}"/>
+              <div class="form-label-title">\${item.label}</div>
+            </div>
+            <i class="fas fa-chevron-right icon-right-down"></i>
+          </label>
+          <hr class="separ">
+            <!-- 折叠列表 -->
+          <div class="collapsible-content" id="content">
+            <div class="coll__body">
+              \${item.item.map(item => label(item)).join('')}
+            </div>
+            <hr class="separ">
+          </div>\`;
+        
+          const icon = collapsible.querySelector('.collapsible-label .icon-right-down');
+          const content = collapsible.querySelector('.collapsible-content');
+          let isExpanded = false;
+          collapsible.querySelector('.collapsible-label').addEventListener('click', () => {
+            content.classList.toggle('show');
+            isExpanded = !isExpanded;
+            icon.style.transition = 'transform 0.4s';
+            icon.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+          });
+          
+          collapsible.querySelectorAll('.form-item').forEach((label, index) => {
+            label.addEventListener( 'click', () => {
+              const labelId = label.getAttribute('id');  
+              invoke(labelId, item.item[index]);
+            });
+          });
+        } else {
+          if ( !elBody ) {
+            const groupDiv = fragment.appendChild(document.createElement('div'));
+            groupDiv.className = 'list'
+            if ( title ) {
+              const elTitle = groupDiv.appendChild(document.createElement('div'));
+              elTitle.className = 'list__header'
+              elTitle.textContent = title;
+            }
+            elBody = groupDiv.appendChild(document.createElement('div'));
+            elBody.className = 'list__body'
+          }
+          const label = createFormItem(item);
+          elBody.appendChild(label);
+        }
+      }
+      return fragment
+    };
+    const fragment = createList(formItems);
+    document.getElementById('settings').appendChild(fragment);
+    
+    /** 加载动画 **/
+    const toggleLoading = (e) => {
+      const target = e.currentTarget;
+      target.classList.add('loading')
+      const icon = target.querySelector('.iconfont');
+      const className = icon.className;
+      icon.className = 'iconfont icon-loading';
+      
+      const listener = (event) => {
+        if (event.detail.code) {
+          target.classList.remove('loading');
+          icon.className = className;
+          window.removeEventListener(
+            'JWeb', listener
+          );
+        }
+      };
+      window.addEventListener('JWeb', listener);
+    };
+    
+    document.querySelectorAll('.form-item').forEach((btn) => {
+      btn.addEventListener('click', (e) => { toggleLoading(e) });
+    });
+    
+    ['getKey', 'store', 'install'].forEach(id => {
+      const elementById = document.getElementById(id).addEventListener('click', () => invoke(id));
+    });
+    
+    })()`;
+  
+  
+    /**
+     * 生成主菜单头像信息和弹窗的HTML内容
+     * @returns {string} 包含主菜单头像信息、弹窗和脚本标签的HTML字符串
+     */
+    const mainMenuTop = async () => {
+      const avatar = `
+      <div class="avatarInfo">
+        <span class="signin-loader">
+          <img src="${authorAvatar}" class="avatar"/>
+        </span>
+        <div class="interval"></div>
+        <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img">
+        <div id="store">
+          <a class="rainbow-text but">Script Store</a>
+        </div>
+      </div>`;
+      
+      const popup = `      
+      <div class="modal fade" id="u_sign" role="dialog">
+        <div class="modal-dialog">
+          <div class="zib-widget blur-bg relative">
+            <div id="appleHub" class="box-body sign-logo">
+              <img src="${appleHub}">
+            </div>
+            <div class="box-body">
+              <div class="title-h-center popup-title">
+                ${scriptName}
+              </div>
+              <a id="notify" class="popup-content">
+                <div class="but">
+                  Version ${version}
+                </div>
+              </a><br>
+              <div class="form-label-title"> <li>${updateDate}</li>
+                <li>修复已知问题</li> <li>性能优化，改进用户体验</li>
+              </div>
+            </div>
+            <div class="box-body">
+              <div id="sign-in">
+                <button id="install" type="button" class="but radius jb-yellow btn-block">立即更新</button>
+              </div>
+            </div>
+            <p class="social-separator separator separator-center">95度茅台</p>
+          </div>
+        </div>
+      </div>
+      <script type="text/javascript">
+        const popupOpen = () => { $('.signin-loader').click() };
+        setTimeout(function() {
+          $('${updateVersionNotice()}').click();
+        }, 1200);
+        // https://zibll.com
+        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll', loading: '95du' };
+      </script>
+      `
+      // music
+      const songId = [
+        '8fk9B72BcV2',
+        '8duPZb8BcV2',
+        '6pM373bBdV2',
+        '6NJHhd6BeV2'
+      ];
+      const randomId = songId[Math.floor(Math.random() * songId.length)];
+      const music = `
+      <iframe data-src="https://t1.kugou.com/song.html?id=${randomId}" class="custom-iframe" frameborder="0" scrolling="auto">
+      </iframe>
+      <script>
+        const iframe = document.querySelector('.custom-iframe');
+        iframe.src = iframe.getAttribute('data-src');
+      </script>`;
+      
+      return `
+        ${avatar}
+        ${settings.music === true ? music : ''}
+        ${popup}
+        ${scriptTags.join('\n')}
+      `
+    };
+    
+    /**
+     * 底部弹窗信息
+     * 创建底部弹窗的相关交互功能
+     * 当用户点击底部弹窗时，显示/隐藏弹窗动画，并显示预设消息的打字效果。
+     */
+    const buttonPopup = async () => {
+      const js = `
+      const menuMask = document.querySelector(".popup-mask");
+    
+      const showMask = async (callback, isFadeIn) => {
+        const duration = isFadeIn ? 200 : 300;
+        const startTime = performance.now();
+    
+        const animate = ( currentTime ) => {
+          const elapsedTime = currentTime - startTime;
+          menuMask.style.opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration;
+          if (elapsedTime < duration) requestAnimationFrame(animate);
+          else callback?.();
+        };
+    
+        menuMask.style.display = "block";
+        await new Promise(requestAnimationFrame);
+        animate(performance.now());
+      };
+    
+      function switchDrawerMenu() {
+        const popup = document.querySelector(".popup-container");
+        const isOpen = !popup.style.height || popup.style.height !== '255px';
+    
+        showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
+        popup.style.height = isOpen ? '255px' : '';
+        ${!avatarInfo ? 'isOpen && typeNextChar()' : ''}
+      };
+      
+      function hidePopup() {
+        setTimeout(() => switchDrawerMenu(), 300);
+      };
+      
+      const typeNextChar = () => {
+        const chatMsg = document.querySelector(".chat-message");
+        const message = \`${widgetMessage}\`
+        chatMsg.textContent = "";
+        let currentChar = 0;
+    
+        function appendNextChar() {
+          if (currentChar < message.length) {
+            chatMsg.textContent += message[currentChar++];
+            chatMsg.innerHTML += '<span class="typing-indicator"></span>';
+            chatMsg.scrollTop = chatMsg.scrollHeight;
+            setTimeout(appendNextChar, 30);
+          } else {
+            chatMsg.querySelectorAll(".typing-indicator").forEach(indicator => indicator.remove());
+          }
+        }
+        appendNextChar();
+      }`;
+    
+      return `
+      <div class="popup-mask" onclick="switchDrawerMenu()"></div>
+      <div class="popup-container">
+        <div class="popup-widget blur-bg">
+          <div class="box-body">
+            ${avatarInfo
+              ? `<img class="app-icon" src="${aMapAppImage}">  
+                 <div class="app-desc">如果没有开发者账号，请注册开发者
+                 </div>
+                 <button id="getKey" class="but" onclick="hidePopup()">获取 Key</button>`
+              : `<div class="sign-logo"><img src="${appleHub}"></div>`  
+            }
+          </div>
+          <div class="chat-message"></div>
+        </div>
+      </div>
+      <script>${js}</script>`;
+    };
+    
+    /**
+     * 恢复设置时弹出提示窗
+     * @returns {string}
+     * countdownEl.innerHTML = '<i class="fas fa-check"></i>'
+     */
+    const alertPopup = async () => {
+      return `
+      <div class="popup" id="popup">
+        <div class="countdown" id="countdown"></div>
+        <p id="status"></p>
+      </div>
+      <script>
+        const statusEl = document.getElementById('status');
+        
+        const updateCountdown = (seconds) => {
+          const countdownEl = document.getElementById('countdown');
+          if (seconds === 0) {
+            countdownEl.innerHTML =\`
+            <div class="svg-header">
+              <svg><circle class="circle" cx="10" cy="10" r="7.6" /> <polyline class="tick" points="6,10 8,12 12,6" /></svg>
+              <p class="svg-title">
+                读取完成
+              </p>
+            </div>\`;
+            statusEl.textContent = ''
+          } else {
+            countdownEl.textContent = seconds;
+            setTimeout(() => updateCountdown(seconds - 1), 1000);
+          }
+        };
+    
+        const resetContent = () => statusEl.textContent = '正在读取...'
+        
+        const alertWindow = () => {
+          const popupTips = document.getElementById("popup")  
+            .classList;
+          popupTips.add("show", "fd")
+          setTimeout(() => popupTips.remove("show", "fd"), 4000)
+        };
+      </script>`;
+    };
+    
+    /**
+     * 组件效果图预览
+     * 图片左右轮播
+     * Preview Component Images
+     * This function displays images with left-right carousel effect.
+     */
+    previewImgHtml = async () => {
+      const previewImgUrl = [
+        `${rootUrl}img/picture/gps_location_1.png`,
+        `${rootUrl}img/picture/gps_location_2.png`
+      ];
+      
+      if ( settings.topStyle ) {
+        const previewImgs = await Promise.all(previewImgUrl.map(async (item) => {
+          const imgName = decodeURIComponent(item.substring(item.lastIndexOf("/") + 1));
+          const previewImg = await getCacheImage(imgName, item);
+          return previewImg;
+        }));
+        return `<div id="scrollBox">
+          <div id="scrollImg">
+            ${previewImgs.map(img => `<img src="${img}">`).join('')}
+          </div>
+        </div>`; 
+      } else {
+        const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
+        const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
+        const previewImg = await getCacheImage(imgName, randomUrl);
+        return `<img id="store" src="${previewImg}" class="preview-img">`
+      }
+    };
+    
+    // =======  HTML  =======//
+    const html =`
+    <html>
+      <head>
+        <meta name='viewport' content='width=device-width, user-scalable=no, viewport-fit=cover'>
+        <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <style>${style}</style>
+      </head>
+      <body class="${themeColor}">
+        ${avatarInfo ? await mainMenuTop() : previewImage ? await previewImgHtml() : ''}
+        <!-- 弹窗 -->
+        ${await alertPopup()}
+        ${await buttonPopup()}
+        <section id="settings">
+        </section>
+        <script>${js}</script>
+      </body>
+    </html>`;
+  
+    const webView = new WebView();
+    await webView.loadHTML(html, $);
+    
+    /**
+     * 修改特定 form 表单项的文本
+     * @param {string} elementId
+     * @param {string} newText
+     * @param {WebView} webView
+     */  
+    const innerTextElementById = (elementId, newText) => {
+      webView.evaluateJavaScript(
+        `var element = document.getElementById("${elementId}-desc");
+        if (element) element.innerHTML = \`${newText}\`;
+        `, false
+      ).catch(console.error);
+    };
+    
+    // 背景图 innerText
+    const innerTextBgImage = () => {
+      const isSetBackground = fm.fileExists(getBgImage()) ? '已添加' : ''
+      innerTextElementById(
+        'chooseBgImg',
+        isSetBackground
+      );
+      
+      settings.chooseBgImg_status = isSetBackground;
+      writeSettings(settings);
+    };
+    
+    /**
+     * Input window
+     * @param data
+     * @returns {Promise<string>}
+     */
+    const input = async ({ label, name, message, display, isAdd, desc } = data) => {
+      await generateInputAlert({
+        title: label,
+        message: message,
+        options: [
+          {
+            hint: settings[name] ? String(settings[name]) : '请输入',
+            value: String(settings[name]) ?? ''
+          }
+        ]
+      }, 
+      async ([{ value }]) => {
+        if ( isAdd ) {
+          result = value.endsWith('.png') ? value : ''
+        } else if ( display ) {
+          result = /[a-z]+/.test(value) && /\d+/.test(value) ? value : ''
+        } else {
+          result = value === '0' ? value : !isNaN(value) ? Number(value) : settings[name];
+        };
+        
+        const isName = ['aMapkey', 'logo', 'carImg'].includes(name);
+        const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
+        
+        settings[name] = result;
+        settings[`${name}_status`] = inputStatus;
+        writeSettings(settings);
+        innerTextElementById(name, isName ? inputStatus : result);
+      })
+    };
+          
+    // 登录设备
+    const login = async ({ label, name, message, desc } = data) => {
+      await generateInputAlert({
+        title: label,
+        message: message,
+        options: [
+          { hint: 'imei', value: String(settings['imei']) },
+          { hint: '密码', value: String(settings['password']) }
+        ]
+      }, 
+      async (inputArr) => {
+        const [imei, password] = inputArr.map(({ value }) => value);
+        settings.imei = !imei ? '' : Number(imei);
+        settings.password = !password ? '' : Number(password);
+        
+        writeSettings(settings);
+        innerTextElementById(name, imei && password ? '已登录' : '未登录')
+        await previewWidget();
+      });
+    };
+    
+    // 推送微信
+    const weiChat = async ({ label, name, message, desc } = data) => {
+      await generateInputAlert({
+        title: label,
+        message: message,
+        options: [
+          { hint: 'access_token', value: settings['tokenUrl'] },
+          { hint: 'touser成员id', value: settings['touser'] },  
+          { hint: 'agentid应用id', value: String(settings['agentid']) }
+        ]
+      }, 
+      async (inputArr) => {
+        const [tokenUrl, touser, agentid] = inputArr.map(({ value }) => value);
+        settings.tokenUrl = tokenUrl ?? ''
+        settings.touser = touser ? touser : ''
+        settings.agentid = agentid ? Number(agentid) : ''
+          
+        writeSettings(settings);
+        innerTextElementById(name, tokenUrl && touser && agentid ? '已添加' : '未添加');
+      });
+    };
+    
+    // 修改组件布局
+    const layout = async ({ label, message, name } = data) => {
+      await generateInputAlert({
+        title: label,
+        message: message,
+        options: [
+          {hint: '左边容器宽度', value: String(settings['lrfeStackWidth'])},
+          {hint: '车图容器宽度', value: String(settings['carStackWidth'])},
+          {hint: '车图宽度', value: String(settings['carWidth'])},
+          {hint: '车图高度', value: String(settings['carHeight'])},
+          {hint: '图下尺寸', value: String(settings['bottomSize'])}
+        ]
+      },
+      async (inputArr) => {
+        settings.lrfeStackWidth = Number(inputArr[0].value);
+        settings.carStackWidth = Number(inputArr[1].value);
+        settings.carWidth = Number(inputArr[2].value);
+        settings.carHeight = Number(inputArr[3].value);
+        settings.bottomSize = Number(inputArr[4].value);
+        
+        writeSettings(settings);
+        await generateAlert('设置成功', '桌面组件稍后将自动刷新', ['完成']);
+      });
+    };
+    
+    // appleOS 推送时段
+    const period = async ({ label, name, message, desc } = data) => {
+      await generateInputAlert({
+        title: label,
+        message: message,
+        options: [
+          { hint: '开始时间 4', value: String(settings['startTime']) },
+          { hint: '结束时间 6', value: String(settings['endTime']) }
+        ]
+      }, 
+      async (inputArr) => {
+        const [startTime, endTime] = inputArr.map(({ value }) => value);
+        settings.startTime = startTime ? Number(startTime) : ''
+        settings.endTime = endTime ? Number(endTime) : ''
+        
+        const inputStatus = startTime || endTime ? '已设置' : '默认'
+        settings[`${name}_status`] = inputStatus;
+        writeSettings(settings);
+        innerTextElementById(name, inputStatus);
+      })
+    };
+    
+    // 注入监听器
+    const injectListener = async () => {
+      const event = await webView.evaluateJavaScript(
+        `(() => {
+          const controller = new AbortController()
+          const listener = (e) => {
+            completion(e.detail)
+            controller.abort()
+          }
+          window.addEventListener(
+            'JBridge',
+            listener,
+            { signal: controller.signal }
+          )
+        })()`,
+        true
+      ).catch((err) => {
+        console.error(err);
+      });
+      
+      const { code, data } = event;
+      if (code === 'clearCache') {
+        const action = await generateAlert(  
+          '清除缓存', '是否确定删除所有缓存？\n离线内容及图片均会被清除。',
+          options = ['取消', '清除']
+        );
+        if ( action === 1 ) {
+          fm.remove(cache);
+          ScriptableRun();
+        }
+      } else if (code === 'reset') {
+        const action = await generateAlert(
+          '清空所有数据', 
+          '该操作将把用户储存的所有数据清除，重置后等待5秒组件初始化并缓存数据', 
+          ['取消', '重置'], '重置'
+        );
+        if ( action === 1 ) {
+          fm.remove(mainPath);
+          ScriptableRun();
+        }
+      } else if ( code === 'recover' ) {
+        Timer.schedule(3800, false, async () => {
+          const index = await generateAlert('是否恢复设置 ？', '用户登录的信息将重置\n设置的数据将会恢复为默认', options = ['取消', '恢复']);
+          if ( index === 1 ) {
+            writeSettings(DEFAULT);
+            ScriptableRun();
+          }
+        });
+      } else if ( data?.input ) {
+        await input(data);
+      };
+      
+      // switch
+      switch (code) {
+        case 'setAvatar':
+          const avatarImage = Image.fromData(Data.fromBase64String(data));
+          fm.writeImage(
+            getAvatarImg(), await drawSquare(avatarImage)
+          );
+          ScriptableRun();
+          break;
+        case 'telegram':
+          Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
+          break;
+        case 'getKey':
+          Timer.schedule(650, false, () => { Safari.openInApp('https://lbs.amap.com/api/webservice/guide/create-project/get-key', false)});
+          break;
+        case 'changeSettings':
+          Object.assign(settings, data);
+          writeSettings(settings);
+          break;
+        case 'updateCode':
+          await updateVersion();
+          break;
+        case 'login':
+          await login(data);
+          break;
+        case 'weiChat':
+          await weiChat(data);
+          break;
+        case 'layout':
+          await layout(data);
+          break;
+        case 'period':
+          await period(data);
+          break;
+        case 'preview':
+          await previewWidget();
+          break;
+        case 'chooseBgImg':
+          const image = await Photos.fromLibrary();
+          fm.writeImage(getBgImage(), image);
+          innerTextBgImage();
+          await previewWidget();
+          break;
+        case 'clearBgImg':
+          const bgImagePath = fm.fileExists(getBgImage());
+          if ( bgImagePath ) {
+            fm.remove(getBgImage());
+            innerTextBgImage();
+            await previewWidget();
+          }
+          break;
+        case 'background':
+          await importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
+          break;
+        case 'store':
+          importModule(await webModule('store.js', 'https://gitcode.net/4qiao/framework/raw/master/mian/module_95du_storeScript.js')).main();
+          await myStore();
+          break;
+        case 'install':
+          await updateString();
+          break;
+        case 'itemClick':      
+          const findItem = (items, name) => items.reduce((found, item) => found || (item.name === name ? item : (item.type === 'group' && findItem(item.items, name))), null);
+          
+          const item = data.type === 'page' ? findItem(formItems, data.name) : data;
+          
+          data.type === 'page' ? await renderAppView(item, false, { settings }) : onItemClick?.(data, { settings });
+          break;
+      };
+      // Remove Event Listener
+      if ( event ) {
+        webView.evaluateJavaScript(
+          `window.dispatchEvent(new CustomEvent('JWeb', { detail: { code: 'finishLoading'} }))`,
+          false
+        );
+      };
+      await injectListener();
+    };
+  
+    injectListener().catch((e) => {
+      console.error(e);
+    });
+    await webView.present();
+  };
+  
+  
+  // 用户菜单
+  const userMenu = (() => {
+    const formItems = [
+      {
+        type: 'group',
+        items: [
+          {
+            label: '图片轮播',
+            name: 'topStyle',
+            type: 'switch',
+            icon: {
+              name: 'photo.tv',
+              color: '#FF9500'
+            }
+          },
+          {
+            label: '列表动画',
+            name: 'animation',
+            type: 'switch',
+            icon: {
+              name: 'rotate.right.fill',  
+              color: '#BD7DFF'
+            },
+            default: true
+          },
+          {
+            label: '动画时间',
+            name: 'fadeInUp',
+            type: 'cell',
+            input: true,
+            icon: {
+              name: 'clock.fill',
+              color: '#0096FF'
+            },
+            message: '设置时长为0时，列表将无动画效果\n( 单位: 秒 )',
+            desc: settings.fadeInUp
+          },
+          {
+            label: '组件简介',
+            name: 'widgetMsg',
+            type: 'cell',
+            icon: {
+              name: 'doc.text.image',
+              color: '#43CD80'
+            }
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: 'AppleOS',
+            name: 'appleOS',
+            type: 'switch',
+            icon: `${rootUrl}img/symbol/notice.png`
+          },
+          {
+            label: '推送时段',
+            name: 'period',
+            type: 'cell',
+            isAdd: true,
+            icon: {
+              name: 'deskclock.fill',
+              color: '#0096FF'
+            },
+            message: 'iOS 最新系统版本更新通知\n默认 04:00 至 06:00',
+            desc: settings.startTime || settings.endTime ? '已设置' : '默认'
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '组件商店',
+            name: 'store',
+            type: 'cell',
+            icon: {
+              name: 'bag.fill',  
+              color: 'FF6800'
+            }
+          }
+        ]
+      }
+    ];
+    return formItems;
+  })();
+  
+  // 设置菜单
+  const settingMenu = (() => {
+    const formItems = [
+      {
+        label: '设置',
+        type: 'group',
+        items: [
+          {
+            label: '恢复设置',
+            name: 'recover',
+            type: 'cell',
+            icon: {
+              name: 'gearshape.fill',
+              color: '#FF4D3D'
+            }
+          },
+          {
+            label: '刷新时间',
+            name: 'refresh',
+            type: 'cell',
+            input: true,
+            icon: `${rootUrl}img/symbol/refresh.png`,  
+            message: '设置桌面组件的时长\n( 单位: 分钟 )',
+            desc: settings.refresh
+          },
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            name: "textLightColor",
+            label: "白天文字",
+            type: "color",
+            icon: `${rootUrl}img/symbol/title.png`
+          },
+          {
+            name: "textDarkColor",
+            label: "夜间文字",
+            type: "color",
+            icon: {
+              name: 'textformat',
+              color: '#938BF0'
+            }
+          },
+          {
+            name: "titleColor",
+            label: "车牌颜色",
+            type: "color",
+            icon: {
+              name: 'checklist',
+              color: '#F9A825'
+            }
+          }
+        ]
+      },
+      {
+        label: '渐变角度、颜色',
+        type: 'group',
+        items: [
+          {
+            type: 'range',
+            name: 'angle',
+            color: 'rangeColor',
+            icon: {
+              name: 'lock.rotation.open',
+              color: '289CF4'
+            }
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            name: "solidColor",
+            label: "纯色背景",
+            type: "color",
+            icon: {
+              name: 'square.filled.on.square',
+              color: '#34C759'
+            }
+          },
+          {
+            label: '精选渐变',
+            name: 'gradient',
+            type: 'select',
+            multiple: true,
+            icon: {
+              name: 'scribble.variable',
+              color: '#289CF4'
+            },
+            options: [
+              {
+                label: 'Group - 1',
+                values: [
+                  { 
+                    label: '#82B1FF',
+                    value: '#82B1FF'
+                  },
+                  {
+                    label: '#4FC3F7',
+                    value: '#4FC3F7'
+                  },
+                  { 
+                    label: '#66CCFF',
+                    value: '#66CCFF'
+                  }
+                ]
+              },
+              {
+                label: 'Group - 2',
+                values: [
+                  { 
+                    label: '#99CCCC',
+                    value: '#99CCCC'
+                  },
+                  { 
+                    label: '#BCBBBB',
+                    value: '#BCBBBB'
+                  },
+                  { 
+                    label: '#A0BACB',
+                    value: '#A0BACB'
+                  },
+                  {
+                    label: '#FF6800',
+                    value: '#FF6800',
+                    disabled: true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            label: '渐变透明',
+            name: 'transparency',
+            type: 'cell',
+            input: true,
+            icon: `${rootUrl}img/symbol/masking_2.png`,  
+            message: '渐变颜色透明度，完全透明设置为 0',
+            desc: settings.transparency
+          },
+          {
+            label: '透明背景',
+            name: 'background',
+            type: 'cell',
+            icon: `${rootUrl}img/symbol/transparent.png`
+          },
+          {
+            label: '遮罩透明',
+            name: 'masking',
+            type: 'cell',
+            input: true,
+            icon: {
+              name: 'photo.stack',
+              color: '#8E8D91'
+            },
+            message: '给图片加一层半透明遮罩\n完全透明设置为 0',
+            desc: settings.masking
+          },
+          {
+            label: '图片背景',
+            name: 'chooseBgImg',
+            type: 'file',
+            isAdd: true,
+            icon: `${rootUrl}img/symbol/bgImage.png`,
+            desc: fm.fileExists(getBgImage()) ? '已添加' : ' '
+          },
+          {
+            label: '清除背景',
+            name: 'clearBgImg',
+            type: 'cell',
+            icon: `${rootUrl}img/symbol/clearBg.png`
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '布局调整',
+            name: 'layout',
+            type: 'cell',
+            icon: `${rootUrl}img/symbol/layout.png`
+          },
+          {
+            label: '推送通知',
+            name: 'interval',
+            type: 'cell',
+            input: true,
+            message: '车辆静止超过10分钟后，车辆未行驶则默认每4小时推送一次车辆状态通知\n（ 单位: 分钟 ）',
+            desc: settings.interval,
+            icon: {
+              name: 'text.bubble.fill',
+              color: '#F9A825'
+            }
+          },
+          {
+            label: '车辆图片',
+            name: 'carImg',
+            type: 'cell',
+            input: true,
+            isAdd: true,
+            message: '填入png格式图片的URL',
+            desc: settings.carImg ? '已添加' : '默认',
+            icon: {
+              name: 'car.rear.fill',
+              color: '#43CD80'
+            }
+          },
+          {
+            label: '更换车标',
+            name: 'logo',
+            type: 'cell',
+            input: true,
+            isAdd: true,
+            message: '填入png格式的图标URL',
+            desc: settings.logo ? '已添加' : '默认',
+            icon: {
+              name: 'checkerboard.shield',
+              color: '#BD7DFF'
+            }
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '自动更新',
+            name: 'update',
+            type: 'switch',
+            icon: `${rootUrl}img/symbol/update.png`
+          },
+          {
+            label: '背景音乐',
+            name: 'music',
+            type: 'switch',
+            icon: {
+              name: 'music.note',  
+              color: '#FF6800'
+            },
+            default: true
+          }
+        ]
+      },
+    ];
+    return formItems;
+  })();
+  
+  // 主菜单
+  await renderAppView({
+    avatarInfo: true,
+    formItems: [
+      {
+        type: 'group',
+        items: [
+          {
+            label: '设置头像',
+            name: 'setAvatar',
+            type: 'cell',
+            icon: `${rootUrl}img/icon/camera.png`
+          },
+          {
+            label: 'Telegram',
+            name: 'telegram',
+            type: 'cell',
+            icon: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/NicegramLogo.png'
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: 'GPS定位',
+            type: 'collapsible',
+            name: 'user',
+            icon: {
+              name: 'safari',
+              color: '#0FC4EA'
+            },
+            item: [
+              {
+                label: '登录设备',
+                name: 'login',
+                type: 'cell',
+                display: true,
+                desc: settings.password && settings.imei ? '已登录' : '未登录',
+                message: '在设备上查看获取 imei 码\n原始密码为: 123456',
+                icon: 'externaldrive.badge.plus'
+              },
+              {
+                label: '静态地图',
+                name: 'aMapkey',
+                type: 'cell',
+                input: true,
+                display: true,
+                desc: settings.aMapkey ? '已添加' : '未添加',
+                message: '高德地图web服务 API 类型 Key\n用于获取模拟电子围栏及静态地图',
+                icon: 'pin'
+              },
+              {
+                label: '推送微信',
+                name: 'weiChat',
+                type: 'cell',
+                display: true,
+                desc: settings.tokenUrl && settings.touser && settings.agentid ? '已添加' : '未添加',
+                message: '创建企业微信中的应用，获取access_token的链接，touser成员ID，agentid企业应用的ID',
+                icon: 'message'
+              }
+            ]
+          },
+          {
+            label: '重置所有',
+            name: 'reset',
+            type: 'cell',
+            icon: `${rootUrl}img/symbol/reset.png`
+          },
+          {
+            label: '清除缓存',
+            name: 'clearCache',
+            type: 'cell',
+            icon: {
+              name: 'arrow.triangle.2.circlepath',
+              color: '#FF9500'
+            }
+          },
+          {
+            label: '组件信息',
+            name: 'infoPage',
+            type: 'page',
+            icon: {
+              name: 'person.crop.circle',
+              color: '#43CD80'
+            },
+            formItems: userMenu,
+            previewImage: true
+          },
+          {
+            label: '偏好设置',
+            name: 'preference',
+            type: 'page',
+            icon: {
+              name: 'gearshape.fill',
+              color: '#0096FF'
+            },
+            formItems: settingMenu
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            label: '预览组件',
+            name: 'preview',
+            type: 'cell',
+            icon: `${rootUrl}img/symbol/preview.png`
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            name: "version",
+            label: "组件版本",
+            type: "cell",
+            icon: {
+              name: 'externaldrive.fill', 
+              color: '#F9A825'
+            },
+            desc: version
+          },
+          {
+            name: "updateCode",
+            label: "更新代码",
+            type: "cell",
+            icon: `${rootUrl}img/symbol/update.png`
+          }
+        ]
+      }
+    ]
+  }, true);
 }
 module.exports = { main }
