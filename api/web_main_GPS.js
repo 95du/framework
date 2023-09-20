@@ -186,7 +186,7 @@ async function main() {
     const index = await generateAlert(
       '更新代码',
       '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复',
-      options = ['取消', '确认']
+      options = ['取消', '更新']
     );
     if (index === 0) return;
     await updateString();
@@ -1383,7 +1383,7 @@ async function main() {
         }
       } else if ( code === 'recover' ) {
         Timer.schedule(3800, false, async () => {
-          const index = await generateAlert('是否恢复设置 ？', '用户登录的信息将重置\n设置的数据将会恢复为默认', options = ['取消', '确认']);
+          const index = await generateAlert('是否恢复设置 ？', '用户登录的信息将重置\n设置的数据将会恢复为默认', options = ['取消', '恢复']);
           if ( index === 1 ) {
             writeSettings(DEFAULT);
             ScriptableRun();
