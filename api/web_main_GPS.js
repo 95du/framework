@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: deep-purple; icon-glyph: cog;
+// icon-color: cyan; icon-glyph: cog;
 
 async function main() {
   const scriptName = 'GPS 定位器'
@@ -79,11 +79,11 @@ async function main() {
     appleOS: true,
     fadeInUp: 0.7,
     angle: 90,
+    rangeColor: '#FF6800',
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
     titleColor: '#000000',
-    solidColor: '#FFFFFF',
-    rangeColor: '#ff6800'
+    solidColor: '#FFFFFF'
   };
   
   const getSettings = (file) => {
@@ -1662,6 +1662,7 @@ async function main() {
             },
             options: [
               {
+                label: 'Group - 1',
                 values: [
                   { 
                     label: '#82B1FF',
@@ -1678,7 +1679,7 @@ async function main() {
                 ]
               },
               {
-                label: 'select more',
+                label: 'Group - 2',
                 values: [
                   { 
                     label: '#99CCCC',
