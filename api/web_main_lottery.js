@@ -4,8 +4,8 @@
 
 async function main() {
   const scriptName = '全国彩开奖结果'
-  const version = '1.0.2'
-  const updateDate = '2023年09月17日'
+  const version = '1.0.3'
+  const updateDate = '2023年09月20日'
   
   const pathName = '95du_lottery';
   const widgetMessage = '组件功能: 全国彩开奖结果，如果想显示多个彩票种类，在桌面小组件长按编辑小组件， 在 Parameter 添加参数 ( 例如双色球: 输入ssq ，七星彩: qxc ， 福彩3D: fc3d ， 排列五: pl5 ) 彩票名称的小写字母包括数字。';
@@ -49,7 +49,7 @@ async function main() {
     refresh: 20,
     transparency: 0.5,
     masking: 0.3,
-    gradient: ['#82B1FF'],
+    gradient: [],
     update: true,
     topStyle: true,
     music: true,
@@ -58,13 +58,13 @@ async function main() {
     useCache: false,
     fadeInUp: 0.7,
     angle: 90,
+    solidColor: true,
     radius: 10,
     agentShortName: 0,
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
     titleColor: '#000000',
-    solidColor: '#FFFFFF',
-    rangeColor: '#ff6800'
+    rangeColor: '#3F8BFF',
   };
   
   const getSettings = (file) => {
@@ -468,7 +468,7 @@ async function main() {
     if ( version !== settings.version && settings.update === false && hours >= 12 || !settings.updateTime ) {
       settings.updateTime = Date.now();
       writeSettings(settings);
-      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题。\n需清除缓存或重置所有再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
+      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，增加文字、背景设置功能，需重置所有再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     if (settings.refresh) {  
@@ -645,9 +645,11 @@ async function main() {
         select.addEventListener( 'change', (e) => {
           const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
           formData[item.name] = item.multiple ? selectedValues : selectedValues[0];
+          
+          formData.solidColor = selectedValues.length > 0 ? false : true;
           invoke('changeSettings', formData);
         });
-      
+        
         const selCont = document.createElement('div');
         selCont.classList.add('form-item__input__select');
         selCont.appendChild(select);
@@ -1581,6 +1583,33 @@ async function main() {
         type: 'group',
         items: [
           {
+            label: '彩种弧度',
+            name: 'radius',
+            type: 'cell',
+            input: true,
+            icon: {
+              name: 'rotate.right.fill',  
+              color: '#BD7DFF'
+            },
+            message: 'iOS 14 系统设置值为 18 即可显示圆形',
+            desc: settings.radius
+          },
+          {
+            label: '使用缓存',
+            name: 'useCache',
+            type: 'switch',
+            icon: {
+              name: 'externaldrive.fill', 
+              color: '#F9A825'
+            },
+            default: false
+          }
+        ]
+      },
+      {
+        type: 'group',
+        items: [
+          {
             name: "textLightColor",
             label: "白天文字",
             type: "color",
@@ -1625,36 +1654,9 @@ async function main() {
         type: 'group',
         items: [
           {
-            label: '彩种弧度',
-            name: 'radius',
-            type: 'cell',
-            input: true,
-            icon: {
-              name: 'rotate.right.fill',  
-              color: '#BD7DFF'
-            },
-            message: 'iOS 14 系统设置值为 18 即可显示圆形',
-            desc: settings.radius
-          },
-          {
-            label: '使用缓存',
-            name: 'useCache',
-            type: 'switch',
-            icon: {
-              name: 'externaldrive.fill', 
-              color: '#F9A825'
-            },
-            default: false
-          }
-        ]
-      },
-      {
-        type: 'group',
-        items: [
-          {
             name: "solidColor",
-            label: "纯色背景",
-            type: "color",
+            label: "黑白背景",
+            type: "switch",
             icon: {
               name: 'square.filled.on.square',
               color: '#34C759'
@@ -1671,6 +1673,7 @@ async function main() {
             },
             options: [
               {
+                label: 'Group - 1',
                 values: [
                   { 
                     label: '#82B1FF',
@@ -1687,7 +1690,7 @@ async function main() {
                 ]
               },
               {
-                label: 'more',
+                label: 'Group - 2',
                 values: [
                   { 
                     label: '#99CCCC',
