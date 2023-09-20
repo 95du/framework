@@ -295,8 +295,8 @@ a:focus,a:hover {
 }
 
 .custom-img {
-  width: 200px;
-  height: 40px;
+  width: 180px;
+  height: 35px;
   margin-bottom: 3px;
   animation: fadeInUp 0.6s ease-in-out;
 }
