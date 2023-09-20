@@ -32,7 +32,7 @@ async function main() {
     }
   } else {
     layout = {
-      lrfeStackWidth: 107,
+      lrfeStackWidth: 108,
       carStackWidth: 225,
       carWidth: 225,
       carHeight: 100,
@@ -120,7 +120,7 @@ async function main() {
   async function getVerifyToken() {  
     const open = await generateAlert(
       title = '交管 12123',
-      message = `\r\n自动获取Token以及Referer需要Quantumult-X / Surge 辅助运行，\n具体方法请查看小组件代码开头注释\n\n【 获取Referer方法 】 \n跳转到支付宝12123页面时，点击 [ 车牌号码/查询 ] 即可获取/更新，用于获取检验有效期日期和累积记分‼️\n\nverifyToken/Sign 和 Referer 获取后返回点击预览组件即可使用。`,
+      message = `\n自动获取Token以及Referer需要Quantumult-X 或 Surge 辅助运行，\n具体方法请查看小组件代码开头注释\n\n【 获取Referer方法 】 \n跳转到支付宝12123页面后，点击车牌号码，再点击查询，即可获取/更新，用于获取检验有效期日期和累积记分‼️\n\nverifyToken、Sign、Referer 获取后返回点击预览组件即可使用。`,
       options = ['取消', '获取']
     );
     if (open === 1) {
@@ -173,15 +173,12 @@ async function main() {
     rightText.widthWeight = 0.3;
     rightText.rightAligned();
     rightText.onTap = async () => {
-      const delAlert = new Alert();
-      delAlert.title = '清空所有数据';
-      delAlert.message = '该操作将把用户储存的所有数据清除，重置后重新运行预览组件，即可自动获取数据【 确保辅助工具已打开 】';
-      delAlert.addDestructiveAction('重置');
-      delAlert.addCancelAction('取消');
-      const action = await delAlert.presentAlert();
-      if (action == 0) {
+      const action = await generateAlert(
+        '清空所有数据', '该操作将把用户储存的所有数据清除，重置后重新运行预览组件，即可自动获取数据【 确保辅助工具已打开 】',
+        ['取消', '重置'], '重置'
+      );
+      if ( action == 1 ) {
         F_MGR.remove(path);
-        notify('已清空数据', '请重新运行或重新配置小组件');
         Safari.open('scriptable:///run/' + encodeURIComponent(uri));
       }
     };
@@ -924,12 +921,12 @@ async function main() {
    * @param options 按键
    * @returns { Promise<number> }
    */
-  async function generateAlert(title, message, options) {
-    let alert = new Alert();
+  async function generateAlert(title, message, options, destructive) {
+    const alert = new Alert();
     alert.title = title
     alert.message = message
     for (const option of options) {
-      alert.addAction(option)
+      option === destructive ? alert.addDestructiveAction(option) : alert.addAction(option)
     }
     return await alert.presentAlert();
   };
