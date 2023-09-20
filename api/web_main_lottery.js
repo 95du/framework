@@ -1582,7 +1582,7 @@ async function main() {
         type: 'group',
         items: [
           {
-            label: '彩种弧度',
+            label: '彩球弧度',
             name: 'radius',
             type: 'cell',
             input: true,
@@ -1625,7 +1625,7 @@ async function main() {
           },
           {
             name: "titleColor",
-            label: "名称颜色",
+            label: "标题名称",
             type: "color",
             icon: {
               name: 'checklist',
