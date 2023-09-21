@@ -4,8 +4,8 @@
 
 async function main() {
   const scriptName = '全国彩开奖结果'
-  const version = '1.0.3'
-  const updateDate = '2023年09月20日'
+  const version = '1.0.4'
+  const updateDate = '2023年09月21日'
   
   const pathName = '95du_lottery';
   const widgetMessage = '组件功能: 全国彩开奖结果，如果想显示多个彩票种类，在桌面小组件长按编辑小组件， 在 Parameter 添加参数 ( 例如双色球: 输入ssq ，七星彩: qxc ， 福彩3D: fc3d ， 排列五: pl5 ) 彩票名称的小写字母包括数字。';
@@ -59,7 +59,7 @@ async function main() {
     fadeInUp: 0.7,
     angle: 90,
     solidColor: true,
-    radius: 10,
+    radius: 12,
     agentShortName: 0,
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
@@ -468,7 +468,7 @@ async function main() {
     if ( version !== settings.version && settings.update === false && hours >= 12 || !settings.updateTime ) {
       settings.updateTime = Date.now();
       writeSettings(settings);
-      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，增加文字、背景设置功能，需重置所有再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
+      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，桌面组件布局调整，清除缓存再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     if (settings.refresh) {  
@@ -955,8 +955,8 @@ async function main() {
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <div class="loading-cont">
-          <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img">
+        <div class="loading-cont" onclick="switchDrawerMenu()">
+          <img src="${appleHub}" class="custom-img">
           <div class="loading-right"></div>
         </div>
         <div id="store">
@@ -993,15 +993,17 @@ async function main() {
           </div>
         </div>
       </div>
-      <script type="text/javascript">
+      <script>
         setTimeout(() => {
           const loadingDiv = document.querySelector('.loading-right').style.display = 'none';
         }, 1800);
         
         const popupOpen = () => { $('.signin-loader').click() };
+
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
         }, 1200);
+        
         // https://zibll.com
         window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll', loading: '95du' };
       </script>
@@ -1590,7 +1592,7 @@ async function main() {
               name: 'rotate.right.fill',  
               color: '#BD7DFF'
             },
-            message: 'iOS 14 系统设置值为 18 即可显示圆形',
+            message: 'iOS 16 系统以下设置值为 18\n即可显示圆形',
             desc: settings.radius
           },
           {
@@ -1643,7 +1645,7 @@ async function main() {
             name: 'angle',
             color: 'rangeColor',
             icon: {
-              name: 'lock.rotation.open',
+              name: 'circle.lefthalf.filled',
               color: '289CF4'
             }
           }
@@ -1668,7 +1670,7 @@ async function main() {
             multiple: true,
             icon: {
               name: 'scribble.variable',
-              color: '#289CF4'
+              color: '#B07DFF'
             },
             options: [
               {
