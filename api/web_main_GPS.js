@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: cyan; icon-glyph: cog;
+// icon-color: deep-brown; icon-glyph: cog;
 
 async function main() {
   const scriptName = 'GPS 定位器'
@@ -8,7 +8,7 @@ async function main() {
   const updateDate = '2023年08月12日'
   
   const pathName = '95du_GPS';
-  const widgetMessage = '组件功能: 通过GPS设备制作的中小号小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图web服务Api类型key，微信推送需要另外填入企业微信应用的Api信息。';
+  const widgetMessage = '组件功能: 通过GPS设备制作的中小号小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图 web 服务 Api 类型key，微信推送需要另外填入企业微信应用的Api信息。';
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   
@@ -985,8 +985,9 @@ async function main() {
           </div>
         </div>
       </div>
-      <script type="text/javascript">
+      <script>
         const popupOpen = () => { $('.signin-loader').click() };
+
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
         }, 1200);
@@ -1633,7 +1634,7 @@ async function main() {
             name: 'angle',
             color: 'rangeColor',
             icon: {
-              name: 'lock.rotation.open',
+              name: 'circle.lefthalf.filled',
               color: '289CF4'
             }
           }
@@ -1658,7 +1659,7 @@ async function main() {
             multiple: true,
             icon: {
               name: 'scribble.variable',
-              color: '#289CF4'
+              color: '#B07DFF'
             },
             options: [
               {
