@@ -3,6 +3,7 @@
 // icon-color: cyan; icon-glyph: gas-pump;
 
 async function main() {
+  const version = '1.0.2'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duOilPrice");
@@ -15,6 +16,7 @@ async function main() {
   const bgImage = F_MGR.joinPath(bgPath, uri + ".jpg");
   
   const DEFAULT_SETTINGS = {
+    version,
     minute: '10',
     interval: Device.screenSize().height < 926 ? '3' : '0',
     transparency: '0.5',
@@ -69,8 +71,7 @@ async function main() {
         return modulePath;
       }
     }
-  }
-  
+  };
   
   /**
    * 设置组件内容
@@ -100,7 +101,7 @@ async function main() {
     const leftText = topRow.addButton('组件商店');
     leftText.widthWeight = 0.3;
     leftText.onTap = async () => {
-      await Run();
+      importModule(await ScriptStore()).main();
     };
   
     const authorImage = topRow.addImageAtURL('https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png');
@@ -111,12 +112,10 @@ async function main() {
     rightText.widthWeight = 0.3;
     rightText.rightAligned();
     rightText.onTap = async () => {
-      const delAlert = new Alert();
-      delAlert.title = '清空所有数据';
-      delAlert.message = '该操作将把用户储存的所有数据清除，重置后需重新运行获取，否则组件可能无法正常运行或显示';
-      delAlert.addDestructiveAction('重置');
-      delAlert.addCancelAction('取消');
-      const action = await delAlert.presentAlert();
+      const action = await generateAlert(
+        '清空所有数据', '该操作将把用户储存的所有数据清除，重置后重新运行预览组件，即可自动获取数据【 确保辅助工具已打开 】',
+        ['取消', '重置'], '重置'
+      );
       if (action == 0) {
         F_MGR.remove(path);
         notify('已清空数据', '请重新运行或重新配置小组件');
@@ -403,9 +402,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年08月17日\n修复已知错误，增加渐变角度',
-        val: '1.0.1',
-        ver: 'Version 1.0.1'
+        desc: '2023年09月22日\n修复已知错误，优化用户体验',
+        val: '1.0.2',
+        ver: 'Version 1.0.2'
       },
       {
         icon: {
@@ -638,8 +637,7 @@ async function main() {
       table.reload();
     }
     await loadAllRows();
-  }
-  
+  };
   
   /**
    * 存储当前设置
@@ -648,8 +646,7 @@ async function main() {
   async function saveSettings() {
     typeof setting === 'object' ?  F_MGR.writeString(cacheFile, JSON.stringify(setting)) : null
     console.log(JSON.stringify(setting, null, 2))
-  }
-  
+  };
   
   /**
    * AppOS updateVersion
@@ -666,8 +663,13 @@ async function main() {
         await saveSettings();
       }
     }
-  }
-  
+  };
+  // Version Update Notice  
+  if ( version !== setting.version && setting.update === 'false' ) {
+    notify('全国油价', `新版本更新 Version ${version}  ( 可开启自动更新 )`);
+    setting.version = version;
+    await saveSettings();
+  };
   
   /**
    * Download Script
@@ -689,8 +691,7 @@ async function main() {
       F_MGR.writeString(modulePath, codeString);
       Safari.open('scriptable:///run/' + encodeURIComponent(uri));
     }
-  }
-  
+  };
   
   /**
    * Setting drawTableIcon
@@ -763,7 +764,6 @@ async function main() {
     return ctx.getImage();
   };
   
-  
   /**
    * 制作透明背景
    * 获取截图中的组件剪裁图
@@ -784,8 +784,7 @@ async function main() {
         return modulePath;
       }
     }
-  }
-  
+  };
   
   /**
    * 弹出一个通知
@@ -802,8 +801,7 @@ async function main() {
     n.sound = 'accept'
     if (url) n.openURL = url
     return await n.schedule()
-  }
-  
+  };
   
   /**
    * @param message 内容
@@ -818,8 +816,22 @@ async function main() {
       alert.addAction(option)
     }
     return await alert.presentAlert();
-  }
+  };
   
+/**
+   * @param message 内容
+   * @param options 按键
+   * @returns { Promise<number> }
+   */
+  async function generateAlert(title, message, options, destructive) {
+    const alert = new Alert();
+    alert.title = title
+    alert.message = message
+    for (const option of options) {
+      option === destructive ? alert.addDestructiveAction(option) : alert.addAction(option)
+    }
+    return await alert.presentAlert();
+  };
   
   /**
    * 弹出输入框
@@ -851,129 +863,35 @@ async function main() {
       confirm(inputObj);
     }
     return getIndex;
-  }
+  };
   
+  /** download store **/
+  const myStore = async () => {
+    const script = await new Request('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js').loadString()
+    const fm = FileManager.iCloud();
+    fm.writeString(
+      fm.documentsDirectory() + '/95du_ScriptStore.js', script);
+  };
   
   /**
    * Download Script
    * author: @95度茅台
    */
-  renderTableList = async (data) => {
-    try {
-      const table = new UITable();
-      table.showSeparators = true;
-  
-      const gifRow = new UITableRow();
-      gifRow.height = 83 * Device.screenScale();
-      gifRow.backgroundColor = bgColor
-      const gifImage = gifRow.addImageAtURL(atob('aHR0cHM6Ly9zd2VpeGluZmlsZS5oaXNlbnNlLmNvbS9tZWRpYS9NMDAvNzEvQzgvQ2g0RnlXT0k2b0NBZjRQMUFFZ0trSzZxVVVrNTQyLmdpZg=='));
-      gifImage.centerAligned();
-      table.addRow(gifRow);
-  
-      // Top Row
-      const topRow = new UITableRow();
-      topRow.height = 70;
-      const leftText = topRow.addButton('效果图');
-      leftText.onTap = async () => {
-        const webView = new WebView();
-        await webView.loadURL('https://gitcode.net/4qiao/framework/raw/master/img/picture/Example.png');
-        await webView.present(false);
-      };
-  
-      const authorImage = topRow.addImageAtURL('https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png');
-      authorImage.widthWeight = 0.9
-      authorImage.centerAligned();
-  
-      const rightText = topRow.addButton('快捷指令');
-      rightText.rightAligned();
-      rightText.onTap = async () => {
-        Safari.openInApp('https://sharecuts.cn/user/KVlQooAqzA', false);
-      };
-      table.addRow(topRow);
-  
-      // interval 1
-      await gapRow(table);
-  
-      // 如果是节点，则先远程获取
-      const subscription = await new Request(data.subscription).loadJSON()
-      const apps = subscription.apps;
-      apps.forEach((item) => {
-        const r = new UITableRow();
-        r.height = 60;
-        const imgCell = UITableCell.imageAtURL(item.thumb);
-        imgCell.centerAligned();
-        r.addCell(imgCell);
-  
-        const nameCell = UITableCell.text(item.title);
-        nameCell.centerAligned();
-        r.addCell(nameCell);
-  
-        const downloadCell = UITableCell.button("获取");
-        downloadCell.centerAligned();
-        downloadCell.dismissOnTap = true;
-        downloadCell.onTap = async () => {
-          const script = await new Request(item.scriptURL).loadString();
-          const F_MGR = FileManager.iCloud();
-          F_MGR.writeString(F_MGR.documentsDirectory() + `/${item.name}.js`, script)
-          if (script) {
-            notify('', `小组件:${item.title}下载/更新成功`);
-          }
-        };
-        r.addCell(downloadCell);
-        table.addRow(r);
-      });
-  
-      // interval 2
-      await gapRow(table);
-  
-      // telegramRow
-      const telegramRow = new UITableRow();
-      telegramRow.height = 70;
-      const telegram = telegramRow.addButton('加入 Scriptable 小组件交流群');
-      telegram.widthWeight = 0.3;
-      telegram.centerAligned();
-      telegram.onTap = async () => {
-        Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
-      };
-      table.addRow(telegramRow);
-  
-      // bottom interval
-      const bottom = new UITableRow();
-      bottom.height = 180;
-      bottom.backgroundColor = bgColor
-      const bottomText = bottom.addText('Copyright ©️ 2022 界面修改自·@DmYY');
-      bottomText.centerAligned();
-      bottomText.titleFont = Font.boldMonospacedSystemFont(10);
-      bottomText.titleColor = Color.gray();
-      table.addRow(bottom);
-      table.present(false);
-    } catch (e) {
-      console.log(e);
-      notify("错误提示", "脚本获取失败");
+  async function ScriptStore() {
+    const modulePath = F_MGR.joinPath(path, 'store.js');
+    if ( F_MGR.fileExists(modulePath) ) {
+      F_MGR.remove(modulePath);
+    }
+    const req = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdmlwL21haW45NWR1U3RvcmUuanM='));
+    const moduleJs = await req.load().catch(() => {
+      return null;
+    });
+    if ( moduleJs ) {
+      await myStore();
+      F_MGR.write(modulePath, moduleJs);
+      return modulePath;
     }
   };
-  
-  async function gapRow(table) {
-    const gapRow = new UITableRow();
-    gapRow.height = 30;
-    gapRow.backgroundColor = bgColor
-    return table.addRow(gapRow);
-  }
-  
-  const Run = async () => {
-    try {
-      await renderTableList({
-        author: '95度茅台',
-        subscription: 'https://gitcode.net/4qiao/framework/raw/master/scriptable/install.json'
-      });
-      const script = await new Request('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js').loadString();
-      const fm = FileManager.iCloud();
-      fm.writeString(fm.documentsDirectory() + '/95° 小组件商店.js', script);
-    } catch (e) {
-      console.log("缓存读取错误" + e);
-    }
-  };
-  // await Runing()
   await setWidgetConfig();
 }
 module.exports = { main }
