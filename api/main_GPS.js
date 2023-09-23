@@ -690,13 +690,9 @@ async function main() {
             }, 
             async (inputArr) => {
               const filedVal = inputArr[0].value;
-              if (val === 'gradient') {
-                matchVal = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
-              }
-              if (val === 'logo') {
-                setting[val] = filedVal.match(/(http.+png)/)[1];
-              }
-              if (val === 'picture') {
+              if (val === 'gradient') matchVal = filedVal.match(/(^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$)/)[1];
+              if (val === 'logo') setting[val] = filedVal.match(/(http.+png)/)[1];
+              if (val === 'picture') {  
                 matchVal = filedVal.match(/(http.+png)/)[1];
                 setting.imgArr = [];
               }
