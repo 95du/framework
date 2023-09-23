@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: cyan; icon-glyph: car;
-
+await 
 async function main() {
   const version = '1.2.7'
   const uri = Script.name();
@@ -479,7 +479,7 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年04月28日\n\n布局修正，修复已知问题 ‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分，另: 车牌号码需正确填写【 有违章时获取数据 】\n1，支持多车辆、多次违章( 随机显示 )\n2，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
+        desc: '2023年04月28日\n\n布局修正，修复已知问题‼️\n\n⚠️ 注: 12123_Referer用于获取检验有效期的日期和累积记分。\n\n1，车牌号码需正确填写 (获取违章数据)\n2，Sign过期后点击组件上的车辆图片自动跳转到支付宝并获取新的Sign等。\n3，支持多车辆、多次违章( 随机显示 )\n4，随机显示违章照片，点击地址跳转\n\n小组件作者：95度茅台\n获取Token作者: @FoKit',
         val: version,
         ver: 'Version 1.2.7'
       },
