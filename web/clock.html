@@ -1,4 +1,3 @@
-<html>
 <head>
   <style>
     .clock-center {
@@ -212,7 +211,7 @@
       </svg>
     </div>
   </div>
-  <script>  
+  <script>
     window.addEventListener("DOMContentLoaded", () => {
       const clock = new ProgressClock("#clock");
     });
@@ -361,7 +360,7 @@
           this.ringTimeouts = [];
     
           units.forEach(u => {
-            const ring = this.el.querySelector(\`[data-ring="\${u.label}"]\`);
+            const ring = this.el.querySelector(`[data-ring="${u.label}"]`);
     
             if (ring) {
               const strokeDashArray = ring.getAttribute("stroke-dasharray");
@@ -387,7 +386,7 @@
               }
             }
     
-            const unit = this.el.querySelector(\`[data-unit="\${u.label}"]\`);
+            const unit = this.el.querySelector(`[data-unit="${u.label}"]`);
             if (unit) unit.innerText = u.value;
           });
         }
@@ -396,6 +395,4 @@
       }
     }
   </script>
-  <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
 </body>
-</html>
