@@ -104,8 +104,10 @@ async function main() {
   
   // 预览组件
   const previewWidget = async () => {
-    await importModule(await webModule(scrName, scrUrl)).main();
-  }
+    if (settings.token && settings.aMapkey) {
+      await importModule(await webModule(scrName, scrUrl)).main();  
+    }
+  };
   
   /**
    * 弹出通知
@@ -1480,7 +1482,7 @@ async function main() {
   };
   
   
-  // 用户菜单
+  // 组件信息页
   const userMenu = (() => {
     const formItems = [
       {
@@ -1569,7 +1571,7 @@ async function main() {
     return formItems;
   })();
   
-  // 设置菜单
+  // 设置菜单页
   const settingMenu = (() => {
     const formItems = [
       {
