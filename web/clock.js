@@ -1,6 +1,3 @@
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: blue; icon-glyph: star-of-david;
 <head>
   <style>
     .clock-center {
@@ -15,13 +12,6 @@
       border: none;
       color: var(--fg);
       font: 0.5em/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg);
-      height: 90vh;
-      display: grid;
-      place-items: center;
     }
 
     .progress-clock {
