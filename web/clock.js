@@ -1,30 +1,20 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: star-of-david;
-
-<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, maximum-scale=1.0">
   <style>
-    * {
-      border: 0;
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    .clock-center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    :root {
-      --hue: 223;
-      --bg: hsl(var(--hue), 10%, 90%);
-      --fg: hsl(var(--hue), 10%, 10%);
-      font-size: calc(16px + (24 - 16) * (100vw - 320px) / (1280 - 320));
-    }
-
-    body,
     button {
+      margin: 0; /* 去除外边距 */
+      padding: 0; /* 去除内边距 */
+      border: none;
       color: var(--fg);
-      font: 1em/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font: 0.5em/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
@@ -157,82 +147,79 @@
 
     /* Dark theme */
     @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: hsl(var(--hue), 10%, 5%);
-        --fg: hsl(var(--hue), 10%, 90%);
-      }
-
       .progress-clock__ring {
-        opacity: 0.2;
+        opacity: 0.25;
       }
     }
   </style>
 </head>
 <body>
-  <div id="clock" class="progress-clock">
-    <button class="progress-clock__time-date" data-group="d" type="button">
-      <small data-unit="w">Sunday</small><br>
-      <span data-unit="mo">January</span>
-      <span data-unit="d">1</span>
-    </button>
-    <button class="progress-clock__time-digit" data-unit="h" data-group="h" type="button">12</button>
-    <span class="progress-clock__time-colon">:</span>
-    <button class="progress-clock__time-digit" data-unit="m" data-group="m" type="button">00</button>
-    <span class="progress-clock__time-colon">:</span>
-    <button class="progress-clock__time-digit" data-unit="s" data-group="s" type="button">00</button>
-    <span class="progress-clock__time-ampm" data-unit="ap">AM</span>
-    <svg class="progress-clock__rings" width="256" height="256" viewbox="0 0 256 256">
-      <defs>
-        <lineargradient id="pc-red" x1="1" y1="0.5" x2="0" y2="0.5">
-          <stop offset="0%" stop-color="hsl(343,90%,55%)">
-          </stop>
-          <stop offset="100%" stop-color="hsl(323,90%,55%)">
-          </stop>
-        </lineargradient>
-        <lineargradient id="pc-yellow" x1="1" y1="0.5" x2="0" y2="0.5">
-          <stop offset="0%" stop-color="hsl(43,90%,55%)">
-          </stop>
-          <stop offset="100%" stop-color="hsl(23,90%,55%)">
-          </stop>
-        </lineargradient>
-        <lineargradient id="pc-blue" x1="1" y1="0.5" x2="0" y2="0.5">
-          <stop offset="0%" stop-color="hsl(223,90%,55%)">
-          </stop>
-          <stop offset="100%" stop-color="hsl(203,90%,55%)">
-          </stop>
-        </lineargradient>
-        <lineargradient id="pc-purple" x1="1" y1="0.5" x2="0" y2="0.5">
-          <stop offset="0%" stop-color="hsl(283,90%,55%)">
-          </stop>
-          <stop offset="100%" stop-color="hsl(263,90%,55%)">
-          </stop>
-        </lineargradient>
-      </defs>
-      <!-- Days of Month -->
-      <g data-units="d">
-        <circle class="progress-clock__ring" cx="128" cy="128" r="74" fill="none" opacity="0.1" stroke="url(#pc-red)" stroke-width="12"></circle>
-        <circle class="progress-clock__ring-fill" data-ring="mo" cx="128" cy="128" r="74" fill="none" stroke="url(#pc-red)" stroke-width="12" stroke-dasharray="465 465" stroke-dashoffset="465" stroke-linecap="round" transform="rotate(-90,128,128)">
-        </circle>
-      </g>
-      <!-- Hours of Day -->
-      <g data-units="h">
-        <circle class="progress-clock__ring" cx="128" cy="128" r="90" fill="none" opacity="0.1" stroke="url(#pc-yellow)" stroke-width="12"></circle>
-        <circle class="progress-clock__ring-fill" data-ring="d" cx="128" cy="128" r="90" fill="none" stroke="url(#pc-yellow)" stroke-width="12" stroke-dasharray="565.5 565.5" stroke-dashoffset="565.5" stroke-linecap="round" transform="rotate(-90,128,128)">
-        </circle>
-      </g>
-      <!-- Minutes of Hour -->
-      <g data-units="m">
-        <circle class="progress-clock__ring" cx="128" cy="128" r="106" fill="none" opacity="0.1" stroke="url(#pc-blue)" stroke-width="12"></circle>
-        <circle class="progress-clock__ring-fill" data-ring="h" cx="128" cy="128" r="106" fill="none" stroke="url(#pc-blue)" stroke-width="12" stroke-dasharray="666 666" stroke-dashoffset="666" stroke-linecap="round" transform="rotate(-90,128,128)">
-        </circle>
-      </g>
-      <!-- Seconds of Minute -->
-      <g data-units="s">
-        <circle class="progress-clock__ring" cx="128" cy="128" r="122" fill="none" opacity="0.1" stroke="url(#pc-purple)" stroke-width="12"></circle>
-        <circle class="progress-clock__ring-fill" data-ring="m" cx="128" cy="128" r="122" fill="none" stroke="url(#pc-purple)" stroke-width="12" stroke-dasharray="766.5 766.5" stroke-dashoffset="766.5" stroke-linecap="round" transform="rotate(-90,128,128)">
-        </circle>
-      </g>
-    </svg>
+  <div class="clock-center">
+    <div id="clock" class="progress-clock">
+      <button class="progress-clock__time-date" data-group="d" type="button">
+        <small data-unit="w">Sunday</small><br>
+        <span data-unit="mo">January</span>
+        <span data-unit="d">1</span>
+      </button>
+      <button class="progress-clock__time-digit" data-unit="h" data-group="h" type="button">12</button>
+      <span class="progress-clock__time-colon">:</span>
+      <button class="progress-clock__time-digit" data-unit="m" data-group="m" type="button">00</button>
+      <span class="progress-clock__time-colon">:</span>
+      <button class="progress-clock__time-digit" data-unit="s" data-group="s" type="button">00</button>
+      <span class="progress-clock__time-ampm" data-unit="ap">AM</span>
+      <svg class="progress-clock__rings" width="256" height="256" viewbox="0 0 256 256">
+        <defs>
+          <lineargradient id="pc-red" x1="1" y1="0.5" x2="0" y2="0.5">
+            <stop offset="0%" stop-color="hsl(343,90%,55%)">
+            </stop>
+            <stop offset="100%" stop-color="hsl(323,90%,55%)">
+            </stop>
+          </lineargradient>
+          <lineargradient id="pc-yellow" x1="1" y1="0.5" x2="0" y2="0.5">
+            <stop offset="0%" stop-color="hsl(43,90%,55%)">
+            </stop>
+            <stop offset="100%" stop-color="hsl(23,90%,55%)">
+            </stop>
+          </lineargradient>
+          <lineargradient id="pc-blue" x1="1" y1="0.5" x2="0" y2="0.5">
+            <stop offset="0%" stop-color="hsl(223,90%,55%)">
+            </stop>
+            <stop offset="100%" stop-color="hsl(203,90%,55%)">
+            </stop>
+          </lineargradient>
+          <lineargradient id="pc-purple" x1="1" y1="0.5" x2="0" y2="0.5">
+            <stop offset="0%" stop-color="hsl(283,90%,55%)">
+            </stop>
+            <stop offset="100%" stop-color="hsl(263,90%,55%)">
+            </stop>
+          </lineargradient>
+        </defs>
+        <!-- Days of Month -->
+        <g data-units="d">
+          <circle class="progress-clock__ring" cx="128" cy="128" r="74" fill="none" opacity="0.1" stroke="url(#pc-red)" stroke-width="12"></circle>
+          <circle class="progress-clock__ring-fill" data-ring="mo" cx="128" cy="128" r="74" fill="none" stroke="url(#pc-red)" stroke-width="12" stroke-dasharray="465 465" stroke-dashoffset="465" stroke-linecap="round" transform="rotate(-90,128,128)">
+          </circle>
+        </g>
+        <!-- Hours of Day -->
+        <g data-units="h">
+          <circle class="progress-clock__ring" cx="128" cy="128" r="90" fill="none" opacity="0.1" stroke="url(#pc-yellow)" stroke-width="12"></circle>
+          <circle class="progress-clock__ring-fill" data-ring="d" cx="128" cy="128" r="90" fill="none" stroke="url(#pc-yellow)" stroke-width="12" stroke-dasharray="565.5 565.5" stroke-dashoffset="565.5" stroke-linecap="round" transform="rotate(-90,128,128)">
+          </circle>
+        </g>
+        <!-- Minutes of Hour -->
+        <g data-units="m">
+          <circle class="progress-clock__ring" cx="128" cy="128" r="106" fill="none" opacity="0.1" stroke="url(#pc-blue)" stroke-width="12"></circle>
+          <circle class="progress-clock__ring-fill" data-ring="h" cx="128" cy="128" r="106" fill="none" stroke="url(#pc-blue)" stroke-width="12" stroke-dasharray="666 666" stroke-dashoffset="666" stroke-linecap="round" transform="rotate(-90,128,128)">
+          </circle>
+        </g>
+        <!-- Seconds of Minute -->
+        <g data-units="s">
+          <circle class="progress-clock__ring" cx="128" cy="128" r="122" fill="none" opacity="0.1" stroke="url(#pc-purple)" stroke-width="12"></circle>
+          <circle class="progress-clock__ring-fill" data-ring="m" cx="128" cy="128" r="122" fill="none" stroke="url(#pc-purple)" stroke-width="12" stroke-dasharray="766.5 766.5" stroke-dashoffset="766.5" stroke-linecap="round" transform="rotate(-90,128,128)">
+          </circle>
+        </g>
+      </svg>
+    </div>
   </div>
   <script>  
     window.addEventListener("DOMContentLoaded", () => {
@@ -420,4 +407,3 @@
   </script>
   <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
 </body>
-</html>
