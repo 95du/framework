@@ -507,7 +507,7 @@ async function main() {
       `${rootUrl}img/icon/4qiao.png`
     );
     
-    const clockScript = await getCacheString('clock.html', 'https://gitcode.net/4qiao/framework/raw/master/web/clock.html');
+    const clockScript = await getCacheString('clock.html', `${rootUrl}web/clock.html`);
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
