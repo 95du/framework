@@ -55,7 +55,6 @@ async function main() {
     music: true,
     animation: true,
     appleOS: true,
-    useCache: false,
     fadeInUp: 0.7,
     angle: 90,
     solidColor: true,
@@ -508,6 +507,8 @@ async function main() {
       `${rootUrl}img/icon/4qiao.png`
     );
     
+    const clockScript = await getCacheString('clock.html', 'https://gitcode.net/4qiao/framework/raw/master/web/clock.html');
+    
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
       const content = await getCacheString(script, `${rootUrl}web/${script}`);
@@ -556,6 +557,7 @@ async function main() {
       --typing-indicator: #000;
       --separ: var(--checkbox);
       --coll-color: hsl(0, 0%, 97%);
+
     }
 
     .modal-dialog {
@@ -986,7 +988,7 @@ async function main() {
             </div>
             <div class="box-body">
               <div id="sign-in">
-                <button id="install" type="button" class="but radius jb-yellow btn-block">立即更新</button>
+                <button id="install" class="but radius jb-yellow btn-block">立即更新</button>
               </div>
             </div>
             <p class="social-separator separator separator-center">95度茅台</p>
@@ -996,7 +998,7 @@ async function main() {
       <script>
         setTimeout(() => {
           const loadingDiv = document.querySelector('.loading-right').style.display = 'none';
-        }, 1800);
+        }, 1500);
         
         const popupOpen = () => { $('.signin-loader').click() };
 
@@ -1059,10 +1061,10 @@ async function main() {
     
       function switchDrawerMenu() {
         const popup = document.querySelector(".popup-container");
-        const isOpen = !popup.style.height || popup.style.height !== '255px';
+        const isOpen = !popup.style.height || popup.style.height !== '255px'
     
         showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
-        popup.style.height = isOpen ? '255px' : '';
+        popup.style.height = isOpen ? '255px' : ''
         ${!avatarInfo ? 'isOpen && typeNextChar()' : ''}
       };
       
@@ -1097,7 +1099,7 @@ async function main() {
             ${avatarInfo
               ? `<img class="app-icon" src="${appImage}">  
                  <div class="app-desc">中国体育彩票，福利彩票</div>
-                 <button class="but"  id="shortcuts" onclick="hidePopup()">安装捷径版</button>`
+                 <button class="but" id="shortcuts" onclick="hidePopup()">安装捷径版</button>`
               : `<div class="sign-logo"><img src="${appleHub}"></div>`  
             }
           </div>
@@ -1126,10 +1128,7 @@ async function main() {
           if (seconds === 0) {
             countdownEl.innerHTML =\`
             <div class="svg-header">
-              <svg><circle class="circle" cx="10" cy="10" r="7.6" /> <polyline class="tick" points="6,10 8,12 12,6" /></svg>
-              <p class="svg-title">
-                读取完成
-              </p>
+              <svg><circle class="circle" cx="10" cy="10" r="7.6" /> <polyline class="tick" points="6,10 8,12 12,6" /></svg><p class="svg-title">读取完成</p>
             </div>\`;
             statusEl.textContent = ''
           } else {
@@ -1190,7 +1189,7 @@ async function main() {
       <style>${style}</style>
       </head>
       <body class="${themeColor}">
-        ${avatarInfo ? await mainMenuTop() : previewImage ? await previewImgHtml() : ''}
+        ${avatarInfo ? await mainMenuTop() : previewImage ? (settings.clock ? clockScript : await previewImgHtml()) : ''}
         <!-- 弹窗 -->
         ${await alertPopup()}
         ${await buttonPopup()}
@@ -1464,12 +1463,21 @@ async function main() {
   };
   
   
-  // 用户菜单
+  // 组件信息页
   const userMenu = (() => {
     const formItems = [
       {
         type: 'group',
         items: [
+          {
+            label: '炫酷时钟',
+            name: 'clock',
+            type: 'switch',
+            icon: {
+              name: 'clock.badge.fill',
+              color: '#F326A2'
+            }
+          },
           {
             label: '图片轮播',
             name: 'topStyle',
@@ -1553,7 +1561,7 @@ async function main() {
     return formItems;
   })();
   
-  // 设置菜单
+  // 设置菜单页
   const settingMenu = (() => {
     const formItems = [
       {
@@ -1812,8 +1820,8 @@ async function main() {
             type: 'select',
             multiple: false,
             icon: {
-              name: '8.circle',
-              color: '#00B9FF'
+              name: 'circle.grid.2x1.fill',
+              color: '#00C4B6'
             },
             options: [
               {
