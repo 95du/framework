@@ -1474,7 +1474,7 @@ async function main() {
             name: 'clock',
             type: 'switch',
             icon: {
-              name: 'clock.badge.fill',
+              name: 'button.programmable',
               color: '#F326A2'
             }
           },
