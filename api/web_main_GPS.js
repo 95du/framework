@@ -1116,10 +1116,7 @@ async function main() {
           if (seconds === 0) {
             countdownEl.innerHTML =\`
             <div class="svg-header">
-              <svg><circle class="circle" cx="10" cy="10" r="7.6" /> <polyline class="tick" points="6,10 8,12 12,6" /></svg>
-              <p class="svg-title">
-                读取完成
-              </p>
+              <svg><circle class="circle" cx="10" cy="10" r="7.6" /> <polyline class="tick" points="6,10 8,12 12,6" /></svg><p class="svg-title">读取完成</p>
             </div>\`;
             statusEl.textContent = ''
           } else {
@@ -1851,7 +1848,7 @@ async function main() {
             type: 'collapsible',
             name: 'user',
             icon: {
-              name: 'safari',
+              name: 'dot.radiowaves.up.forward',
               color: '#0FC4EA'
             },
             item: [
