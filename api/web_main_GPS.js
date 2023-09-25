@@ -523,6 +523,8 @@ async function main() {
       `${rootUrl}img/icon/4qiao.png`
     );
     
+    const clockScript = await getCacheString('clock.html', `${rootUrl}web/clock.html`);
+    
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
       const content = await getCacheString(script, `${rootUrl}web/${script}`);
@@ -1177,7 +1179,7 @@ async function main() {
       <style>${style}</style>
       </head>
       <body class="${themeColor}">
-        ${avatarInfo ? await mainMenuTop() : previewImage ? await previewImgHtml() : ''}
+        ${avatarInfo ? await mainMenuTop() : previewImage ? (settings.clock ? clockScript : await previewImgHtml()) : ''}
         <!-- 弹窗 -->
         ${await alertPopup()}
         ${await buttonPopup()}
@@ -1485,6 +1487,15 @@ async function main() {
       {
         type: 'group',
         items: [
+          {
+            label: '炫酷时钟',
+            name: 'clock',
+            type: 'switch',
+            icon: {
+              name: 'clock.badge.fill',
+              color: '#F326A2'
+            }
+          },
           {
             label: '图片轮播',
             name: 'topStyle',
