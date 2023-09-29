@@ -148,7 +148,11 @@ async function main() {
     // Header effectImage Row
     const effectRow = new UITableRow();
     effectRow.height = 70 * Device.screenScale();
-    const topImg = ['https://sweixinfile.hisense.com/media/M00/73/77/Ch4FyWPYOtmAYDgwAAU4xDsKUHY614.png', 'https://sweixinfile.hisense.com/media/M00/76/0D/Ch4FyWROupyAMi72AASytnX7Psw182.png']
+    const topImg = [  
+      'https://sweixinfile.hisense.com/media/M00/7C/42/Ch4FyWUW-MWAB61MAAR9TR38Sz4809.png',  
+      'https://sweixinfile.hisense.com/media/M00/7C/85/Ch4FyGUW-QWAO5r0AARvKLlfp8Q190.png',  
+      'https://sweixinfile.hisense.com/media/M00/7C/43/Ch4FyWUW_B-ANncuAASxKP5M9Cw250.png'
+    ];
     const items = topImg[Math.floor(Math.random()*topImg.length)];
     const effectImage = effectRow.addImageAtURL(items);
     effectImage.widthWeight = 0.4;
