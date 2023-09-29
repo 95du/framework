@@ -8,7 +8,7 @@ async function main() {
   const updateDate = '2023年08月12日'
   
   const pathName = '95du_GPS';
-  const widgetMessage = '组件功能: 通过GPS设备制作的中小号小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图 web 服务 Api 类型key，微信推送需要另外填入企业微信应用的Api信息。';
+  const widgetMessage = '功能: 通过GPS设备制作的中小号小组件，显示车辆实时位置、车速、最高时速、行车里程和停车时间等。推送实时静态地图及信息到微信。需申请高德地图 web 服务 Api 类型 key，微信推送需要另外填入企业微信应用的Api信息。';
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   
@@ -90,12 +90,12 @@ async function main() {
     if (fm.fileExists(file)) {
       return JSON.parse(fm.readString(file));
     } else {
-      settings = DEFAULT;
+      const settings = DEFAULT;
       writeSettings(settings);
     }
     return settings;
   };
-  settings = await getSettings(getSettingPath());
+  const settings = await getSettings(getSettingPath());
   
   // ScriptableRun
   const ScriptableRun = () => {
@@ -686,11 +686,6 @@ async function main() {
             case 'widgetMsg':
               switchDrawerMenu();
               break;
-            case 'recover':
-              resetContent();
-              alertWindow();
-              updateCountdown(3);
-              break;
           };
       
           invoke(item.type === 'page' ? 'itemClick' : name, item);
@@ -1100,45 +1095,6 @@ async function main() {
     };
     
     /**
-     * 恢复设置时弹出提示窗
-     * @returns {string}
-     * countdownEl.innerHTML = '<i class="fas fa-check"></i>'
-     */
-    const alertPopup = async () => {
-      return `
-      <div class="popup" id="popup">
-        <div class="countdown" id="countdown"></div>
-        <p id="status"></p>
-      </div>
-      <script>
-        const statusEl = document.getElementById('status');
-        
-        const updateCountdown = (seconds) => {
-          const countdownEl = document.getElementById('countdown');
-          if (seconds === 0) {
-            countdownEl.innerHTML =\`
-            <div class="svg-header">
-              <svg><circle class="circle" cx="10" cy="10" r="7.6" /> <polyline class="tick" points="6,10 8,12 12,6" /></svg><p class="svg-title">读取完成</p>
-            </div>\`;
-            statusEl.textContent = ''
-          } else {
-            countdownEl.textContent = seconds;
-            setTimeout(() => updateCountdown(seconds - 1), 1000);
-          }
-        };
-    
-        const resetContent = () => statusEl.textContent = '正在读取...'
-        
-        const alertWindow = () => {
-          const popupTips = document.getElementById("popup")  
-            .classList;
-          popupTips.add("show", "fd")
-          setTimeout(() => popupTips.remove("show", "fd"), 4000)
-        };
-      </script>`;
-    };
-    
-    /**
      * 组件效果图预览
      * 图片左右轮播
      * Preview Component Images
@@ -1181,7 +1137,6 @@ async function main() {
       <body class="${themeColor}">
         ${avatarInfo ? await mainMenuTop() : previewImage ? (settings.clock ? clockScript : await previewImgHtml()) : ''}
         <!-- 弹窗 -->
-        ${await alertPopup()}
         ${await buttonPopup()}
         <section id="settings">
         </section>
@@ -1384,13 +1339,15 @@ async function main() {
           ScriptableRun();
         }
       } else if ( code === 'recover' ) {
-        Timer.schedule(3800, false, async () => {
-          const index = await generateAlert('是否恢复设置 ？', '用户登录的信息将重置\n设置的数据将会恢复为默认', options = ['取消', '恢复']);
-          if ( index === 1 ) {
-            writeSettings(DEFAULT);
-            ScriptableRun();
-          }
-        });
+        const index = await generateAlert(  
+          '是否恢复设置 ？', 
+          '用户登录的信息将重置\n设置的数据将会恢复为默认',   
+          options = ['取消', '恢复']
+        );
+        if ( index === 1 ) {
+          writeSettings(DEFAULT);
+          ScriptableRun();
+        }
       } else if ( data?.input ) {
         await input(data);
       };
@@ -1783,7 +1740,7 @@ async function main() {
             type: 'cell',
             input: true,
             isAdd: true,
-            message: '填入png格式图片的URL',
+            message: '填入png格式的图片链接',
             desc: settings.carImg ? '已添加' : '默认',
             icon: {
               name: 'car.rear.fill',
@@ -1796,7 +1753,7 @@ async function main() {
             type: 'cell',
             input: true,
             isAdd: true,
-            message: '填入png格式的图标URL',
+            message: '填入png格式的图标链接',
             desc: settings.logo ? '已添加' : '默认',
             icon: {
               name: 'checkerboard.shield',
