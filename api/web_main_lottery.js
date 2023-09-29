@@ -70,12 +70,12 @@ async function main() {
     if (fm.fileExists(file)) {
       return JSON.parse(fm.readString(file));
     } else {
-      settings = DEFAULT;
+      const settings = DEFAULT;
       writeSettings(settings);
     }
     return settings;
   };
-  settings = await getSettings(getSettingPath());
+  const settings = await getSettings(getSettingPath());
   
   // ScriptableRun
   const ScriptableRun = () => {
@@ -689,11 +689,6 @@ async function main() {
             case 'widgetMsg':
               switchDrawerMenu();
               break;
-            case 'recover':
-              resetContent();
-              alertWindow();
-              updateCountdown(3);
-              break;
           };
       
           invoke(item.type === 'page' ? 'itemClick' : name, item);
@@ -1110,45 +1105,6 @@ async function main() {
     };
     
     /**
-     * 恢复设置时弹出提示窗
-     * @returns {string}
-     * countdownEl.innerHTML = '<i class="fas fa-check"></i>'
-     */
-    const alertPopup = async () => {
-      return `
-      <div class="popup" id="popup">
-        <div class="countdown" id="countdown"></div>
-        <p id="status"></p>
-      </div>
-      <script>
-        const statusEl = document.getElementById('status');
-        
-        const updateCountdown = (seconds) => {
-          const countdownEl = document.getElementById('countdown');
-          if (seconds === 0) {
-            countdownEl.innerHTML =\`
-            <div class="svg-header">
-              <svg><circle class="circle" cx="10" cy="10" r="7.6" /> <polyline class="tick" points="6,10 8,12 12,6" /></svg><p class="svg-title">读取完成</p>
-            </div>\`;
-            statusEl.textContent = ''
-          } else {
-            countdownEl.textContent = seconds;
-            setTimeout(() => updateCountdown(seconds - 1), 1000);
-          }
-        };
-    
-        const resetContent = () => statusEl.textContent = '正在读取...'
-        
-        const alertWindow = () => {
-          const popupTips = document.getElementById("popup")  
-            .classList;
-          popupTips.add("show", "fd")
-          setTimeout(() => popupTips.remove("show", "fd"), 4000)
-        };
-      </script>`;
-    };
-    
-    /**
      * 组件效果图预览
      * 图片左右轮播
      * Preview Component Images
@@ -1191,7 +1147,6 @@ async function main() {
       <body class="${themeColor}">
         ${avatarInfo ? await mainMenuTop() : previewImage ? (settings.clock ? clockScript : await previewImgHtml()) : ''}
         <!-- 弹窗 -->
-        ${await alertPopup()}
         ${await buttonPopup()}
         <section id="settings">
         </section>
@@ -1369,13 +1324,15 @@ async function main() {
           ScriptableRun();
         }
       } else if ( code === 'recover' ) {
-        Timer.schedule(3800, false, async () => {
-          const index = await generateAlert('是否恢复设置 ？', '用户登录的信息将重置\n设置的数据将会恢复为默认', options = ['取消', '恢复']);
-          if ( index === 1 ) {
-            writeSettings(DEFAULT);
-            ScriptableRun();
-          }
-        });
+        const index = await generateAlert(  
+          '是否恢复设置 ？', 
+          '用户登录的信息将重置\n设置的数据将会恢复为默认',   
+          options = ['取消', '恢复']
+        );
+        if ( index === 1 ) {
+          writeSettings(DEFAULT);
+          ScriptableRun();
+        }
       } else if ( data?.input ) {
         await input(data);
       };
