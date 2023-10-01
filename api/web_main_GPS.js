@@ -949,7 +949,7 @@ async function main() {
           <img src="${authorAvatar}" class="avatar"/>
         </span>
         <div class="interval"></div>
-        <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img">
+        <img src="${appleHub}" onclick="switchDrawerMenu()" class="custom-img" tabindex="0">
         <div id="store">
           <a class="rainbow-text but">Script Store</a>
         </div>
@@ -1866,7 +1866,7 @@ async function main() {
             }
           },
           {
-            label: '组件信息',
+            label: '偏好设置',
             name: 'infoPage',
             type: 'page',
             icon: {
@@ -1877,7 +1877,7 @@ async function main() {
             previewImage: true
           },
           {
-            label: '偏好设置',
+            label: '组件设置',
             name: 'preference',
             type: 'page',
             icon: {
