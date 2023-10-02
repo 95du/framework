@@ -990,8 +990,7 @@ async function main() {
         setTimeout(function() {
           $('${updateVersionNotice()}').click();
         }, 1200);
-        // https://zibll.com
-        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll', loading: '95du' };
+        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll' };
       </script>
       `
       // music
