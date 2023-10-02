@@ -70,12 +70,12 @@ async function main() {
     if (fm.fileExists(file)) {
       return JSON.parse(fm.readString(file));
     } else {
-      const settings = DEFAULT;
+      settings = DEFAULT;
       writeSettings(settings);
     }
     return settings;
   };
-  const settings = await getSettings(getSettingPath());
+  settings = await getSettings(getSettingPath());
   
   // ScriptableRun
   const ScriptableRun = () => {
