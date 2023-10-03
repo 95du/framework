@@ -1105,9 +1105,17 @@ async function main() {
      * This function displays images with left-right carousel effect.
      */
     previewImgHtml = async () => {
+      const pictureArr = [
+        `${rootUrl}img/picture/12123_0.png`,
+        `${rootUrl}img/picture/12123_1.png`,
+        `${rootUrl}img/picture/12123_2.png`,
+        `${rootUrl}img/picture/12123_3.png`
+      ]
+      const randomImageUrl = pictureArr[Math.floor(Math.random() * pictureArr.length)];
+      
       const previewImgUrl = [
-        'https://sweixinfile.hisense.com/media/M00/7C/43/Ch4FyWUW_B-ANncuAASxKP5M9Cw250.png',
-        'https://sweixinfile.hisense.com/media/M00/7C/85/Ch4FyGUW-QWAO5r0AARvKLlfp8Q190.png'
+        randomImageUrl,
+        `${rootUrl}img/picture/12123_4.png`
       ];
       
       if ( settings.topStyle ) {
