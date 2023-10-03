@@ -8,7 +8,7 @@ async function main() {
   const updateDate = '2023年10月03日'
 
   const pathName = '95du_12123';
-  const widgetMessage = '1，车辆检验有效期的日期和累积记分。<br>2，支持多车辆、多次违章( 随机显示 )。<br>3，点击违章信息可预览违章照片。<br>️注: Sign过期后点击组件上的车辆图片自动跳转到支付宝并获取新的Sign等。'
+  const widgetMessage = '1，车辆检验有效期的日期和累积记分。<br>2，支持多车辆、多次违章( 随机显示 )。<br>3，点击违章信息可预览违章照片。<br>️注：Sign过期后点击组件上的车辆图片自动跳转到支付宝并获取新的Sign等。'
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   
@@ -109,9 +109,7 @@ async function main() {
   
   // 预览组件
   const previewWidget = async () => {
-    //if (settings.token && settings.referer) {
-      await importModule(await webModule(scrName, scrUrl)).main();  
-    
+      await importModule(await webModule(scrName, scrUrl)).main();
   };
   
   /**
