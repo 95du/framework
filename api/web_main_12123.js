@@ -521,7 +521,7 @@ async function main() {
       `${rootUrl}img/picture/appleHub_${logoColor}.png`
     );
     
-    const aMapAppImage = await getCacheImage('appImage.png', `${rootUrl}img/icon/12123.png`);
+    const appImage = await getCacheImage('appImage.png', `${rootUrl}img/icon/12123.png`);
     
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage(
       'author.png',
@@ -1085,7 +1085,7 @@ async function main() {
         <div class="popup-widget blur-bg">
           <div class="box-body">
             ${avatarInfo
-              ? `<img class="app-icon" src="${aMapAppImage}">  
+              ? `<img class="app-icon" src="${appImage}">  
                  <div class="app-desc">获取verifyToken，Sign，Referer
                  </div>
                  <button id="getKey" class="but jb-green" onclick="hidePopup()">立即获取</button>`
