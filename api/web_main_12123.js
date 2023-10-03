@@ -1088,7 +1088,7 @@ async function main() {
               ? `<img class="app-icon" src="${aMapAppImage}">  
                  <div class="app-desc">获取verifyToken，Sign，Referer
                  </div>
-                 <button id="getKey" class="but jb-blue " onclick="hidePopup()">立即获取</button>`
+                 <button id="getKey" class="but jb-green" onclick="hidePopup()">立即获取</button>`
               : `<div class="sign-logo"><img src="${appleHub}"></div>`  
             }
           </div>
