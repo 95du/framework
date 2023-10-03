@@ -75,7 +75,7 @@ body {
   --blur-bg: rgba(255, 255, 255, 0.75);
 }
 
-a:focus,a:hover {
+a:focus, a:hover {
   color: var(--focus-color);
   outline: 0;
   text-decoration: none;
@@ -96,22 +96,22 @@ a:focus,a:hover {
   background: var(--blur-bg);
 }
 
-.box-body,.box-header {
+.box-body, .box-header {
   padding: 20px 20px 10px 20px;
 }
 
-.badg.radius,.but.radius,.radius>.but {
+.badg.radius, .but.radius, .radius>.but {
   border-radius: 50px;
   padding: .3em 1em;
 }
 
-.jb-blue,.jb-cyan,.jb-green,.jb-pink,.jb-purple,.jb-red,.jb-vip1,.jb-vip2,.jb-yellow {
+.jb-blue, .jb-cyan, .jb-green, .jb-pink, .jb-purple, .jb-red, .jb-vip1, .jb-vip2, .jb-yellow {
   color: var(--this-color);
   background: var(--this-bg);
   --this-color: #fff;
 }
 
-.jb-blue,.jb-cyan,.jb-green,.jb-pink,.jb-purple,.jb-red,.jb-vip1,.jb-vip2,.jb-yellow {
+.jb-blue, .jb-cyan, .jb-green, .jb-pink, .jb-purple, .jb-red, .jb-vip1, .jb-vip2, .jb-yellow {
   border: none;
 }
 
@@ -136,7 +136,7 @@ a:focus,a:hover {
 }
 
 .jb-green {
-  --this-bg: linear-gradient(135deg, #60e464 1%, #00CA00 100%);
+  --this-bg: #00CA00;
 }
 
 .jb-purple {
@@ -214,7 +214,7 @@ a:focus,a:hover {
   font-size: 14px;
 }
 
-.separator::after,.separator::before {
+.separator::after, .separator::before {
   content: "";
   background: var(--main-border-color);
   max-width: 23%;
