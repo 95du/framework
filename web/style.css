@@ -136,7 +136,7 @@ a:focus,a:hover {
 }
 
 .jb-green {
-  --this-bg: linear-gradient(135deg, #60e464 10%, #5cb85b 100%);
+  --this-bg: linear-gradient(135deg, #60e464 1%, #00CA00 100%);
 }
 
 .jb-purple {
