@@ -79,6 +79,8 @@ async function main() {
     appleOS: true,
     fadeInUp: 0.7,
     angle: 90,
+    carTop: -25,
+    carBottom: 0,
     rangeColor: '#FF6800',
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
@@ -1260,7 +1262,9 @@ async function main() {
           {hint: '车图容器宽度', value: String(settings['carStackWidth'])},
           {hint: '车图宽度', value: String(settings['carWidth'])},
           {hint: '车图高度', value: String(settings['carHeight'])},
-          {hint: '图下尺寸', value: String(settings['bottomSize'])}
+          {hint: '车图顶部空白', value: String(settings['carTop'])},
+          {hint: '车图底部空白', value: String(settings['carBottom'])},
+          {hint: '文字容器尺寸', value: String(settings['bottomSize'])}
         ]
       },
       async (inputArr) => {
@@ -1268,7 +1272,9 @@ async function main() {
         settings.carStackWidth = Number(inputArr[1].value);
         settings.carWidth = Number(inputArr[2].value);
         settings.carHeight = Number(inputArr[3].value);
-        settings.bottomSize = Number(inputArr[4].value);
+        settings.carTop = Number(inputArr[4].value);
+        settings.carBottom = Number(inputArr[5].value);
+        settings.bottomSize = Number(inputArr[6].value);
         
         writeSettings(settings);
         await generateAlert('设置成功', '桌面组件稍后将自动刷新', ['完成']);
