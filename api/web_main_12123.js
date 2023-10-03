@@ -8,7 +8,7 @@ async function main() {
   const updateDate = '2023年10月03日'
 
   const pathName = '95du_12123';
-  const widgetMessage = '1，车辆检验有效期的日期和累积记分。2，支持多车辆、多次违章( 随机显示 )。3，随机显示违章照片，点击地址可跳转至预览页。⚠️ Sign过期后点击组件上的车辆图片自动跳转到支付宝并获取新的Sign等。'
+  const widgetMessage = '1，车辆检验有效期的日期和累积记分。<br>2，支持多车辆、多次违章( 随机显示 )。<br>3，点击违章信息可预览违章照片。<br>️注: Sign过期后点击组件上的车辆图片自动跳转到支付宝并获取新的Sign等。'
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
   
@@ -1062,18 +1062,24 @@ async function main() {
       
       const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
-        const message = \`${widgetMessage}\`
-        chatMsg.textContent = "";
+        chatMsg.innerHTML = ""
         let currentChar = 0;
-    
+        const message = \`${widgetMessage}\`;
+
         function appendNextChar() {
           if (currentChar < message.length) {
-            chatMsg.textContent += message[currentChar++];
-            chatMsg.innerHTML += '<span class="typing-indicator"></span>';
+            if (message[currentChar] === '<') {
+              const closingBracketIndex = message.indexOf(">", currentChar);
+              if (closingBracketIndex !== -1) {
+                chatMsg.innerHTML += message.slice(currentChar, closingBracketIndex + 1);
+                currentChar = closingBracketIndex + 1;
+              }
+            } else {
+              chatMsg.innerHTML += message[currentChar++];
+            }
+      
             chatMsg.scrollTop = chatMsg.scrollHeight;
             setTimeout(appendNextChar, 30);
-          } else {
-            chatMsg.querySelectorAll(".typing-indicator").forEach(indicator => indicator.remove());
           }
         }
         appendNextChar();
