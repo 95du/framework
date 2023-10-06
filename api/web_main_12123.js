@@ -1109,12 +1109,7 @@ async function main() {
      * This function displays images with left-right carousel effect.
      */
     previewImgHtml = async () => {
-      const pictureArr = [
-        `${rootUrl}img/picture/12123_0.png`,
-        `${rootUrl}img/picture/12123_1.png`,
-        `${rootUrl}img/picture/12123_2.png`,
-        `${rootUrl}img/picture/12123_3.png`
-      ]
+      const pictureArr = Array.from({ length: 4 }, (_, index) => `${rootUrl}img/picture/12123_${index}.png`);
       const randomImageUrl = pictureArr[Math.floor(Math.random() * pictureArr.length)];
       
       const previewImgUrl = [
