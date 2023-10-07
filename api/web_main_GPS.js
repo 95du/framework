@@ -1059,9 +1059,9 @@ async function main() {
       
       const typeNextChar = () => {
         const chatMsg = document.querySelector(".chat-message");
-        const message = \`${widgetMessage}\`
         chatMsg.textContent = "";
         let currentChar = 0;
+        const message = \`${widgetMessage}\`
     
         function appendNextChar() {
           if (currentChar < message.length) {
@@ -1344,12 +1344,12 @@ async function main() {
           ScriptableRun();
         }
       } else if ( code === 'recover' ) {
-        const index = await generateAlert(  
+        const action = await generateAlert(  
           '是否恢复设置 ？', 
           '用户登录的信息将重置\n设置的数据将会恢复为默认',   
           options = ['取消', '恢复']
         );
-        if ( index === 1 ) {
+        if ( action === 1 ) {
           writeSettings(DEFAULT);
           ScriptableRun();
         }
@@ -1625,7 +1625,7 @@ async function main() {
             }
           },
           {
-            label: '精选渐变',
+            label: '内置渐变',
             name: 'gradient',
             type: 'select',
             multiple: true,
