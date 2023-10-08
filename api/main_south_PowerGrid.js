@@ -1,9 +1,9 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: light-brown; icon-glyph: tags;
-
+await 
 async function main() {
-  const version = '1.0.2'
+  const version = '1.0.3'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(
@@ -472,9 +472,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年09月14日\n增加设置头像弧度及已知问题',
+        desc: '2023年10月08日\n修复已知问题',
         val: version,
-        ver: 'Version 1.0.2'
+        ver: 'Version 1.0.3'
       },
       {
         icon: {
