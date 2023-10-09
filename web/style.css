@@ -247,6 +247,7 @@ a:focus, a:hover {
 .popup-content {
   text-align: center;
   font-size: 16px;
+  margin-bottom: 10px;
 }
 
 /** 头像呼吸光环旋转放大开始 **/
@@ -335,6 +336,58 @@ a:focus, a:hover {
   animation: changeColor 3s linear infinite;
 }
 /** 彩色昵称结束 **/
+
+/* 捐赠对话框开始 */
+.donate {  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+    
+.donate img {
+  max-width: 90%;
+}
+    
+.tab-content>.tab-pane {
+  display: none
+}
+    
+.tab-content>.active {
+  display: block
+}
+    
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.flip-horizontal {
+  animation: flipHorizontal 0.5s ease-in-out forwards;
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateY(-90deg);
+  opacity: 0;
+}
+
+@keyframes flipHorizontal {
+  0% {
+    transform: perspective(1000px) rotateY(90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: perspective(1000px) rotateY(0deg);
+    opacity: 1;
+  }
+}
+/* 捐赠对话框结束 */
 
 /* 预览的图片 */
 .preview-img {
