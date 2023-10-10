@@ -308,6 +308,10 @@ a:focus, a:hover {
   font-weight: 400;
 }
 
+.update-desc {
+  color: var(--update-desc);
+}
+
 .popup-content {
   text-align: center;
   font-size: 16px;
@@ -1029,6 +1033,7 @@ input[type="range"]:after {
     --typing-indicator: #fff;
     --separ: #333;
     --coll-color: hsl(0, 0%, 6%);
+    --update-desc: hsl(0, 0%, 70%);
   }
     
   .white-theme, .dark-theme {
