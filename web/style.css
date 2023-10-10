@@ -225,12 +225,16 @@ a:focus, a:hover {
 }
 
 /* 捐赠对话框开始 */
-.donate {  
+.donated, .donate {  
   display: flex;
   justify-content: center;
   align-items: center;
 }
-    
+
+.donated img {
+  max-width: 90%;
+}
+
 .donate img {
   max-width: 90%;
   transition: transform 0.5s ease-in-out;
