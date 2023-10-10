@@ -514,23 +514,17 @@ async function main() {
     // themeColor
     const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark-theme', 'white'] : ['white-theme', 'black'];
 
-    const appleHub = await getCacheImage(
-      `${logoColor}.png`,
-      `${rootUrl}img/picture/appleHub_${logoColor}.png`
-    );
+    const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
     
     const appImage = await getCacheImage('appImage.png', `${rootUrl}img/icon/12123.png`);
     
-    const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage(
-      'author.png',
-      `${rootUrl}img/icon/4qiao.png`
-    );
+    const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage('author.png', `${rootUrl}img/icon/4qiao.png`);
     
     const clockScript = await getCacheString('clock.html', `${rootUrl}web/clock.html`);
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
-      const content = await getCacheString(script, `${rootUrl}web/${script}`);
+      const content = await getCacheString(script, `${rootUrl}web/${script}?ver=7.4.2`);
       return `<script>${content}</script>`;
     }));
     
@@ -580,8 +574,8 @@ async function main() {
     .modal-dialog {
       position: relative;
       width: auto;
-      margin: ${screenSize < 926 ? '62px' : '78px'};
-      top: ${screenSize < 926 ? '-5%' : '-11%'};
+      margin: ${screenSize < 926 ? (avatarInfo ? '62px' : '50px') : (avatarInfo ? '78px' : '65px')};
+      top: ${screenSize < 926 ? (avatarInfo ? '-4.5%' : '-2%') : (avatarInfo ? '-8.5%' : '-4%')};
     }
     
     ${settings.animation ? `
@@ -983,7 +977,7 @@ async function main() {
                 <button id="install" type="button" class="but radius jb-yellow btn-block">立即更新</button>
               </div>
             </div>
-            <p class="social-separator separator separator-center">95度茅台</p>
+            <p class="social-separator separator separator-center" data-dismiss="modal">95度茅台</p>
           </div>
         </div>
       </div>
