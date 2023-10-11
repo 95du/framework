@@ -85,8 +85,7 @@ async function main() {
   
   async function userloginWeb() {  
     const login = await generateAlert(  
-      title = '中国电信余量',
-      message = `登录天翼账号中心，登录成功 Cookie 将储存到 iCloud`,
+      '中国电信余量', `登录天翼账号中心，登录成功 Cookie 将储存到 iCloud`,
       options = ['取消', '登录']
     );
     if (login === 1) {
@@ -98,7 +97,7 @@ async function main() {
     const webview = new WebView();
     await webview.loadURL(url);
     await webview.present();
-    cookie = await webview.evaluateJavaScript('document.cookie');
+    const cookie = await webview.evaluateJavaScript('document.cookie');
     setting.cookie = cookie.match(/(CZSSON=[a-zA-Z\d]+)/)[1];
     if (cookie.indexOf('configurable') === -1) {
       notify('Cookie获取/更新成功', setting.cookie);
