@@ -1,9 +1,9 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: cyan; icon-glyph: gas-pump;
-
+await 
 async function main() {
-  const version = '1.0.2'
+  const version = '1.0.3'
   const uri = Script.name();
   const F_MGR = FileManager.local();
   const path = F_MGR.joinPath(F_MGR.documentsDirectory(), "95duOilPrice");
@@ -402,9 +402,9 @@ async function main() {
         },
         type: 'ver',
         title: '当前版本',
-        desc: '2023年09月22日\n修复已知错误，优化用户体验',
-        val: '1.0.2',
-        ver: 'Version 1.0.2'
+        desc: '2023年10月12日\n修复已知错误，优化用户体验',
+        val: '1.0.3',
+        ver: 'Version 1.0.3'
       },
       {
         icon: {
