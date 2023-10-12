@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: cyan; icon-glyph: gas-pump;
-await 
+
 async function main() {
   const version = '1.0.3'
   const uri = Script.name();
@@ -666,7 +666,7 @@ async function main() {
   };
   // Version Update Notice  
   if ( version !== setting.version && setting.update === 'false' ) {
-    notify('全国油价', `新版本更新 Version ${version}  ( 可开启自动更新 )`);
+    notify('全国油价', `新版本更新 Version ${version}  ⚠️本次更新需要重置所有( 可开启自动更新 )`);
     setting.version = version;
     await saveSettings();
   };
