@@ -1,7 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: angle-double-left;
-
 .btn-block {
   display: block;
   width: 100%;
@@ -345,7 +344,7 @@ a:focus, a:hover {
 }
 /** 头像呼吸光环旋转放大结束 **/
 
-/** 彩色昵称开始 **/
+/** logo动画 **/
 .interval {
   margin-top: 10px;
 }
@@ -389,8 +388,7 @@ a:focus, a:hover {
   outline: none;
 }
 
-/** 彩色昵称开始 **/
-@keyframes changeColor {
+@keyframes changeColor { /* 昵称 */
   0%, 100% { color: rgb(0, 128, 255); }
   20% { color: rgb(8, 0, 255); }
   40% { color: rgb(128, 0, 255); }
@@ -404,7 +402,7 @@ a:focus, a:hover {
   font-size: 19px;
   animation: changeColor 3s linear infinite;
 }
-/** 彩色昵称结束 **/
+/* 彩色昵称结束 */
 
 /* 预览的图片 */
 .preview-img {
@@ -617,7 +615,7 @@ svg {
   height: 255px;
 }
 
-/* App */
+/* App image */
 .app-icon {
   width: 75px;
   height: 75px;
@@ -1023,6 +1021,7 @@ input[type="range"]:after {
   }
 }
 
+/* dark */
 @media (prefers-color-scheme: dark) {
   :root {
     --divider-color: rgba(84,84,88,0.65);
