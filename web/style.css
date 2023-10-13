@@ -69,7 +69,6 @@ body {
   --main-color: #4e5358;
   --main-shadow: rgba(116, 116, 116, 0.08);
   --main-bg-color: #fff;
-  --main-border-color: rgba(50, 50, 50, 0.06);
   --main-radius: 25px;
   --blur-bg: rgba(255, 255, 255, 0.75);
 }
@@ -206,16 +205,13 @@ a:focus, a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.separator-center {
   color: #86868b;
   font-size: 14px;
 }
 
-.separator::after, .separator::before {
+.separator::after,
+.separator::before {
   content: "";
-  background: var(--main-border-color);
   max-width: 23%;
   height: 1px;
   margin: 0 1em;
