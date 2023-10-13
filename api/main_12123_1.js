@@ -7,7 +7,7 @@
  * 获取Token作者: @FoKit
  * Version 1.3.5
  */
-
+await 
 async function main() {
   const uri = Script.name();
   const F_MGR = FileManager.local();
@@ -534,7 +534,8 @@ async function main() {
     barStack2.borderColor = new Color('#AB47BC', 0.7);
     barStack2.borderWidth = 2
     
-    const barIcon2 = SFSymbol.named('person.text.rectangle.fill');
+    const systemVersion =  Device.systemVersion().split('.')[0];
+    const barIcon2 = SFSymbol.named(systemVersion < 16 ? 'server.rack' : 'person.text.rectangle.fill');
     const barIconElement2 = barStack2.addImage(barIcon2.image);
     barIconElement2.imageSize = new Size(16, 16);
     barIconElement2.tintColor = Color.purple();
