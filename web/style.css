@@ -62,6 +62,15 @@
   opacity: .5;
 }
 
+.modal.fade .modal-dialog {
+  transform: scale(.9);
+  transition: transform .5s cubic-bezier(.32,.85,.45,1.18),width .3s;
+}
+
+.modal.in .modal-dialog {
+  transform: scale(1);
+}
+
 /* 弹窗 body f04494 */
 body {
   --theme-color: #ff6800;
@@ -174,29 +183,6 @@ a:focus, a:hover {
 
 .title-h-center:hover:before {
   width: 100px;
-}
-
-.modal {
-  padding-right: 0!important;
-}
-
-.modal-title {
-  font-size: 16px;
-}
-
-.modal-content {
-  border-radius: var(--main-radius);
-  background: var(--main-bg-color);
-  border: none;
-}
-
-.modal.fade .modal-dialog {
-  transform: scale(.9);
-  transition: transform .5s cubic-bezier(.32,.85,.45,1.18),width .3s;
-}
-
-.modal.in .modal-dialog {
-  transform: scale(1);
 }
 
 /* 弹窗底部线 */
