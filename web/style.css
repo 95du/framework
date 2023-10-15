@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: blue; icon-glyph: angle-double-left;
+// icon-color: teal; icon-glyph: angle-double-left;
 .btn-block {
   display: block;
   width: 100%;
@@ -1015,7 +1015,7 @@ input[type="range"]:after {
     --typing-indicator: #fff;
     --separ: #333;
     --coll-color: hsl(0, 0%, 6%);
-    --update-desc: hsl(0, 0%, 80%);
+    --update-desc: hsl(0, 0%, 85%);
   }
     
   .white-theme, .dark-theme {
