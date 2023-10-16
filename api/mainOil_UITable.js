@@ -261,7 +261,7 @@ async function main() {
         },
         type: 'input',
         title: '省份地区',
-        desc: '输入你所在的省份名称',
+        desc: '填入省份',
         val: '>',
         inp: 'province'
       },
