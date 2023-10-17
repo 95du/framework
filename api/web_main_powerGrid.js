@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: pink; icon-glyph: bolt;
-await 
+
 async function main() {
   const scriptName = '南方电网'
   const version = '1.0.0'
