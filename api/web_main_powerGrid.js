@@ -567,13 +567,13 @@ async function main() {
       animation: fadeInUp ${settings.fadeInUp}s ease-in-out;
     }` : ''}
     ${cssStyle}
-    
+      
     .app-icon {
       width: 280px;
       height: 90px;
       margin-bottom: -5px;
       object-fit: cover;
-      filter: brightness(15) saturate(25) hue-rotate(180deg);
+      filter: brightness(15) saturate(25) hue-rotate(260deg);
     }`;
     
     /**
@@ -749,7 +749,7 @@ async function main() {
       const content = `${avatarInfo  
         ? `<img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
           <div class="app-desc">南网在线 App ( 5 省 )</div>
-          <button class="but" id="alipay" onclick="hidePopup()">支付宝缴费</button>`  
+          <button class="but jb-green" onclick="hidePopup()" id="alipay">支付宝缴费</button>`  
         : `<div class="sign-logo"><img src="${appleHub}"></div>`    
       }`
       
