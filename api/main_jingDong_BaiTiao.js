@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: tags;
-await main()
+
 async function main() {
   const version = '1.0.3';  
   const uri = Script.name();
