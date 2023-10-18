@@ -492,7 +492,7 @@ async function main() {
 
     const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
 
-    const appImage = await getCacheImage('electric_0.png', `${rootUrl}img/icon/electric_0.png`);
+    const appImage = await getCacheImage('whiteGoose1.png', 'https://gitcode.net/4qiao/scriptable/raw/master/img/jingdong/whiteGoose1.png');
     
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage('author.png', `${rootUrl}img/icon/4qiao.png`);
     
@@ -564,11 +564,10 @@ async function main() {
     ${cssStyle}
     
     .app-icon {
-      width: 280px;
-      height: 90px;
-      margin-bottom: -5px;
+      width: 70px;
+      height: 80px;
+      margin-bottom: 15px;
       object-fit: cover;
-      filter: brightness(15) saturate(25) hue-rotate(180deg);
     }`;
     
     /**
@@ -727,8 +726,8 @@ async function main() {
         <div class="popup-widget blur-bg" role="dialog">
           <div class="box-body">
             <img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
-            <div class="app-desc">中国电信天翼账号中心</div>
-            <button class="but jb-green" onclick="hidePopup()" id="cookie">获取 Cookie</button>
+            <div class="app-desc">京东白条、等级</div>
+            <button class="but jb-green" onclick="hidePopup()" id="cookie">查看白条</button>
           </div>
         </div>
       </div>
