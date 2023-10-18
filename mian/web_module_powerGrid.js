@@ -2,15 +2,15 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-green; icon-glyph: phone-volume;
 /**
- * 组件名称: 中国电信余量
+ * 组件名称: 中国南方电网
  * 组件作者：95度茅台
  * 组件版本: Version 1.0.0
  * 更新日期: 2023-10-18 15:00
  * Telegram 交流群 https://t.me/+CpAbO_q_SGo2ZWE1
 */
 
-const scriptName = '95duTelecom';
-const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpblRlbGVjb21fVUlUYWJsZS5qcw==');
+const scriptName = '95du_powerGrid';
+const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvd2ViX21haW5fcG93ZXJHcmlkLmpz');
 
 const fm = FileManager.local();
 const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
