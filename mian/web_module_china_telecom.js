@@ -9,8 +9,8 @@
  * Telegram 交流群 https://t.me/+CpAbO_q_SGo2ZWE1
 */
 
-const scriptName = '95duTelecom';
-const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpblRlbGVjb21fVUlUYWJsZS5qcw==');
+const scriptName = '95du_telecom';
+const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvd2ViX21haW5fY2hpbmFfdGVsZWNvbS5qcw==');
 
 const fm = FileManager.local();
 const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
