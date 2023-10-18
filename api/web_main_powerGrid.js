@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: pink; icon-glyph: bolt;
+// icon-color: deep-green; icon-glyph: bolt;
 
 async function main() {
   const scriptName = '南方电网'
@@ -470,7 +470,7 @@ async function main() {
     if ( version !== settings.version && !settings.update && hours >= 12 || !settings.updateTime ) {
       settings.updateTime = Date.now();
       writeSettings(settings);
-      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，桌面组件布局调整，清除缓存再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
+      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，新的组件框架`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     if (settings.refresh) {  
@@ -497,7 +497,7 @@ async function main() {
 
     const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
 
-    const appImage = await getCacheImage('electricity.png', `${rootUrl}img/icon/electric.png`);
+    const appImage = await getCacheImage('electric_0.png', `${rootUrl}img/icon/electric_0.png`);
     
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage('author.png', `${rootUrl}img/icon/4qiao.png`);
     
@@ -566,7 +566,15 @@ async function main() {
     .list {
       animation: fadeInUp ${settings.fadeInUp}s ease-in-out;
     }` : ''}
-    ${cssStyle}`;
+    ${cssStyle}
+    
+    .app-icon {
+      width: 280px;
+      height: 90px;
+      margin-bottom: -5px;
+      object-fit: cover;
+      filter: brightness(15) saturate(25) hue-rotate(180deg);
+    }`;
     
     /**
      * 生成主菜单头像信息和弹窗的HTML内容
@@ -740,7 +748,7 @@ async function main() {
       
       const content = `${avatarInfo  
         ? `<img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
-          <div class="app-desc">中国南网在线 ( 5 省 )</div>
+          <div class="app-desc">南网在线 App ( 5 省 )</div>
           <button class="but" id="alipay" onclick="hidePopup()">支付宝缴费</button>`  
         : `<div class="sign-logo"><img src="${appleHub}"></div>`    
       }`
@@ -1208,7 +1216,7 @@ async function main() {
      * @param data
      * @returns {Promise<string>}
      */
-    const input = async ({ label, name, message, input, display, isAdd, other } = data) => {
+    const input = async ({ label, name, message, other } = data) => {
       await generateInputAlert({
         title: label,
         message: message,
@@ -1220,25 +1228,17 @@ async function main() {
         ]
       }, 
       async ([{ value }]) => {
-        if ( isAdd ) {
-          result = value.endsWith('.png') ? value : ''
-        } else if ( display ) {
-          result = /[a-z]+/.test(value) && /\d+/.test(value) ? value : ''
-        } else if (name === 'location') {
+        if (name === 'location') {
           result = value.match(/^0$|^1$/)[0] ? settings[name] = value : settings[name];
         } else {
           result = value === '0' || other ? value : !isNaN(value) ? Number(value) : settings[name];
         };
         
-        const isName = ['aMapkey', 'logo', 'carImg'].includes(name);
-        const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
-        
-        settings[name] = result;
-        if ( isAdd || display ) {
-          settings[`${name}_status`] = inputStatus;  
+        if ( result ) {
+          settings[name] = result;
+          writeSettings(settings);
+          innerTextElementById(name, result);  
         }
-        writeSettings(settings);
-        innerTextElementById(name, isName ? inputStatus : result);
       })
     };
           
@@ -1275,12 +1275,14 @@ async function main() {
           settings.code = 0
           notify('登录成功', result);
           writeSettings(settings);
+          innerTextElementById(name, result ? '已登录' : '未登录')
+          await previewWidget();
         }
       }
     };
     
     // appleOS 推送时段
-    const period = async ({ label, name, message, desc } = data) => {
+    const period = async ({ label, name, message } = data) => {
       await generateInputAlert({
         title: label,
         message: message,
@@ -1823,11 +1825,13 @@ async function main() {
             label: '登录电网',
             name: 'token',
             type: 'cell',
+            isAdd: true,
             icon: {
               name: 'bolt.fill',
               color: '#00C4B6'
             },
-            message: '输入token'
+            message: '输入token',
+            desc: settings.token ? '已登录' : '未登录'
           },
           {
             label: '重置所有',
