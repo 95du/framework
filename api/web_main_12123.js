@@ -84,6 +84,7 @@ async function main() {
     textDarkColor: '#FFFFFF',
     titleColor: '#000000',
     solidColor: '#FFFFFF',
+    useCache: true,
     carTop: -20,
     carBottom: 0,
     myPlate: '琼A·849A8',
@@ -1261,7 +1262,6 @@ async function main() {
         if (!settings.referer || !settings.verifyToken) {
           await previewWidget();
         }
-        innerTextElementById('token', settings.imgArr ? '已获取' : '未获取');
       }
     };
     
@@ -1802,6 +1802,16 @@ async function main() {
         type: 'group',
         items: [
           {
+            label: '使用缓存',
+            name: 'useCache',
+            type: 'switch',
+            icon: {
+              name: 'externaldrive.fill', 
+              color: '#F9A825'
+            },
+            default: true
+          },
+          {
             label: '自动更新',
             name: 'update',
             type: 'switch',
@@ -1848,7 +1858,7 @@ async function main() {
         type: 'group',
         items: [
           {
-            label: '车辆数据',
+            label: '交管信息',
             type: 'collapsible',
             name: 'user',
             icon: {
