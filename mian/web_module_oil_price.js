@@ -9,8 +9,8 @@
  * Telegram 交流群 https://t.me/+CpAbO_q_SGo2ZWE1
 */
 
-const scriptName = '95duOilPrice';
-const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbk9pbF9VSVRhYmxlLmpz');
+const scriptName = '95du_Oils';
+const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvd2ViX21haW5fb2lsX3ByaWNlLmpz');
 
 const fm = FileManager.local();
 const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
