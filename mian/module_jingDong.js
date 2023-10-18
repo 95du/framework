@@ -10,7 +10,7 @@
 */
 
 const scriptName = '95duJingDong';
-const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbl8lMjBqaW5nRG9uZ19CZWFuLmpz');
+const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvLS9yYXcvbWFzdGVyL2FwaS9tYWluX2ppbmdEb25nX0JlYW4uanM=');
 
 const fm = FileManager.local();
 const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
