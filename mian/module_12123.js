@@ -40,7 +40,7 @@ hostname = miniappcsfw.122.gov.cn
 hostname = %APPEND% miniappcsfw.122.gov.cn:8443 surge
 */
 
-const scriptName = '95du_12123';
+const scriptName = '95du12123';
 const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbl8xMjEyMy5qcw==');
 
 const fm = FileManager.local();
