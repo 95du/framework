@@ -495,7 +495,7 @@ async function main() {
 
     const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
 
-    const appImage = await getCacheImage('electric_0.png', `${rootUrl}img/icon/electric_0.png`);
+    const appImage = await getCacheImage('jingDong.png', `${rootUrl}img/icon/jingDong.png`);
     
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage('author.png', `${rootUrl}img/icon/4qiao.png`);
     
@@ -564,15 +564,7 @@ async function main() {
     .list {
       animation: fadeInUp ${settings.fadeInUp}s ease-in-out;
     }` : ''}
-    ${cssStyle}
-    
-    .app-icon {
-      width: 280px;
-      height: 90px;
-      margin-bottom: -5px;
-      object-fit: cover;
-      filter: brightness(15) saturate(25) hue-rotate(180deg);
-    }`;
+    ${cssStyle}`;
     
     /**
      * 生成主菜单头像信息和弹窗的HTML内容
