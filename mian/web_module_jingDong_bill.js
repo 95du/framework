@@ -9,8 +9,8 @@
  * Telegram 交流群 https://t.me/+CpAbO_q_SGo2ZWE1
 */
 
-const scriptName = '95duJingDong_Bill';
-const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvbWFpbkpEX0JpbGxfVUlUYWJsZS5qcw==');
+const scriptName = '95du_jd_Bill';
+const scriptUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci9hcGkvd2ViX21haW5famluZ0RvbmdfYmlsbC5qcw==');
 
 const fm = FileManager.local();
 const runPath = fm.joinPath(fm.documentsDirectory(), scriptName);
