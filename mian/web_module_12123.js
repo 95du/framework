@@ -2,10 +2,10 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: car;
 /**
- * 交管 12123
- * 小组件作者：95度茅台
+ * 支付宝小程序 交管12123
+ * 组件作者：95度茅台
  * 获取Token作者: @FoKit
- * 版本: Version 1.0.0
+ * 组件版本: Version 1.0.0
  * Telegram 交流群 https://t.me/+CpAbO_q_SGo2ZWE1
 
 获取Token重写:
