@@ -468,11 +468,6 @@ async function main() {
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，新的组件框架`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
-    if (settings.refresh) {  
-      const widget = new ListWidget();
-      widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(settings.refresh));
-    };
-    
     await appleOS();
     await previewWidget();
     return null;
