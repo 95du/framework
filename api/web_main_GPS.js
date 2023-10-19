@@ -189,7 +189,7 @@ async function main() {
   };
   
   const updateString = async () => {
-    const modulePath = fm.joinPath(mainPath, scrName);
+    const modulePath = fm.joinPath(cache, scrName);
     const codeString = await getString(scrUrl);
     if (codeString.indexOf('95度茅台') === -1) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
@@ -223,14 +223,14 @@ async function main() {
    * @param {Image} Base64 
    * @returns {string} - Request
    */
-  const useFileManager = ( options = {} ) => {
+  const useFileManager = ({ cacheTime } = {}) => {
     return {
       readString: (fileName) => {
         const filePath = fm.joinPath(cache, fileName);
-        if (fm.fileExists(filePath) && options.cacheTime) {
+        if (fm.fileExists(filePath) && cacheTime) {
           const createTime = fm.creationDate(filePath).getTime();
           const diff = (Date.now() - createTime) / ( 60 * 60 * 1000 );
-          if (diff >= options.cacheTime) {
+          if (diff >= cacheTime) {
             fm.remove(filePath);
             return null;
           }
@@ -490,11 +490,6 @@ async function main() {
       writeSettings(settings);
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题。\n需清除缓存或重置所有再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     }
-      
-    if (settings.refresh) {  
-      const widget = new ListWidget();
-      widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(settings.refresh));
-    }
     
     await appleOS();
     await previewWidget()
@@ -665,7 +660,7 @@ async function main() {
       </script>`;
       
       return `${avatar}
-        ${settings.music === true ? music : ''}`
+      ${settings.music ? music : ''}`
     };
     
     /**
@@ -1209,7 +1204,7 @@ async function main() {
      * @param data
      * @returns {Promise<string>}
      */
-    const input = async ({ label, name, message, input, display, isAdd, other } = data) => {
+    const input = async ({ label, name, message, display, isAdd, other } = data) => {
       await generateInputAlert({
         title: label,
         message: message,
@@ -1232,17 +1227,17 @@ async function main() {
         const isName = ['aMapkey', 'logo', 'carImg'].includes(name);
         const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
         
-        settings[name] = result;
         if ( isAdd || display ) {
           settings[`${name}_status`] = inputStatus;  
         }
+        settings[name] = result;
         writeSettings(settings);
         innerTextElementById(name, isName ? inputStatus : result);
       })
     };
           
     // 登录设备
-    const login = async ({ label, name, message, desc } = data) => {
+    const login = async ({ label, name, message } = data) => {
       await generateInputAlert({
         title: label,
         message: message,
@@ -1263,7 +1258,7 @@ async function main() {
     };
     
     // 推送微信
-    const weiChat = async ({ label, name, message, desc } = data) => {
+    const weiChat = async ({ label, name, message } = data) => {
       await generateInputAlert({
         title: label,
         message: message,
@@ -1314,7 +1309,7 @@ async function main() {
     };
     
     // appleOS 推送时段
-    const period = async ({ label, name, message, desc } = data) => {
+    const period = async ({ label, name, message } = data) => {
       await generateInputAlert({
         title: label,
         message: message,
@@ -1882,7 +1877,6 @@ async function main() {
                 label: '登录设备',
                 name: 'login',
                 type: 'cell',
-                display: true,
                 desc: settings.password && settings.imei ? '已登录' : '未登录',
                 message: '在设备上查看获取 imei 码\n原始密码为: 123456',
                 icon: 'externaldrive.badge.plus'
@@ -1901,7 +1895,6 @@ async function main() {
                 label: '推送微信',
                 name: 'weiChat',
                 type: 'cell',
-                display: true,
                 desc: settings.tokenUrl && settings.touser && settings.agentid ? '已添加' : '未添加',
                 message: '创建企业微信中的应用，获取access_token的链接，touser成员ID，agentid企业应用的ID',
                 icon: 'message'
