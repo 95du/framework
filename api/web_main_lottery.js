@@ -20,11 +20,11 @@ async function main() {
    */
   const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
+  const cache = fm.joinPath(mainPath, 'cache_path');
   
   const getSettingPath = () => {
-    if (!fm.fileExists(mainPath)) {
-      fm.createDirectory(mainPath);
-    }
+    if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
+    if (!fm.fileExists(cache)) fm.createDirectory(cache);
     return fm.joinPath(mainPath, 'setting.json');
   };
 
@@ -70,10 +70,10 @@ async function main() {
     if (fm.fileExists(file)) {
       return JSON.parse(fm.readString(file));
     } else {
-      settings = DEFAULT;
+      const settings = DEFAULT;
       writeSettings(settings);
+      return settings;
     }
-    return settings;
   };
   settings = await getSettings(getSettingPath());
   
@@ -105,14 +105,13 @@ async function main() {
    * @returns {string} - 目录路径
    */
   const getBgImage = () => {
-    const bgPath = fm.joinPath(fm.documentsDirectory(), '95duBackground');
-    return fm.joinPath(bgPath, Script.name() + '.jpg');
+    const bgImagePath = fm.joinPath(fm.documentsDirectory(), '95duBackground');
+    return fm.joinPath(bgImagePath, Script.name() + '.jpg');
   };
   
   // 获取头像图片
   const getAvatarImg = () => {
-    const avatarImgPath = fm.joinPath(fm.documentsDirectory(), pathName);
-    return fm.joinPath(avatarImgPath, 'userSetAvatar.png');
+    return fm.joinPath(cache, 'userSetAvatar.png');
   };
   
   /**
@@ -122,16 +121,12 @@ async function main() {
    * @param { string } module
    */
   const webModule = async (scriptName, url) => {
-    const modulePath = fm.joinPath(mainPath, scriptName);
-    if (settings.update === false && await fm.fileExists(modulePath)) {
+    const modulePath = fm.joinPath(cache, scriptName);
+    if (!settings.update && fm.fileExists(modulePath)) {
       return modulePath;
     } else {
-      const req = new Request(url);
-      const moduleJs = await req.load().catch(() => {
-        return null;
-      });
+      const moduleJs = await getCacheString(scriptName, url);
       if (moduleJs) {
-        fm.write(modulePath, moduleJs);
         return modulePath;
       }
     }
@@ -149,11 +144,8 @@ async function main() {
    * 版本更新时弹出窗口
    * @returns {String} string
    */
-  const updateVersionNotice = () => {
-    if ( version !== settings.version ) {
-      return '.signin-loader';
-    }
-    return null
+  const updateVerPopup = () => {
+    return settings.version !== version ? '.signin-loader' : (settings.loader !== '95du' ? '.signup-loader' : null);
   };
   
   /**
@@ -173,7 +165,7 @@ async function main() {
   };
   
   const updateString = async () => {
-    const modulePath = fm.joinPath(mainPath, scrName);
+    const modulePath = fm.joinPath(cache, scrName);
     const codeString = await getString(scrUrl);
     if (codeString.indexOf('95度茅台') === -1) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
@@ -207,13 +199,18 @@ async function main() {
    * @param {Image} Base64 
    * @returns {string} - Request
    */
-  const cache = fm.joinPath(mainPath, 'cache_path');
-  fm.createDirectory(cache, true);
-  
-  const useFileManager = () => {
+  const useFileManager = ({ cacheTime } = {}) => {
     return {
       readString: (fileName) => {
         const filePath = fm.joinPath(cache, fileName);
+        if (fm.fileExists(filePath) && cacheTime) {
+          const createTime = fm.creationDate(filePath).getTime();
+          const diff = (Date.now() - createTime) / ( 60 * 60 * 1000 );
+          if (diff >= cacheTime) {
+            fm.remove(filePath);
+            return null;
+          }
+        }
         return fm.readString(filePath);
       },
       writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),
@@ -235,7 +232,7 @@ async function main() {
   };
   
   const getCacheString = async (cssFileName, cssFileUrl) => {
-    const cache = useFileManager();
+    const cache = useFileManager({ cacheTime: 24 });
     const cssString = cache.readString(cssFileName);
     if (cssString) {
       return cssString;
@@ -464,19 +461,14 @@ async function main() {
   if (config.runsInWidget) {
     const hours = Math.floor((Date.now() - settings.updateTime) % (24 * 3600 * 1000) / (3600 * 1000));
     
-    if ( version !== settings.version && settings.update === false && hours >= 12 || !settings.updateTime ) {
+    if ( version !== settings.version && !settings.update && hours >= 12 || !settings.updateTime ) {
       settings.updateTime = Date.now();
       writeSettings(settings);
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，桌面组件布局调整，清除缓存再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
-    if (settings.refresh) {  
-      const widget = new ListWidget();
-      widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(settings.refresh));
-    };
-    
     await appleOS();
-    await previewWidget()
+    await previewWidget();
     return null;
   };
   
@@ -485,37 +477,32 @@ async function main() {
   const renderAppView = async (options) => {
     const {
       formItems = [],
-      $ = 'https://www.imarkr.com',
       avatarInfo,
       previewImage
     } = options;
-    
+
     // themeColor
     const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark-theme', 'white'] : ['white-theme', 'black'];
 
-    const appleHub = await getCacheImage(
-      `${logoColor}.png`,
-      `${rootUrl}img/picture/appleHub_${logoColor}.png`
-    );
+    const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
     
     const lotteryType = ['i64_ssq', 'i64_dlt', 'i48_pl3', 'i48_fc3d', 'i48_qxc', 'i48_7lc', 'i48_pl5'];
     const randomItem = lotteryType[Math.floor(Math.random() * lotteryType.length)];
     const appImage = await getCacheImage(`${randomItem}.png`, `https://r.ttyingqiu.com/r/images/kjgg/cpdt/${randomItem}.png`);
     
-    const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage(
-      'author.png',
-      `${rootUrl}img/icon/4qiao.png`
-    );
+    const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage('author.png', `${rootUrl}img/icon/4qiao.png`);
+    
+    const collectionCode = await getCacheImage('collection.png',`${rootUrl}img/picture/collectionCode.jpeg`);
     
     const clockScript = await getCacheString('clock.html', `${rootUrl}web/clock.html`);
     
     const scripts = ['jquery.min.js', 'bootstrap.min.js', 'loader.js'];
     const scriptTags = await Promise.all(scripts.map(async (script) => {
-      const content = await getCacheString(script, `${rootUrl}web/${script}`);
+      const content = await getCacheString(script, `${rootUrl}web/${script}?ver=7.4.2`);
       return `<script>${content}</script>`;
     }));
     
-    // Convert SFicon
+    // SFSymbol url icons
     for (const i of formItems) {
       for (const item of i.items) {
         if ( item.item ) {
@@ -552,19 +539,19 @@ async function main() {
       --card-background: #fff;
       --card-radius: 10px;
       --checkbox: #ddd;
-      --list-header-color: rgba(60,60,67,0.6);  
+      --list-header-color: rgba(60,60,67,0.6);
       --desc-color: #888;
       --typing-indicator: #000;
+      --update-desc: hsl(0, 0%, 20%);
       --separ: var(--checkbox);
       --coll-color: hsl(0, 0%, 97%);
-
     }
 
     .modal-dialog {
       position: relative;
       width: auto;
-      margin: ${screenSize < 926 ? '62px' : '78px'};
-      top: ${screenSize < 926 ? '-5%' : '-11%'};
+      margin: ${screenSize < 926 ? (avatarInfo ? '62px' : '50px') : (avatarInfo ? '78px' : '65px')};
+      top: ${screenSize < 926 ? (avatarInfo ? '-4.5%' : '-2%') : (avatarInfo ? '-8.5%' : '-4%')};
     }
     
     ${settings.animation ? `
@@ -582,7 +569,228 @@ async function main() {
       object-fit: cover;
     }`;
     
-    // Java Script
+    /**
+     * 生成主菜单头像信息和弹窗的HTML内容
+     * @returns {string} 包含主菜单头像信息、弹窗和脚本标签的HTML字符串
+     */
+    const mainMenuTop = async () => {
+      const avatar = `
+      <div class="avatarInfo">
+        <span class="signup-loader">
+          <img src="${authorAvatar}" class="avatar"/>
+        </span>
+        <a class="signin-loader"></a>
+        <div class="interval"></div>
+        <div class="loading-cont" onclick="switchDrawerMenu()">
+          <img src="${appleHub}" class="custom-img" tabindex="0">
+          <div class="loading-right"></div>
+        </div>
+        <div id="store">
+          <a class="rainbow-text but">Script Store</a>
+        </div>
+      </div>
+      <!-- 对话框 -->
+      <div class="modal fade" id="u_sign" role="dialog">
+        <div class="modal-dialog">
+          <div class="zib-widget blur-bg relative">
+            <a href="#tab-sign-up" data-toggle="tab"></a>
+            <div class="box-body sign-logo"><img src="${appleHub}">  
+            </div>
+            <div class="tab-content">
+              <!-- 版本信息 -->
+              <div class="tab-pane fade active in" id="tab-sign-in">
+                <div class="box-body">
+                  <div href="#tab-sign-up" data-toggle="tab" class="fa-2x title-h-center popup-title">
+                    ${scriptName}
+                  </div>
+                  <a class="popup-content update-desc">
+                     <div class="but">Version ${version}</div>
+                  </a><br>
+                  <div class="form-label-title update-desc"> <li>${updateDate}</li> <li>修复已知问题</li> <li>性能优化，改进用户体验</li>
+                  </div>
+                </div>
+                <div class="box-body" ><button id="install" class="but radius jb-yellow btn-block">立即更新</button>
+                </div>
+              </div>
+              <!-- 捐赠 -->
+              <div class="tab-pane fade-in" id="tab-sign-up">
+                <a class="donate flip-horizontal" href="#tab-sign-in" data-toggle="tab"><img src="${collectionCode}">  
+                </a>
+              </div>
+            </div>
+            <p class="separator" data-dismiss="modal">95度茅台</p>
+          </div>
+        </div>
+      </div>
+      <script>
+        setTimeout(() => {
+          const loadingDiv = document.querySelector('.loading-right').style.display = 'none';
+        }, 1500);
+        
+        const popupOpen = () => { $('.signin-loader').click() };
+        
+        window.onload = () => {
+          setTimeout(() => {
+            $('${updateVerPopup()}').click();
+          }, 1600);
+        };
+        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll' };
+      </script>
+      `
+      // music
+      const songId = [
+        '8fk9B72BcV2',
+        '8duPZb8BcV2',
+        '6pM373bBdV2',
+        '6NJHhd6BeV2'
+      ];
+      const randomId = songId[Math.floor(Math.random() * songId.length)];
+      const music = `
+      <iframe data-src="https://t1.kugou.com/song.html?id=${randomId}" class="custom-iframe" frameborder="0" scrolling="auto">
+      </iframe>
+      <script>
+        const iframe = document.querySelector('.custom-iframe');
+        iframe.src = iframe.getAttribute('data-src');
+      </script>`;
+      
+      return `${avatar}
+      ${settings.music ? music : ''}`
+    };
+    
+    /**
+     * Donated Author
+     * weChat pay
+     */
+    const donatePopup = async () => {
+      return `        
+      <a class="signin-loader"></a>
+      <div class="modal fade" id="u_sign" role="dialog">
+        <div class="modal-dialog">
+          <div class="zib-widget blur-bg relative">
+            <div id="appleHub" class="box-body sign-logo">
+              <img src="${appleHub}">
+            </div>
+            <a class="but donated">
+              <img src="${collectionCode}">
+            </a>
+            <p class="but separator">95度茅台</p>
+          </div>
+        </div>
+      </div>
+      <script>
+        const popupOpen = () => { $('.signin-loader').click() };
+        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll' };
+      </script>`
+    };
+    
+    /**
+     * 底部弹窗信息
+     * 创建底部弹窗的相关交互功能
+     * 当用户点击底部弹窗时，显示/隐藏弹窗动画，并显示预设消息的打字效果。
+     */
+    const buttonPopup = async () => {
+      const js = `
+      const menuMask = document.querySelector(".popup-mask")
+      const showMask = async (callback, isFadeIn) => {
+        const duration = isFadeIn ? 200 : 300;
+        const startTime = performance.now();
+    
+        const animate = async (currentTime) => {
+          const elapsedTime = currentTime - startTime;
+          menuMask.style.opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration;
+          if (elapsedTime < duration) requestAnimationFrame(animate);
+          else callback?.();
+        };
+    
+        menuMask.style.display = "block";
+        await new Promise(requestAnimationFrame);
+        animate(performance.now());
+      };
+    
+      function switchDrawerMenu() {
+        const popup = document.querySelector(".popup-container");
+        const isOpen = !popup.style.height || popup.style.height !== '255px'
+    
+        showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
+        popup.style.height = isOpen ? '255px' : ''
+        ${!avatarInfo ? 'isOpen && typeNextChar()' : ''}
+      };
+      
+      const hidePopup = () => {
+        setTimeout(() => switchDrawerMenu(), 300);
+      };
+      
+      const typeNextChar = () => {
+        const chatMsg = document.querySelector(".chat-message");
+        chatMsg.textContent = "";
+        let currentChar = 0;
+        const message = \`${widgetMessage}\`
+    
+        function nextChar() {
+          if (currentChar < message.length) {
+            chatMsg.textContent += message[currentChar++];
+            chatMsg.innerHTML += '<span class="typing-indicator"></span>';
+            chatMsg.scrollTop = chatMsg.scrollHeight;
+            setTimeout(nextChar, 30);
+          } else {
+            chatMsg.querySelectorAll(".typing-indicator").forEach(indicator => indicator.remove());
+          }
+        }
+        nextChar();
+      }`;
+      
+      const content = `${avatarInfo  
+        ? `<img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
+          <div class="app-desc">中国体育彩票，福利彩票</div>
+          <button class="but" id="shortcuts" onclick="hidePopup()">安装捷径版</button>`  
+        : `<div class="sign-logo"><img src="${appleHub}"></div>`    
+      }`
+      
+      return `
+      <div class="popup-mask" onclick="switchDrawerMenu()"></div>
+      <div class="popup-container">
+        <div class="popup-widget blur-bg" role="dialog">
+          <div class="box-body">
+            ${content}
+          </div>
+          <div class="chat-message"></div>
+        </div>
+      </div>
+      <script>${js}</script>`;
+    };
+    
+    /**
+     * 组件效果图预览
+     * 图片左右轮播
+     * Preview Component Images
+     * This function displays images with left-right carousel effect.
+     */
+    previewImgHtml = async () => {
+      const previewImgUrl = [
+        `${rootUrl}img/picture/lottery_dark.png`,
+        `${rootUrl}img/picture/lottery_light.png`
+      ];
+      
+      if ( settings.topStyle ) {
+        const previewImgs = await Promise.all(previewImgUrl.map(async (item) => {
+          const imgName = decodeURIComponent(item.substring(item.lastIndexOf("/") + 1));
+          const previewImg = await getCacheImage(imgName, item);
+          return previewImg;
+        }));
+        return `<div id="scrollBox">
+          <div id="scrollImg">
+            ${previewImgs.map(img => `<img src="${img}">`).join('')}
+          </div>
+        </div>`; 
+      } else {
+        const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
+        const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
+        const previewImg = await getCacheImage(imgName, randomUrl);
+        return `<img id="store" src="${previewImg}" class="preview-img">`
+      }
+    };
+    
+    // =======  js  =======//
     const js =`
     (() => {
     const settings = ${JSON.stringify({
@@ -680,6 +888,9 @@ async function main() {
         label.addEventListener('click', (e) => {
           switch (name) {
             case 'version':
+              popupOpen();
+              break;
+            case 'donate':
               popupOpen();
               break;
             case 'setAvatar':
@@ -934,226 +1145,35 @@ async function main() {
       btn.addEventListener('click', (e) => { toggleLoading(e) });
     });
     
-    ['store', 'install', 'shortcuts'].forEach(id => {
+    ['store', 'install', 'app', 'shortcuts'].forEach(id => {
       const elementById = document.getElementById(id).addEventListener('click', () => invoke(id));
     });
     
     })()`;
-  
-  
-    /**
-     * 生成主菜单头像信息和弹窗的HTML内容
-     * @returns {string} 包含主菜单头像信息、弹窗和脚本标签的HTML字符串
-     */
-    const mainMenuTop = async () => {
-      const avatar = `
-      <div class="avatarInfo">
-        <span class="signin-loader">
-          <img src="${authorAvatar}" class="avatar"/>
-        </span>
-        <div class="interval"></div>
-        <div class="loading-cont" onclick="switchDrawerMenu()">
-          <img src="${appleHub}" class="custom-img" tabindex="0">
-          <div class="loading-right"></div>
-        </div>
-        <div id="store">
-          <a class="rainbow-text but">Script Store</a>
-        </div>
-      </div>`;
-      
-      const popup = `      
-      <div class="modal fade" id="u_sign" role="dialog">
-        <div class="modal-dialog">
-          <div class="zib-widget blur-bg relative">
-            <div id="appleHub" class="box-body sign-logo">
-              <img src="${appleHub}">
-            </div>
-            <div class="box-body">
-              <div class="title-h-center popup-title">
-                ${scriptName}
-              </div>
-              <a id="notify" class="popup-content">
-                <div class="but">
-                  Version ${version}
-                </div>
-              </a><br>
-              <div class="form-label-title"> <li>${updateDate}</li>
-                <li>修复已知问题</li> <li>性能优化，改进用户体验</li>
-              </div>
-            </div>
-            <div class="box-body">
-              <div id="sign-in">
-                <button id="install" class="but radius jb-yellow btn-block">立即更新</button>
-              </div>
-            </div>
-            <p class="social-separator separator separator-center">95度茅台</p>
-          </div>
-        </div>
-      </div>
-      <script>
-        setTimeout(() => {
-          const loadingDiv = document.querySelector('.loading-right').style.display = 'none';
-        }, 1500);
-        
-        const popupOpen = () => { $('.signin-loader').click() };
-
-        setTimeout(function() {
-          $('${updateVersionNotice()}').click();
-        }, 1200);
-        window._win = { uri: 'https://bbs.applehub.cn/wp-content/themes/zibll' };
-      </script>
-      `
-      // music
-      const songId = [
-        '8fk9B72BcV2',
-        '8duPZb8BcV2',
-        '6pM373bBdV2',
-        '6NJHhd6BeV2'
-      ];
-      const randomId = songId[Math.floor(Math.random() * songId.length)];
-      const music = `
-      <iframe data-src="https://t1.kugou.com/song.html?id=${randomId}" class="custom-iframe" frameborder="0" scrolling="auto">
-      </iframe>
-      <script>
-        const iframe = document.querySelector('.custom-iframe');
-        iframe.src = iframe.getAttribute('data-src');
-      </script>`;
-      
-      return `
-        ${avatar}
-        ${settings.music === true ? music : ''}
-        ${popup}
-        ${scriptTags.join('\n')}
-      `
-    };
-    
-    /**
-     * 底部弹窗信息
-     * 创建底部弹窗的相关交互功能
-     * 当用户点击底部弹窗时，显示/隐藏弹窗动画，并显示预设消息的打字效果。
-     */
-    const buttonPopup = async () => {
-      const js = `
-      const menuMask = document.querySelector(".popup-mask");
-    
-      const showMask = async (callback, isFadeIn) => {
-        const duration = isFadeIn ? 200 : 300;
-        const startTime = performance.now();
-    
-        const animate = ( currentTime ) => {
-          const elapsedTime = currentTime - startTime;
-          menuMask.style.opacity = isFadeIn ? elapsedTime / duration : 1 - elapsedTime / duration;
-          if (elapsedTime < duration) requestAnimationFrame(animate);
-          else callback?.();
-        };
-    
-        menuMask.style.display = "block";
-        await new Promise(requestAnimationFrame);
-        animate(performance.now());
-      };
-    
-      function switchDrawerMenu() {
-        const popup = document.querySelector(".popup-container");
-        const isOpen = !popup.style.height || popup.style.height !== '255px'
-    
-        showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
-        popup.style.height = isOpen ? '255px' : ''
-        ${!avatarInfo ? 'isOpen && typeNextChar()' : ''}
-      };
-      
-      function hidePopup() {
-        setTimeout(() => switchDrawerMenu(), 300);
-      };
-      
-      const typeNextChar = () => {
-        const chatMsg = document.querySelector(".chat-message");
-        chatMsg.textContent = "";
-        let currentChar = 0;
-        const message = \`${widgetMessage}\`
-    
-        function appendNextChar() {
-          if (currentChar < message.length) {
-            chatMsg.textContent += message[currentChar++];
-            chatMsg.innerHTML += '<span class="typing-indicator"></span>';
-            chatMsg.scrollTop = chatMsg.scrollHeight;
-            setTimeout(appendNextChar, 30);
-          } else {
-            chatMsg.querySelectorAll(".typing-indicator").forEach(indicator => indicator.remove());
-          }
-        }
-        appendNextChar();
-      }`;
-    
-      return `
-      <div class="popup-mask" onclick="switchDrawerMenu()"></div>
-      <div class="popup-container">
-        <div class="popup-widget blur-bg">
-          <div class="box-body">
-            ${avatarInfo
-              ? `<img class="app-icon" src="${appImage}">  
-                 <div class="app-desc">中国体育彩票，福利彩票</div>
-                 <button class="but" id="shortcuts" onclick="hidePopup()">安装捷径版</button>`
-              : `<div class="sign-logo"><img src="${appleHub}"></div>`  
-            }
-          </div>
-          <div class="chat-message"></div>
-        </div>
-      </div>
-      <script>${js}</script>`;
-    };
-    
-    /**
-     * 组件效果图预览
-     * 图片左右轮播
-     * Preview Component Images
-     * This function displays images with left-right carousel effect.
-     */
-    previewImgHtml = async () => {
-      const previewImgUrl = [
-        `${rootUrl}img/picture/lottery_dark.png`,
-        `${rootUrl}img/picture/lottery_light.png`
-      ];
-      
-      if ( settings.topStyle ) {
-        const previewImgs = await Promise.all(previewImgUrl.map(async (item) => {
-          const imgName = decodeURIComponent(item.substring(item.lastIndexOf("/") + 1));
-          const previewImg = await getCacheImage(imgName, item);
-          return previewImg;
-        }));
-        return `<div id="scrollBox">
-          <div id="scrollImg">
-            ${previewImgs.map(img => `<img src="${img}">`).join('')}
-          </div>
-        </div>`; 
-      } else {
-        const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
-        const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
-        const previewImg = await getCacheImage(imgName, randomUrl);
-        return `<img id="store" src="${previewImg}" class="preview-img">`
-      }
-    };
     
     // =======  HTML  =======//
     const html =`
     <html>
       <head>
         <meta name='viewport' content='width=device-width, user-scalable=no, viewport-fit=cover'>
-        <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
+        <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_3772663_kmo790s3yfq.css" type="text/css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       <style>${style}</style>
       </head>
       <body class="${themeColor}">
         ${avatarInfo ? await mainMenuTop() : previewImage ? (settings.clock ? clockScript : await previewImgHtml()) : ''}
         <!-- 弹窗 -->
+        ${previewImage ? await donatePopup() : ''}
         ${await buttonPopup()}
         <section id="settings">
         </section>
         <script>${js}</script>
+        ${scriptTags.join('\n')}
       </body>
     </html>`;
   
     const webView = new WebView();
-    await webView.loadHTML(html, $);
+    await webView.loadHTML(html);
     
     /**
      * 修改特定 form 表单项的文本
@@ -1186,7 +1206,7 @@ async function main() {
      * @param data
      * @returns {Promise<string>}
      */
-    const input = async ({ label, name, message, display, isAdd, desc } = data) => {
+    const input = async ({ label, name, message, other } = data) => {
       await generateInputAlert({
         title: label,
         message: message,
@@ -1198,69 +1218,18 @@ async function main() {
         ]
       }, 
       async ([{ value }]) => {
-        if ( isAdd ) {
-          result = value.endsWith('.png') ? value : ''
-        } else if ( display ) {
-          result = /[a-z]+/.test(value) && /\d+/.test(value) ? value : ''
-        } else {
-          result = value === '0' ? value : !isNaN(value) ? Number(value) : settings[name];
-        };
-        
-        const isName = ['aMapkey', 'logo', 'carImg'].includes(name);
-        const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
-        
-        settings[name] = result;
-        settings[`${name}_status`] = inputStatus;
-        writeSettings(settings);
-        innerTextElementById(name, isName ? inputStatus : result);
+        const result = value === '0' || other ? value : !isNaN(value) ? Number(value) : settings[name];
+
+        if ( result ) {
+          settings[name] = result;
+          writeSettings(settings);
+          innerTextElementById(name, result);  
+        }
       })
-    };
-          
-    // 登录设备
-    const login = async ({ label, name, message, desc } = data) => {
-      await generateInputAlert({
-        title: label,
-        message: message,
-        options: [
-          { hint: 'imei', value: String(settings['imei']) },
-          { hint: '密码', value: String(settings['password']) }
-        ]
-      }, 
-      async (inputArr) => {
-        const [imei, password] = inputArr.map(({ value }) => value);
-        settings.imei = !imei ? '' : Number(imei);
-        settings.password = !password ? '' : Number(password);
-        
-        writeSettings(settings);
-        innerTextElementById(name, imei && password ? '已登录' : '未登录')
-        await previewWidget();
-      });
-    };
-    
-    // 推送微信
-    const weiChat = async ({ label, name, message, desc } = data) => {
-      await generateInputAlert({
-        title: label,
-        message: message,
-        options: [
-          { hint: 'access_token', value: settings['tokenUrl'] },
-          { hint: 'touser成员id', value: settings['touser'] },  
-          { hint: 'agentid应用id', value: String(settings['agentid']) }
-        ]
-      }, 
-      async (inputArr) => {
-        const [tokenUrl, touser, agentid] = inputArr.map(({ value }) => value);
-        settings.tokenUrl = tokenUrl ?? ''
-        settings.touser = touser ? touser : ''
-        settings.agentid = agentid ? Number(agentid) : ''
-          
-        writeSettings(settings);
-        innerTextElementById(name, tokenUrl && touser && agentid ? '已添加' : '未添加');
-      });
     };
     
     // appleOS 推送时段
-    const period = async ({ label, name, message, desc } = data) => {
+    const period = async ({ label, name, message } = data) => {
       await generateInputAlert({
         title: label,
         message: message,
@@ -1331,6 +1300,15 @@ async function main() {
           writeSettings(DEFAULT);
           ScriptableRun();
         }
+      } else if (code === 'app') {
+        Timer.schedule(350, false, async () => {
+          await input({
+            label: '捐赠弹窗',
+            name: 'loader',
+            other: true,
+            message: '输入 ( 95du ) 即可关闭捐赠弹窗'
+          })
+        });
       } else if ( data?.input ) {
         await input(data);
       };
@@ -1356,12 +1334,6 @@ async function main() {
           break;
         case 'updateCode':
           await updateVersion();
-          break;
-        case 'login':
-          await login(data);
-          break;
-        case 'weiChat':
-          await weiChat(data);
           break;
         case 'period':
           await period(data);
@@ -1464,6 +1436,12 @@ async function main() {
             message: '设置时长为0时，列表将无动画效果\n( 单位: 秒 )',
             desc: settings.fadeInUp
           },
+          
+        ]
+      },
+      {
+        type: 'group',
+        items: [
           {
             label: '组件简介',
             name: 'widgetMsg',
@@ -1471,6 +1449,15 @@ async function main() {
             icon: {
               name: 'doc.text.image',
               color: '#43CD80'
+            }
+          },
+          {
+            label: '组件商店',
+            name: 'store',
+            type: 'cell',
+            icon: {
+              name: 'bag.fill',  
+              color: 'FF6800'
             }
           }
         ]
@@ -1502,13 +1489,10 @@ async function main() {
         type: 'group',
         items: [
           {
-            label: '组件商店',
-            name: 'store',
-            type: 'cell',
-            icon: {
-              name: 'bag.fill',  
-              color: 'FF6800'
-            }
+            name: "donate",
+            label: "打赏作者",
+            type: "cell",
+            icon: 'https://gitcode.net/4qiao/scriptable/raw/master/img/icon/weChat.png'
           }
         ]
       }
