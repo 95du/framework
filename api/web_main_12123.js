@@ -489,7 +489,7 @@ async function main() {
     if ( version !== settings.version && !settings.update && hours >= 12 || !settings.updateTime ) {
       settings.updateTime = Date.now();
       writeSettings(settings);
-      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题。\n需清除缓存再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
+      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，使用新的框架。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     await appleOS();
