@@ -492,11 +492,6 @@ async function main() {
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题。\n需清除缓存再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
-    if (settings.refresh) {  
-      const widget = new ListWidget();
-      widget.refreshAfterDate = new Date(Date.now() + 1000 * 60 * Number(settings.refresh));
-    };
-    
     await appleOS();
     await previewWidget();
     return null;
