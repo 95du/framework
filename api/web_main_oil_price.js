@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: cyan; icon-glyph: gas-pump;
+// icon-color: orange; icon-glyph: gas-pump;
 
 async function main() {
   const scriptName = '全国油价'
@@ -466,8 +466,8 @@ async function main() {
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，新的组件框架`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
-    await appleOS();
     await previewWidget();
+    await appleOS();
     return null;
   };
   
