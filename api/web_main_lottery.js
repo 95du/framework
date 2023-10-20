@@ -467,8 +467,8 @@ async function main() {
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，桌面组件布局调整，清除缓存再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
-    await appleOS();
     await previewWidget();
+    await appleOS();
     return null;
   };
   
