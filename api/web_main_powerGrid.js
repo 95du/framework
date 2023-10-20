@@ -473,8 +473,8 @@ async function main() {
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，新的组件框架`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
-    await appleOS();
     await previewWidget();
+    await appleOS();
     return null;
   };
   
