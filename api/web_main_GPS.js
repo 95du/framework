@@ -491,8 +491,8 @@ async function main() {
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题。\n需清除缓存或重置所有再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     }
     
+    await previewWidget();
     await appleOS();
-    await previewWidget()
     return null;
   };
   
