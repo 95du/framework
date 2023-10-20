@@ -84,8 +84,12 @@ async function main() {
   
   // 预览组件
   const previewWidget = async () => {
-    await importModule(await webModule(scrName, scrUrl)).main();
-  }
+    const modulePath = await webModule(scrName, scrUrl);
+    if (modulePath != null) {
+      const importedModule = importModule(modulePath);
+      await importedModule.main();
+    }
+  };
   
   /**
    * 弹出通知
@@ -594,15 +598,12 @@ async function main() {
         <div class="modal-dialog">
           <div class="zib-widget blur-bg relative">
             <a href="#tab-sign-up" data-toggle="tab"></a>
-            <div class="box-body sign-logo"><img src="${appleHub}">  
-            </div>
+            <div class="box-body sign-logo" data-dismiss="modal" onclick="hidePopup()"><img src="${appleHub}"></div>
             <div class="tab-content">
               <!-- 版本信息 -->
               <div class="tab-pane fade active in" id="tab-sign-in">
                 <div class="box-body">
-                  <div href="#tab-sign-up" data-toggle="tab" class="fa-2x title-h-center popup-title">
-                    ${scriptName}
-                  </div>
+                  <div href="#tab-sign-up" data-toggle="tab" class="fa-2x title-h-center popup-title">${scriptName}</div>
                   <a class="popup-content update-desc">
                      <div class="but">Version ${version}</div>
                   </a><br>
