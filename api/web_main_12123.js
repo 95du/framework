@@ -71,7 +71,6 @@ async function main() {
     masking: 0.3,
     gradient: ['#82B1FF'],
     imgArr: [],
-    picture: [],
     update: true,
     topStyle: true,
     music: true,
@@ -85,6 +84,7 @@ async function main() {
     titleColor: '#000000',
     solidColor: '#FFFFFF',
     useCache: true,
+    count: 0,
     carTop: -20,
     carBottom: 0,
     myPlate: '琼A·849A8',
@@ -492,8 +492,8 @@ async function main() {
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，使用新的框架。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
-    await appleOS();
     await previewWidget();
+    await appleOS();
     return null;
   };
   
