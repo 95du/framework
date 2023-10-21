@@ -20,20 +20,30 @@ async function main() {
    */
   const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
-  const cache = fm.joinPath(mainPath, 'cache_path');
   
-  const getSettingPath = () => {
+  const createDirectory = (directoryPath) => {
     if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
-    if (!fm.fileExists(cache)) fm.createDirectory(cache);
-    return fm.joinPath(mainPath, 'setting.json');
+    if (!fm.fileExists(directoryPath)) fm.createDirectory(directoryPath);
   };
+  
+  const getCachePath = (dirName) => {
+    const dirPath = fm.joinPath(mainPath, dirName);
+    createDirectory(dirPath);
+    return dirPath;
+  };
+  
+  const [ cacheImg, cacheStr, cacheCar ] = [
+    'cache_image',
+    'cache_string',
+    'cache_vehicle'
+  ].map(getCachePath);
 
   /**
    * 存储当前设置
    * @param { JSON } string
    */
   const writeSettings = async (settings) => {
-    fm.writeString(getSettingPath(), JSON.stringify(settings, null, 2));
+    fm.writeString(getSettingPath(), JSON.stringify(settings, null, 4));
     console.log(JSON.stringify(
       settings, null, 2)
     );
@@ -44,6 +54,10 @@ async function main() {
    * @param {string} file - JSON
    * @returns {object} - JSON
    */
+  const getSettingPath = () => {
+    return fm.joinPath(mainPath, 'setting.json');
+  };
+  
   const screenSize = Device.screenSize().height;
   if (screenSize < 926) {
     layout = {
@@ -136,7 +150,7 @@ async function main() {
   
   // 获取头像图片
   const getAvatarImg = () => {
-    return fm.joinPath(cache, 'userSetAvatar.png');
+    return fm.joinPath(cacheImg, 'userSetAvatar.png');
   };
   
   /**
@@ -146,7 +160,7 @@ async function main() {
    * @param { string } module
    */
   const webModule = async (scriptName, url) => {
-    const modulePath = fm.joinPath(cache, scriptName);
+    const modulePath = fm.joinPath(cacheStr, scriptName);
     if (!settings.update && fm.fileExists(modulePath)) {
       return modulePath;
     } else {
@@ -170,7 +184,7 @@ async function main() {
    * @returns {String} string
    */
   const updateVerPopup = () => {
-    return settings.version !== version ? '.signin-loader' : (settings.loader !== '95du' ? '.signup-loader' : null);
+    return settings.version !== version ? '.signin-loader' : (settings.loader !== '95du' && !settings.verifyToken ? '.signup-loader' : null);
   };
   
   /**
@@ -190,7 +204,7 @@ async function main() {
   };
   
   const updateString = async () => {
-    const modulePath = fm.joinPath(cache, scrName);
+    const modulePath = fm.joinPath(cacheStr, scrName);
     const codeString = await getString(scrUrl);
     if (codeString.indexOf('95度茅台') === -1) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
@@ -225,11 +239,12 @@ async function main() {
    * @returns {string} - Request
    */
   const useFileManager = ({ cacheTime } = {}) => {
-    const getPath = (name) => fm.joinPath(cache, name);
-      
+    const strPath = (name) => fm.joinPath(cacheStr, name);
+    const imgPath = (name) => fm.joinPath(cacheImg, name);
+    
     return {
       readString: (name) => {
-        const filePath = getPath(name);
+        const filePath = strPath(name);
         if (fm.fileExists(filePath) && cacheTime) {
           const createTime = fm.creationDate(filePath).getTime();
           const diff = (Date.now() - createTime) / (60 * 60 * 1000);
@@ -240,13 +255,13 @@ async function main() {
         }
         return fm.readString(filePath);
       },
-      writeString: (name, content) => fm.writeString(getPath(name), content),
+      writeString: (name, content) => fm.writeString(strPath(name), content),
       // cache Image
       readImage: (name) => {
-        const imagePath = getPath(name);
+        const imagePath = imgPath(name);
         return fm.fileExists(imagePath) ? fm.readImage(imagePath) : null
       },
-      writeImage: (name, image) => fm.writeImage(getPath(name), image)
+      writeImage: (name, image) => fm.writeImage(imgPath(name), image)
     }
   };
   
@@ -1248,9 +1263,7 @@ async function main() {
     
     // 获取 Token，Sign，Referer
     const getToken = async () => {
-      const openAlipay = await generateAlert(
-        '交管 12123',
-        '\n自动获取Token以及Referer需要Quantumult-X 或 Surge 辅助运行，\n具体方法请查看小组件代码开头注释\n\n【 获取Referer方法 】 \n跳转到支付宝12123页面后，点击车牌号码，再点击查询，即可获取/更新，用于获取检验有效期日期和累积记分‼️\n\nverifyToken、Sign、Referer 获取后返回点击预览组件即可使用。',
+      const openAlipay = await generateAlert('交管 12123','\n自动获取Token以及Referer需要Quantumult-X 或 Surge 辅助运行，\n具体方法请查看小组件代码开头注释\n\n【 获取Referer方法 】 \n跳转到支付宝12123页面后，点击车牌号码，再点击查询，即可获取/更新，用于获取检验有效期日期和累积记分‼️\n\nverifyToken、Sign、Referer 获取后返回点击预览组件即可使用。',
         options = ['取消', '获取']
       );
       if (openAlipay === 1) {
@@ -1339,7 +1352,8 @@ async function main() {
           options = ['取消', '清除']
         );
         if ( action === 1 ) {
-          fm.remove(cache);
+          fm.remove(cacheStr);
+          fm.remove(cacheImg);
           ScriptableRun();
         }
       } else if (code === 'reset') {
