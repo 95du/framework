@@ -20,13 +20,23 @@ async function main() {
    */
   const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
-  const cache = fm.joinPath(mainPath, 'cache_path');
   
-  const getSettingPath = () => {
+  const createDirectory = (directoryPath) => {
     if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
-    if (!fm.fileExists(cache)) fm.createDirectory(cache);
-    return fm.joinPath(mainPath, 'setting.json');
+    if (!fm.fileExists(directoryPath)) fm.createDirectory(directoryPath);
   };
+  
+  const getCachePath = (dirName) => {
+    const dirPath = fm.joinPath(mainPath, dirName);
+    createDirectory(dirPath);
+    return dirPath;
+  };
+  
+  const [ cacheImg, cacheStr, cacheCar ] = [
+    'cache_image',
+    'cache_string',
+    'cache_vehicle'
+  ].map(getCachePath);
 
   /**
    * 存储当前设置
@@ -44,6 +54,10 @@ async function main() {
    * @param {string} file - JSON
    * @returns {object} - JSON
    */
+  const getSettingPath = () => {
+    return fm.joinPath(mainPath, 'setting.json');
+  };
+  
   const screenSize = Device.screenSize().height;
   if (screenSize < 926) {
     layout = {
@@ -90,7 +104,7 @@ async function main() {
   
   const getSettings = (file) => {
     if (fm.fileExists(file)) {
-      return JSON.parse(fm.readString(file));
+      return { imei, password, aMapkey, tokenUrl, touser, agentid } = JSON.parse(fm.readString(file));
     } else {
       const settings = DEFAULT;
       writeSettings(settings);
@@ -106,9 +120,7 @@ async function main() {
   
   // 预览组件
   const previewWidget = async () => {
-    if (settings.token && settings.aMapkey) {
-      await importModule(await webModule(scrName, scrUrl)).main();  
-    }
+      await importModule(await webModule(scrName, scrUrl)).main();
   };
   
   /**
@@ -135,7 +147,7 @@ async function main() {
   
   // 获取头像图片
   const getAvatarImg = () => {
-    return fm.joinPath(cache, 'userSetAvatar.png');
+    return fm.joinPath(cacheImg, 'userSetAvatar.png');
   };
   
   /**
@@ -145,7 +157,7 @@ async function main() {
    * @param { string } module
    */
   const webModule = async (scriptName, url) => {
-    const modulePath = fm.joinPath(cache, scriptName);
+    const modulePath = fm.joinPath(cacheStr, scriptName);
     if (!settings.update && fm.fileExists(modulePath)) {
       return modulePath;
     } else {
@@ -169,7 +181,7 @@ async function main() {
    * @returns {String} string
    */
   const updateVerPopup = () => {
-    return settings.version !== version ? '.signin-loader' : (settings.loader !== '95du' ? '.signup-loader' : null);
+    return settings.version !== version ? '.signin-loader' : (!settings.token && settings.loader !== '95du' ? '.signup-loader' : null);
   };
   
   /**
@@ -179,8 +191,7 @@ async function main() {
    * @returns {Promise<void>}
    */
   const updateVersion = async () => {
-    const index = await generateAlert(
-      '更新代码',
+    const index = await generateAlert('更新代码', 
       '更新后当前脚本代码将被覆盖\n但不会清除用户已设置的数据\n如预览组件未显示或桌面组件显示错误，可更新尝试自动修复',
       options = ['取消', '更新']
     );
@@ -189,7 +200,7 @@ async function main() {
   };
   
   const updateString = async () => {
-    const modulePath = fm.joinPath(cache, scrName);
+    const modulePath = fm.joinPath(cacheStr, scrName);
     const codeString = await getString(scrUrl);
     if (codeString.indexOf('95度茅台') === -1) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
@@ -224,11 +235,12 @@ async function main() {
    * @returns {string} - Request
    */
   const useFileManager = ({ cacheTime } = {}) => {
-    const getPath = (name) => fm.joinPath(cache, name);
-      
+    const strPath = (name) => fm.joinPath(cacheStr, name);
+    const imgPath = (name) => fm.joinPath(cacheImg, name);
+    
     return {
       readString: (name) => {
-        const filePath = getPath(name);
+        const filePath = strPath(name);
         if (fm.fileExists(filePath) && cacheTime) {
           const createTime = fm.creationDate(filePath).getTime();
           const diff = (Date.now() - createTime) / (60 * 60 * 1000);
@@ -239,13 +251,13 @@ async function main() {
         }
         return fm.readString(filePath);
       },
-      writeString: (name, content) => fm.writeString(getPath(name), content),
+      writeString: (name, content) => fm.writeString(strPath(name), content),
       // cache Image
       readImage: (name) => {
-        const imagePath = getPath(name);
+        const imagePath = imgPath(name);
         return fm.fileExists(imagePath) ? fm.readImage(imagePath) : null
       },
-      writeImage: (name, image) => fm.writeImage(getPath(name), image)
+      writeImage: (name, image) => fm.writeImage(imgPath(name), image)
     }
   };
   
@@ -1228,7 +1240,7 @@ async function main() {
         const isName = ['aMapkey', 'logo', 'carImg'].includes(name);
         const inputStatus = result ? '已添加' : display ? '未添加' : '默认';
         
-        if ( isAdd || display ) {
+        if ( isAdd ) {
           settings[`${name}_status`] = inputStatus;  
         }
         settings[name] = result;
@@ -1358,7 +1370,8 @@ async function main() {
           options = ['取消', '清除']
         );
         if ( action === 1 ) {
-          fm.remove(cache);
+          fm.remove(cacheStr);
+          fm.remove(cacheImg);
           ScriptableRun();
         }
       } else if (code === 'reset') {
@@ -1374,11 +1387,12 @@ async function main() {
       } else if ( code === 'recover' ) {
         const action = await generateAlert(  
           '是否恢复设置 ？', 
-          '用户登录的信息将重置\n设置的数据将会恢复为默认',   
+          '保留用户登录的信息\n设置的数据将会恢复为默认',   
           options = ['取消', '恢复']
         );
         if ( action === 1 ) {
-          writeSettings(DEFAULT);
+          const reserve = { ...DEFAULT, imei, password, aMapkey, tokenUrl, touser, agentid }
+          writeSettings(reserve);
           ScriptableRun();
         }
       } else if (code === 'app') {
