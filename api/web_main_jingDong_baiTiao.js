@@ -201,12 +201,14 @@ async function main() {
    * @returns {string} - Request
    */
   const useFileManager = ({ cacheTime } = {}) => {
+    const getPath = (name) => fm.joinPath(cache, name);
+      
     return {
-      readString: (fileName) => {
-        const filePath = fm.joinPath(cache, fileName);
+      readString: (name) => {
+        const filePath = getPath(name);
         if (fm.fileExists(filePath) && cacheTime) {
           const createTime = fm.creationDate(filePath).getTime();
-          const diff = (Date.now() - createTime) / ( 60 * 60 * 1000 );
+          const diff = (Date.now() - createTime) / (60 * 60 * 1000);
           if (diff >= cacheTime) {
             fm.remove(filePath);
             return null;
@@ -214,19 +216,19 @@ async function main() {
         }
         return fm.readString(filePath);
       },
-      writeString: (fileName, content) => fm.writeString(fm.joinPath(cache, fileName), content),
+      writeString: (name, content) => fm.writeString(getPath(name), content),
       // cache Image
-      readImage: (fileName) => {
-        const imgPath = fm.joinPath(cache, fileName);
-        return fm.fileExists(imgPath) ? fm.readImage(imgPath) : null;
+      readImage: (name) => {
+        const imagePath = getPath(name);
+        return fm.fileExists(imagePath) ? fm.readImage(imagePath) : null
       },
-      writeImage: (fileName, image) => fm.writeImage(fm.joinPath(cache, fileName), image)
+      writeImage: (name, image) => fm.writeImage(getPath(name), image)
     }
   };
   
   /**
    * 获取css，js字符串并使用缓存
-   * @param {string} string
+   * @param {string} url
    */
   const getString = async (url) => {
     return await new Request(url).loadString();
@@ -262,7 +264,7 @@ async function main() {
   const getCacheImage = async (name, url) => {
     const cache = useFileManager();
     const image = cache.readImage(name);
-    if ( image ) {
+    if (image) {
       return toBase64(image);
     }
     const img = await getImage(url);
