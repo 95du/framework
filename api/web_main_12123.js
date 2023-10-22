@@ -21,14 +21,10 @@ async function main() {
   const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
   
-  const createDirectory = (directoryPath) => {
-    if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
-    if (!fm.fileExists(directoryPath)) fm.createDirectory(directoryPath);
-  };
-  
   const getCachePath = (dirName) => {
+    if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
     const dirPath = fm.joinPath(mainPath, dirName);
-    createDirectory(dirPath);
+    if (!fm.fileExists(dirPath)) fm.createDirectory(dirPath);
     return dirPath;
   };
   
@@ -1268,7 +1264,7 @@ async function main() {
       );
       if (openAlipay === 1) {
         Safari.open('alipays://platformapi/startapp?appId=2019050964403523&page=pages%2Fvehicle-illegal-query%2Findex');
-        if (!settings.referer || !settings.verifyToken) {
+        if (!settings.referer) {
           await previewWidget();
         }
       }
