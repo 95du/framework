@@ -21,14 +21,10 @@ async function main() {
   const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
   
-  const createDirectory = (directoryPath) => {
-    if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
-    if (!fm.fileExists(directoryPath)) fm.createDirectory(directoryPath);
-  };
-  
   const getCachePath = (dirName) => {
+    if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
     const dirPath = fm.joinPath(mainPath, dirName);
-    createDirectory(dirPath);
+    if (!fm.fileExists(dirPath)) fm.createDirectory(dirPath);
     return dirPath;
   };
   
