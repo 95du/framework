@@ -184,7 +184,7 @@ async function main() {
    * @returns {String} string
    */
   const updateVerPopup = () => {
-    return settings.version !== version ? '.signin-loader' : (settings.loader !== '95du' && !settings.verifyToken ? '.signup-loader' : null);
+    return settings.version !== version ? '.signin-loader' : (settings.loader !== '95du' && settings.verifyToken ? '.signup-loader' : null);
   };
   
   /**
