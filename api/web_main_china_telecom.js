@@ -67,6 +67,7 @@ async function main() {
     percentColor: '#000000',
     balanceColor: '#FF0000',
     rangeColor: '#3F8BFF',
+    cacheTime: 5,
     init: false
   };
   
@@ -1517,6 +1518,18 @@ async function main() {
             icon: `${rootUrl}img/symbol/refresh.png`,  
             message: '设置桌面组件的时长\n( 单位: 分钟 )',
             desc: settings.refresh
+          },
+          {
+            label: '缓存时长',
+            name: 'cacheTime',
+            type: 'cell',
+            input: true,
+            icon: {
+              name: 'externaldrive.fill', 
+              color: '#F9A825'
+            },
+            message: '缓存余额、流量、语音的数据时长\n( 单位: 小时 )',  
+            desc: settings.cacheTime
           },
         ]
       },
