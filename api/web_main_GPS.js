@@ -20,6 +20,7 @@ async function main() {
    */
   const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
+  const settingPath = () => fm.joinPath(mainPath, 'setting.json')
   
   const getCachePath = (dirName) => {
     if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
@@ -39,7 +40,7 @@ async function main() {
    * @param { JSON } string
    */
   const writeSettings = async (settings) => {
-    fm.writeString(getSettingPath(), JSON.stringify(settings, null, 2));
+    fm.writeString(settingPath(), JSON.stringify(settings, null, 2));
     console.log(JSON.stringify(
       settings, null, 2)
     );
@@ -50,10 +51,6 @@ async function main() {
    * @param {string} file - JSON
    * @returns {object} - JSON
    */
-  const getSettingPath = () => {
-    return fm.joinPath(mainPath, 'setting.json');
-  };
-  
   const screenSize = Device.screenSize().height;
   if (screenSize < 926) {
     layout = {
@@ -89,6 +86,7 @@ async function main() {
     appleOS: true,
     fadeInUp: 0.7,
     angle: 90,
+    updateTime: Date.now(),
     carTop: -25,
     carBottom: 0,
     rangeColor: '#FF6800',
@@ -107,7 +105,7 @@ async function main() {
       return settings;
     }
   };
-  settings = await getSettings(getSettingPath());
+  settings = await getSettings(settingPath());
   
   // ScriptableRun
   const ScriptableRun = () => {
@@ -177,7 +175,11 @@ async function main() {
    * @returns {String} string
    */
   const updateVerPopup = () => {
-    return settings.version !== version ? '.signin-loader' : (settings.token && settings.loader !== '95du' ? '.signup-loader' : null);
+    const creationDate = fm.creationDate(settingPath());
+    if (creationDate) {
+      isInitialized = Date.now() - creationDate.getTime() > 300000;
+    }
+    return settings.version !== version ? '.signin-loader' : (isInitialized && settings.loader !== '95du' ? '.signup-loader' : null);
   };
   
   /**
@@ -231,29 +233,28 @@ async function main() {
    * @returns {string} - Request
    */
   const useFileManager = ({ cacheTime } = {}) => {
-    const strPath = (name) => fm.joinPath(cacheStr, name);
-    const imgPath = (name) => fm.joinPath(cacheImg, name);
-    
     return {
       readString: (name) => {
-        const filePath = strPath(name);
-        if (fm.fileExists(filePath) && cacheTime) {
-          const createTime = fm.creationDate(filePath).getTime();
-          const diff = (Date.now() - createTime) / (60 * 60 * 1000);
-          if (diff >= cacheTime) {
-            fm.remove(filePath);
-            return null;
-          }
+        const filePath = fm.joinPath(cacheStr, name);  
+        const fileExists =  fm.fileExists(filePath)
+        if (fileExists && hasExpired(filePath) > cacheTime) {
+          fm.remove(filePath);
+          return null;
         }
-        return fm.readString(filePath);
+        return fileExists ? fm.readString(filePath) : null;
       },
-      writeString: (name, content) => fm.writeString(strPath(name), content),
-      // cache Image
+      writeString: (name, content) => fm.writeString(fm.joinPath(cacheStr, name), content),
+      // cache image
       readImage: (name) => {
-        const imagePath = imgPath(name);
-        return fm.fileExists(imagePath) ? fm.readImage(imagePath) : null
+        const filePath = fm.joinPath(cacheImg, name);
+        return fm.fileExists(filePath) ? fm.readImage(filePath) : null;
       },
-      writeImage: (name, image) => fm.writeImage(imgPath(name), image)
+      writeImage: (name, image) => fm.writeImage(fm.joinPath(cacheImg, name), image),
+    };
+    
+    function hasExpired(filePath) {
+      const createTime = fm.creationDate(filePath).getTime();
+      return (Date.now() - createTime) / (60 * 60 * 1000)
     }
   };
   
@@ -495,7 +496,7 @@ async function main() {
   if (config.runsInWidget) {
     const hours = Math.floor((Date.now() - settings.updateTime) % (24 * 3600 * 1000) / (3600 * 1000));
     
-    if ( version !== settings.version && !settings.update && hours >= 12 || !settings.updateTime ) {
+    if (version !== settings.version && !settings.update && hours >= 12) {
       settings.updateTime = Date.now();
       writeSettings(settings);
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题。\n需清除缓存或重置所有再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
