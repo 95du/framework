@@ -57,6 +57,7 @@ async function main() {
     appleOS: true,
     fadeInUp: 0.7,
     angle: 90,
+    updateTime: Date.now(),
     solidColor: true,
     radius: 12,
     agentShortName: 0,
@@ -149,7 +150,11 @@ async function main() {
    * @returns {String} string
    */
   const updateVerPopup = () => {
-    return settings.version !== version ? '.signin-loader' : (settings.loader !== '95du' ? '.signup-loader' : null);
+    const creationDate = fm.creationDate(getSettingPath());
+    if (creationDate) {
+      isInitialized = Date.now() - creationDate.getTime() > 300000;
+    }
+    return settings.version !== version ? '.signin-loader' : (isInitialized && settings.loader !== '95du' ? '.signup-loader' : null);
   };
   
   /**
@@ -238,7 +243,7 @@ async function main() {
   };
   
   const getCacheString = async (cssFileName, cssFileUrl) => {
-    const cache = useFileManager({ cacheTime: 24 });
+    const cache = useFileManager({ cacheTime: 1 });
     const cssString = cache.readString(cssFileName);
     if (cssString) {
       return cssString;
@@ -467,7 +472,7 @@ async function main() {
   if (config.runsInWidget) {
     const hours = Math.floor((Date.now() - settings.updateTime) % (24 * 3600 * 1000) / (3600 * 1000));
     
-    if ( version !== settings.version && !settings.update && hours >= 12 || !settings.updateTime ) {
+    if (version !== settings.version && !settings.update && hours >= 12) {
       settings.updateTime = Date.now();
       writeSettings(settings);
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，桌面组件布局调整，清除缓存再更新代码。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
