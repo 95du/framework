@@ -20,7 +20,8 @@ async function main() {
    */
   const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
-  
+  const settingPath = () => fm.joinPath(mainPath, 'setting.json')
+
   const getCachePath = (dirName) => {
     if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
     const dirPath = fm.joinPath(mainPath, dirName);
@@ -39,7 +40,7 @@ async function main() {
    * @param { JSON } string
    */
   const writeSettings = async (settings) => {
-    fm.writeString(getSettingPath(), JSON.stringify(settings, null, 4));
+    fm.writeString(settingPath(), JSON.stringify(settings, null, 4));
     console.log(JSON.stringify(
       settings, null, 2)
     );
@@ -50,10 +51,6 @@ async function main() {
    * @param {string} file - JSON
    * @returns {object} - JSON
    */
-  const getSettingPath = () => {
-    return fm.joinPath(mainPath, 'setting.json');
-  };
-  
   const screenSize = Device.screenSize().height;
   if (screenSize < 926) {
     layout = {
@@ -110,7 +107,7 @@ async function main() {
       return settings;
     }
   };
-  settings = await getSettings(getSettingPath());
+  settings = await getSettings(settingPath());
   
   // ScriptableRun
   const ScriptableRun = () => {
@@ -180,7 +177,11 @@ async function main() {
    * @returns {String} string
    */
   const updateVerPopup = () => {
-    return settings.version !== version ? '.signin-loader' : (settings.loader !== '95du' && settings.verifyToken ? '.signup-loader' : null);
+    const creationDate = fm.creationDate(settingPath());
+    if (creationDate) {
+      isInitialized = Date.now() - creationDate.getTime() > 300000;
+    }
+    return settings.version !== version ? '.signin-loader' : (isInitialized && settings.loader !== '95du' ? '.signup-loader' : null);
   };
   
   /**
@@ -1369,7 +1370,7 @@ async function main() {
           options = ['取消', '恢复']
         );
         if ( action === 1 ) {
-          writeSettings(DEFAULT);
+          fm.remove(settingPath());
           ScriptableRun();
         }
       } else if (code === 'app') {
