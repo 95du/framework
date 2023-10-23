@@ -18,20 +18,26 @@ async function main() {
    */
   const fm = FileManager.local();
   const mainPath = fm.joinPath(fm.documentsDirectory(), pathName);
-  const cache = fm.joinPath(mainPath, 'cache_path');
-  
-  const getSettingPath = () => {
+  const settingPath = () => fm.joinPath(mainPath, 'setting.json')
+
+  const getCachePath = (dirName) => {
     if (!fm.fileExists(mainPath)) fm.createDirectory(mainPath);
-    if (!fm.fileExists(cache)) fm.createDirectory(cache);
-    return fm.joinPath(mainPath, 'setting.json');
+    const dirPath = fm.joinPath(mainPath, dirName);
+    if (!fm.fileExists(dirPath)) fm.createDirectory(dirPath);
+    return dirPath;
   };
+  
+  const [ cacheImg, cacheStr ] = [
+    'cache_image',
+    'cache_string'
+  ].map(getCachePath);
 
   /**
    * 存储当前设置
    * @param { JSON } string
    */
   const writeSettings = async (settings) => {
-    fm.writeString(getSettingPath(), JSON.stringify(settings, null, 2));
+    fm.writeString(settingPath(), JSON.stringify(settings, null, 4));
     console.log(JSON.stringify(
       settings, null, 2)
     );
@@ -77,7 +83,7 @@ async function main() {
       return settings;
     }
   };
-  settings = await getSettings(getSettingPath());
+  settings = await getSettings(settingPath());
   
   // ScriptableRun
   const ScriptableRun = () => {
@@ -113,7 +119,7 @@ async function main() {
   
   // 获取头像图片
   const getAvatarImg = () => {
-    return fm.joinPath(cache, 'userSetAvatar.png');
+    return fm.joinPath(cacheImg, 'userSetAvatar.png');
   };
   
   /**
@@ -123,7 +129,7 @@ async function main() {
    * @param { string } module
    */
   const webModule = async (scriptName, url) => {
-    const modulePath = fm.joinPath(cache, scriptName);
+    const modulePath = fm.joinPath(cacheStr, scriptName);
     if (!settings.update && fm.fileExists(modulePath)) {
       return modulePath;
     } else {
@@ -147,7 +153,7 @@ async function main() {
    * @returns {String} string
    */
   const updateVerPopup = () => {
-    const creationDate = fm.creationDate(getSettingPath());
+    const creationDate = fm.creationDate(settingPath());
     if (creationDate) {
       isInitialized = Date.now() - creationDate.getTime() > 300000;
     }
@@ -171,7 +177,7 @@ async function main() {
   };
   
   const updateString = async () => {
-    const modulePath = fm.joinPath(cache, scrName);
+    const modulePath = fm.joinPath(cacheStr, scrName);
     const codeString = await getString(scrUrl);
     if (codeString.indexOf('95度茅台') === -1) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
@@ -206,28 +212,28 @@ async function main() {
    * @returns {string} - Request
    */
   const useFileManager = ({ cacheTime } = {}) => {
-    const getPath = (name) => fm.joinPath(cache, name);
-      
     return {
       readString: (name) => {
-        const filePath = getPath(name);
-        if (fm.fileExists(filePath) && cacheTime) {
-          const createTime = fm.creationDate(filePath).getTime();
-          const diff = (Date.now() - createTime) / (60 * 60 * 1000);
-          if (diff >= cacheTime) {
-            fm.remove(filePath);
-            return null;
-          }
+        const filePath = fm.joinPath(cacheStr, name);  
+        const fileExists =  fm.fileExists(filePath)
+        if (fileExists && hasExpired(filePath) > cacheTime) {
+          fm.remove(filePath);
+          return null;
         }
-        return fm.readString(filePath);
+        return fileExists ? fm.readString(filePath) : null;
       },
-      writeString: (name, content) => fm.writeString(getPath(name), content),
-      // cache Image
+      writeString: (name, content) => fm.writeString(fm.joinPath(cacheStr, name), content),
+      // cache image
       readImage: (name) => {
-        const imagePath = getPath(name);
-        return fm.fileExists(imagePath) ? fm.readImage(imagePath) : null
+        const filePath = fm.joinPath(cacheImg, name);
+        return fm.fileExists(filePath) ? fm.readImage(filePath) : null;
       },
-      writeImage: (name, image) => fm.writeImage(getPath(name), image)
+      writeImage: (name, image) => fm.writeImage(fm.joinPath(cacheImg, name), image),
+    };
+    
+    function hasExpired(filePath) {
+      const createTime = fm.creationDate(filePath).getTime();
+      return (Date.now() - createTime) / (60 * 60 * 1000)
     }
   };
   
@@ -1290,7 +1296,8 @@ async function main() {
           options = ['取消', '清除']
         );
         if ( action === 1 ) {
-          fm.remove(cache);
+          fm.remove(cacheStr);
+          fm.remove(cacheImg);
           ScriptableRun();
         }
       } else if (code === 'reset') {
