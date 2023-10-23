@@ -4,7 +4,7 @@
 
 async function main() {
   const scriptName = '交管 12123'
-  const version = '1.0.0'
+  const version = '1.0.1'
   const updateDate = '2023年10月03日'
 
   const pathName = '95du_12123';
@@ -91,6 +91,7 @@ async function main() {
     titleColor: '#000000',
     solidColor: '#FFFFFF',
     useCache: true,
+    updateTime: Date.now(),
     count: 0,
     carTop: -20,
     carBottom: 0,
@@ -236,29 +237,28 @@ async function main() {
    * @returns {string} - Request
    */
   const useFileManager = ({ cacheTime } = {}) => {
-    const strPath = (name) => fm.joinPath(cacheStr, name);
-    const imgPath = (name) => fm.joinPath(cacheImg, name);
-    
     return {
       readString: (name) => {
-        const filePath = strPath(name);
-        if (fm.fileExists(filePath) && cacheTime) {
-          const createTime = fm.creationDate(filePath).getTime();
-          const diff = (Date.now() - createTime) / (60 * 60 * 1000);
-          if (diff >= cacheTime) {
-            fm.remove(filePath);
-            return null;
-          }
+        const filePath = fm.joinPath(cacheStr, name);  
+        const fileExists =  fm.fileExists(filePath)
+        if (fileExists && hasExpired(filePath) > cacheTime) {
+          fm.remove(filePath);
+          return null;
         }
-        return fm.readString(filePath);
+        return fileExists ? fm.readString(filePath) : null;
       },
-      writeString: (name, content) => fm.writeString(strPath(name), content),
-      // cache Image
+      writeString: (name, content) => fm.writeString(fm.joinPath(cacheStr, name), content),
+      // cache image
       readImage: (name) => {
-        const imagePath = imgPath(name);
-        return fm.fileExists(imagePath) ? fm.readImage(imagePath) : null
+        const filePath = fm.joinPath(cacheImg, name);
+        return fm.fileExists(filePath) ? fm.readImage(filePath) : null;
       },
-      writeImage: (name, image) => fm.writeImage(imgPath(name), image)
+      writeImage: (name, image) => fm.writeImage(fm.joinPath(cacheImg, name), image),
+    };
+    
+    function hasExpired(filePath) {
+      const createTime = fm.creationDate(filePath).getTime();
+      return (Date.now() - createTime) / (60 * 60 * 1000)
     }
   };
   
@@ -500,7 +500,7 @@ async function main() {
   if (config.runsInWidget) {
     const hours = Math.floor((Date.now() - settings.updateTime) % (24 * 3600 * 1000) / (3600 * 1000));
     
-    if ( version !== settings.version && !settings.update && hours >= 12 || !settings.updateTime ) {
+    if (version !== settings.version && !settings.update && hours >= 12) {
       settings.updateTime = Date.now();
       writeSettings(settings);
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，使用新的框架。`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
