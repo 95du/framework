@@ -58,6 +58,7 @@ async function main() {
     appleOS: true,
     fadeInUp: 0.7,
     angle: 90,
+    updateTime: Date.now(),
     solidColor: false,
     useCache: true,
     textLightColor: '#000000',
@@ -151,7 +152,11 @@ async function main() {
    * @returns {String} string
    */
   const updateVerPopup = () => {
-    return settings.version !== version ? '.signin-loader' : (settings.loader !== '95du' ? '.signup-loader' : null);
+    const creationDate = fm.creationDate(getSettingPath());
+    if (creationDate) {
+      isInitialized = Date.now() - creationDate.getTime() > 300000;
+    }
+    return settings.version !== version ? '.signin-loader' : (isInitialized && settings.loader !== '95du' ? '.signup-loader' : null);
   };
   
   /**
@@ -469,7 +474,7 @@ async function main() {
   if (config.runsInWidget) {
     const hours = Math.floor((Date.now() - settings.updateTime) % (24 * 3600 * 1000) / (3600 * 1000));
     
-    if ( version !== settings.version && !settings.update && hours >= 12 || !settings.updateTime ) {
+    if (version !== settings.version && !settings.update && hours >= 12) {
       settings.updateTime = Date.now();
       writeSettings(settings);
       notify(`${scriptName}‼️`, `新版本更新 Version ${version}，新的组件框架`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
