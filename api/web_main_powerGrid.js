@@ -1335,7 +1335,8 @@ async function main() {
           options = ['取消', '清除']
         );
         if ( action === 1 ) {
-          fm.remove(cache);
+          fm.remove(cacheStr);
+          fm.remove(cacheImg);
           ScriptableRun();
         }
       } else if (code === 'reset') {
@@ -1355,7 +1356,7 @@ async function main() {
           options = ['取消', '恢复']
         );
         if ( action === 1 ) {
-          writeSettings(DEFAULT);
+          fm.remove(settingPath());
           ScriptableRun();
         }
       } else if (code === 'app') {
