@@ -4,8 +4,8 @@
 
 async function main() {
   const scriptName = '中国电信余量'
-  const version = '1.0.0'
-  const updateDate = '2023年10月18日'
+  const version = '1.0.1'
+  const updateDate = '2023年10月25日'
   const pathName = '95du_telecom';
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
@@ -479,7 +479,7 @@ async function main() {
     if (version !== settings.version && !settings.update && hours >= 12) {
       settings.updateTime = Date.now();
       writeSettings(settings);
-      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，新的组件框架`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
+      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题和一些错误`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     await previewWidget();
