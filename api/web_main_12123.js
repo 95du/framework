@@ -4,7 +4,7 @@
 
 async function main() {
   const scriptName = '交管 12123'
-  const version = '1.0.1'
+  const version = '1.0.0'
   const updateDate = '2023年10月03日'
 
   const pathName = '95du_12123';
@@ -85,13 +85,13 @@ async function main() {
     appleOS: true,
     fadeInUp: 0.7,
     angle: 90,
+    updateTime: Date.now(),
     rangeColor: '#FF6800',
     textLightColor: '#000000',
     textDarkColor: '#FFFFFF',
     titleColor: '#000000',
     solidColor: '#FFFFFF',
     useCache: true,
-    updateTime: Date.now(),
     count: 0,
     carTop: -20,
     carBottom: 0,
@@ -204,7 +204,7 @@ async function main() {
   const updateString = async () => {
     const modulePath = fm.joinPath(cacheStr, scrName);
     const codeString = await getString(scrUrl);
-    if (codeString.indexOf('95度茅台') === -1) {
+    if (!codeString.includes('95度茅台')) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
     } else {
       fm.writeString(modulePath, codeString);
@@ -1322,6 +1322,11 @@ async function main() {
       })
     };
     
+    // 其他模块
+    const getModule = async (jsName, jsUrl) => {
+      await importModule(await webModule(jsName, jsUrl)).main();
+    }
+    
     // 注入监听器
     const injectListener = async () => {
       const event = await webView.evaluateJavaScript(
@@ -1435,10 +1440,10 @@ async function main() {
           }
           break;
         case 'background':
-          await importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
+          await getModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js');
           break;
         case 'store':
-          importModule(await webModule('store.js', 'https://gitcode.net/4qiao/framework/raw/master/mian/module_95du_storeScript.js')).main();
+          await getModule('store.js', 'https://gitcode.net/4qiao/framework/raw/master/mian/module_95du_storeScript.js');
           await myStore();
           break;
         case 'install':
