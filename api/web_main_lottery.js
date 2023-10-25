@@ -182,7 +182,7 @@ async function main() {
   const updateString = async () => {
     const modulePath = fm.joinPath(cacheStr, scrName);
     const codeString = await getString(scrUrl);
-    if (codeString.indexOf('95度茅台') === -1) {
+    if (!codeString.includes('95度茅台')) {
       notify('更新失败 ⚠️', '请检查网络或稍后再试');
     } else {
       fm.writeString(modulePath, codeString);
