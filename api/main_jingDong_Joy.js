@@ -126,7 +126,7 @@ async function main() {
     const leftText = topRow.addButton('组件商店');
     leftText.widthWeight = 0.3;
     leftText.onTap = async () => {
-      await Run();
+      await importModule(await ScriptStore()).main();
     };
   
     const authorImage = topRow.addImageAtURL('https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png');
@@ -873,126 +873,33 @@ async function main() {
       confirm(inputObj);
     }
     return getIndex;
-  }
+  };
   
+  /** download store **/
+  const myStore = async () => {
+    const script = await new Request('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js').loadString()
+    const fm = FileManager.iCloud();
+    fm.writeString(
+      fm.documentsDirectory() + '/95du_ScriptStore.js', script);
+  };
   
   /**
    * Download Script
    * author: @95度茅台
    */
-  renderTableList = async (data) => {
-    try {
-      const table = new UITable();
-      table.showSeparators = true;
-  
-      const gifRow = new UITableRow();
-      gifRow.height = 83 * Device.screenScale();
-      gifRow.backgroundColor = bgColor
-      const gifImage = gifRow.addImageAtURL(atob('aHR0cHM6Ly9zd2VpeGluZmlsZS5oaXNlbnNlLmNvbS9tZWRpYS9NMDAvNzEvQzgvQ2g0RnlXT0k2b0NBZjRQMUFFZ0trSzZxVVVrNTQyLmdpZg=='));
-      gifImage.centerAligned();
-      table.addRow(gifRow);
-  
-      // Top Row
-      const topRow = new UITableRow();
-      topRow.height = 70;
-      const leftText = topRow.addButton('效果图');
-      leftText.onTap = async () => {
-        const webView = new WebView();
-        await webView.loadURL('https://gitcode.net/4qiao/framework/raw/master/img/picture/Example.png');
-        await webView.present(false);
-      };
-  
-      const authorImage = topRow.addImageAtURL('https://gitcode.net/4qiao/framework/raw/master/img/icon/4qiao.png');
-      authorImage.widthWeight = 0.9
-      authorImage.centerAligned();
-  
-      const rightText = topRow.addButton('快捷指令');
-      rightText.rightAligned();
-      rightText.onTap = async () => {
-        Safari.openInApp('https://sharecuts.cn/user/KVlQooAqzA', false);
-      };
-      table.addRow(topRow);
-  
-      // interval 1
-      await gapRow(table);
-  
-      // 如果是节点，则先远程获取
-      const subscription = await new Request(data.subscription).loadJSON()
-      const apps = subscription.apps;
-      apps.forEach((item) => {
-        const r = new UITableRow();
-        r.height = 60;
-        const imgCell = UITableCell.imageAtURL(item.thumb);
-        imgCell.centerAligned();
-        r.addCell(imgCell);
-  
-        const nameCell = UITableCell.text(item.title);
-        nameCell.centerAligned();
-        r.addCell(nameCell);
-  
-        const downloadCell = UITableCell.button("获取");
-        downloadCell.centerAligned();
-        downloadCell.dismissOnTap = true;
-        downloadCell.onTap = async () => {
-          const script = await new Request(item.scriptURL).loadString();
-          const F_MGR = FileManager.iCloud();
-          F_MGR.writeString(F_MGR.documentsDirectory() + `/${item.name}.js`, script)
-          if (script) {
-            notify('', `小组件:${item.title}下载/更新成功`);
-          }
-        };
-        r.addCell(downloadCell);
-        table.addRow(r);
-      });
-  
-      // interval 2
-      await gapRow(table);
-  
-      // telegramRow
-      const telegramRow = new UITableRow();
-      telegramRow.height = 70;
-      const telegram = telegramRow.addButton('加入 Scriptable 小组件交流群');
-      telegram.widthWeight = 0.3;
-      telegram.centerAligned();
-      telegram.onTap = async () => {
-        Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
-      };
-      table.addRow(telegramRow);
-  
-      // bottom interval
-      const bottom = new UITableRow();
-      bottom.height = 180;
-      bottom.backgroundColor = bgColor
-      const bottomText = bottom.addText('Copyright ©️ 2022 界面修改自·@DmYY');
-      bottomText.centerAligned();
-      bottomText.titleFont = Font.boldMonospacedSystemFont(10);
-      bottomText.titleColor = Color.gray();
-      table.addRow(bottom);
-      table.present(false);
-    } catch (e) {
-      console.log(e);
-      notify("错误提示", "脚本获取失败");
+  async function ScriptStore() {
+    const modulePath = F_MGR.joinPath(path, 'store.js');
+    if ( F_MGR.fileExists(modulePath) ) {
+      F_MGR.remove(modulePath);
     }
-  };
-  
-  async function gapRow(table) {
-    const gapRow = new UITableRow();
-    gapRow.height = 30;
-    gapRow.backgroundColor = bgColor
-    return table.addRow(gapRow);
-  }
-  
-  const Run = async () => {
-    try {
-      await renderTableList({
-        author: '95度茅台',
-        subscription: 'https://gitcode.net/4qiao/framework/raw/master/scriptable/install.json'
-      });
-      const script = await new Request('https://gitcode.net/4qiao/scriptable/raw/master/api/95duScriptStore.js').loadString();
-      const fm = FileManager.iCloud();
-      fm.writeString(fm.documentsDirectory() + '/95° 小组件商店.js', script);
-    } catch (e) {
-      console.log("缓存读取错误" + e);
+    const req = new Request(atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9zY3JpcHRhYmxlL3Jhdy9tYXN0ZXIvdmlwL21haW45NWR1U3RvcmUuanM='));
+    const moduleJs = await req.load().catch(() => {
+      return null;
+    });
+    if ( moduleJs ) {
+      await myStore();
+      F_MGR.write(modulePath, moduleJs);
+      return modulePath;
     }
   };
   await setWidgetConfig();
