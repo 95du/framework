@@ -445,7 +445,7 @@ async function main() {
     const inputAlert = new Alert();
     inputAlert.title = title;
     inputAlert.message = message;
-    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value));
+    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value))
     inputAlert.addAction('取消');
     inputAlert.addAction('确认');
     const getIndex = await inputAlert.presentAlert();
@@ -1599,6 +1599,16 @@ async function main() {
             icon: {
               name: 'externaldrive.fill', 
               color: '#F9A825'
+            },
+            default: true
+          },
+          {
+            label: '显示估算',
+            name: 'estimate',
+            type: 'switch',
+            icon: {
+              name: 'hand.draw.fill', 
+              color: '#3FC8FF'
             },
             default: true
           },
