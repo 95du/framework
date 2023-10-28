@@ -78,7 +78,6 @@ async function main() {
     masking: 0.3,
     gradient: ['#82B1FF'],
     imgArr: [],
-    picture: [],
     update: true,
     topStyle: true,
     music: true,
@@ -461,7 +460,7 @@ async function main() {
     const inputAlert = new Alert();
     inputAlert.title = title;
     inputAlert.message = message;
-    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value));
+    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value))
     inputAlert.addAction('取消');
     inputAlert.addAction('确认');
     const getIndex = await inputAlert.presentAlert();
@@ -548,7 +547,7 @@ async function main() {
           const {name, color} = icon;
           item.icon = await getCacheMaskSFIcon(name, color);
         } else if (icon?.startsWith('https')) {
-          const name = decodeURIComponent(icon.substring(icon.lastIndexOf("/") + 1));
+          const name = icon.split('/').pop();
           item.icon = await getCacheImage(name, icon);
         }
       }
@@ -800,7 +799,7 @@ async function main() {
         </div>`; 
       } else {
         const randomUrl = previewImgUrl[Math.floor(Math.random() * previewImgUrl.length)];
-        const imgName = decodeURIComponent(randomUrl.substring(randomUrl.lastIndexOf("/") + 1));
+        const imgName = randomUrl.split('/').pop();
         const previewImg = await getCacheImage(imgName, randomUrl);
         return `<img id="store" src="${previewImg}" class="preview-img">`
       }
