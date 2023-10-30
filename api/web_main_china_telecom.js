@@ -4,8 +4,8 @@
 
 async function main() {
   const scriptName = '中国电信余量'
-  const version = '1.0.1'
-  const updateDate = '2023年10月25日'
+  const version = '1.0.2'
+  const updateDate = '2023年10月30日'
   const pathName = '95du_telecom';
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
@@ -441,7 +441,7 @@ async function main() {
     const inputAlert = new Alert();
     inputAlert.title = title;
     inputAlert.message = message;
-    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value));
+    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value))
     inputAlert.addAction('取消');
     inputAlert.addAction('确认');
     const getIndex = await inputAlert.presentAlert();
@@ -479,7 +479,7 @@ async function main() {
     if (version !== settings.version && !settings.update && hours >= 12) {
       settings.updateTime = Date.now();
       writeSettings(settings);
-      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题和一些错误`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
+      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，修复已知问题增加进度条多彩颜色`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     await previewWidget();
@@ -1528,7 +1528,7 @@ async function main() {
               name: 'externaldrive.fill', 
               color: '#F9A825'
             },
-            message: '缓存余额、流量、语音的数据时长\n( 单位: 小时 )',  
+            message: `缓存余额、流量、语音的数据\n( 每${settings.cacheTime ?? '几'}小时更新一次 )`,
             desc: settings.cacheTime
           },
         ]
