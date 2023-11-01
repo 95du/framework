@@ -515,9 +515,7 @@ async function main() {
       previewImage
     } = options;
     
-    // themeColor
-    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark-theme', 'white'] : ['white-theme', 'black'];
-
+    const logoColor = Device.isUsingDarkAppearance() ? 'white' : 'black';
     const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
     
     const appImage = await getCacheImage('aMapAppImage.png', `${rootUrl}img/icon/aMap.png`);
@@ -764,7 +762,7 @@ async function main() {
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
-        <div class="popup-widget blur-bg" role="dialog">
+        <div class="popup-widget zib-widget blur-bg" role="dialog">
           <div class="box-body">
             ${content}
           </div>
@@ -1167,7 +1165,7 @@ async function main() {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       <style>${style}</style>
       </head>
-      <body class="${themeColor}">
+      <body>
         ${avatarInfo ? await mainMenuTop() : previewImage ? (settings.clock ? clockScript : await previewImgHtml()) : ''}
         <!-- 弹窗 -->
         ${previewImage ? await donatePopup() : ''}
