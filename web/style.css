@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: light-brown; icon-glyph: angle-double-left;
+// icon-color: deep-gray; icon-glyph: angle-double-left;
 .btn-block {
   display: block;
   width: 100%;
@@ -1018,7 +1018,7 @@ input[type="range"]:after {
     --update-desc: hsl(0, 0%, 85%);
   }
     
-  .white-theme, .dark-theme {
+  .zib-widget {
     --blur-bg: rgba(50,51,53,0.8);
   }
 
