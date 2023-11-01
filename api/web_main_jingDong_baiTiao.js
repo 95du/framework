@@ -440,7 +440,7 @@ async function main() {
     const inputAlert = new Alert();
     inputAlert.title = title;
     inputAlert.message = message;
-    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value));
+    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value))
     inputAlert.addAction('取消');
     inputAlert.addAction('确认');
     const getIndex = await inputAlert.presentAlert();
@@ -495,9 +495,7 @@ async function main() {
       previewImage
     } = options;
 
-    // themeColor
-    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark-theme', 'white'] : ['white-theme', 'black'];
-
+    const logoColor = Device.isUsingDarkAppearance() ? 'white' : 'black';
     const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
 
     const appImage = await getCacheImage('whiteGoose1.png', 'https://gitcode.net/4qiao/scriptable/raw/master/img/jingdong/whiteGoose1.png');
@@ -728,7 +726,7 @@ async function main() {
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
-        <div class="popup-widget blur-bg" role="dialog">
+        <div class="popup-widget zib-widget blur-bg" role="dialog">
           <div class="box-body">
             <img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
             <div class="app-desc">京东白条、等级</div>
@@ -1143,7 +1141,7 @@ async function main() {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       <style>${style}</style>
       </head>
-      <body class="${themeColor}">
+      <body>
         ${avatarInfo ? await mainMenuTop() : previewImage ? (settings.clock ? clockScript : await previewImgHtml()) : ''}
         <!-- 弹窗 -->
         ${previewImage ? await donatePopup() : ''}
