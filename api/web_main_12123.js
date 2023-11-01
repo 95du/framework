@@ -240,7 +240,7 @@ async function main() {
     return {
       readString: (name) => {
         const filePath = fm.joinPath(cacheStr, name);  
-        const fileExists =  fm.fileExists(filePath)
+        const fileExists =  fm.fileExists(filePath);
         if (fileExists && hasExpired(filePath) > cacheTime) {
           fm.remove(filePath);
           return null;
@@ -465,7 +465,7 @@ async function main() {
     const inputAlert = new Alert();
     inputAlert.title = title;
     inputAlert.message = message;
-    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value));
+    fieldArr.forEach(({ hint, value }) => inputAlert.addTextField(hint, value))
     inputAlert.addAction('取消');
     inputAlert.addAction('确认');
     const getIndex = await inputAlert.presentAlert();
@@ -520,8 +520,7 @@ async function main() {
       previewImage
     } = options;
     
-    // themeColor
-    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark-theme', 'white'] : ['white-theme', 'black'];
+    const logoColor = Device.isUsingDarkAppearance() ? 'white' : 'black';
     const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
     
     const appImage = await getCacheImage('appImage.png', `${rootUrl}img/icon/12123.png`);
@@ -575,7 +574,7 @@ async function main() {
       --card-radius: 10px;
       --checkbox: #ddd;
       --list-header-color: rgba(60,60,67,0.6);
-      --desc-color: #888;
+      --desc-color: #777;
       --typing-indicator: #000;
       --update-desc: hsl(0, 0%, 20%);
       --separ: var(--checkbox);
@@ -774,7 +773,7 @@ async function main() {
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
-        <div class="popup-widget blur-bg" role="dialog">
+        <div class="popup-widget zib-widget blur-bg" role="dialog">
           <div class="box-body">
             ${content}
           </div>
@@ -1180,7 +1179,7 @@ async function main() {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       <style>${style}</style>
       </head>
-      <body class="${themeColor}">
+      <body>
         ${avatarInfo ? await mainMenuTop() : previewImage ? (settings.clock ? clockScript : await previewImgHtml()) : ''}
         <!-- 弹窗 -->
         ${previewImage ? await donatePopup() : ''}
@@ -1323,9 +1322,7 @@ async function main() {
     };
     
     // 其他模块
-    const getModule = async (jsName, jsUrl) => {
-      await importModule(await webModule(jsName, jsUrl)).main();
-    }
+    const getModule = async (jsName, jsUrl) => await importModule(await webModule(jsName, jsUrl)).main();
     
     // 注入监听器
     const injectListener = async () => {
