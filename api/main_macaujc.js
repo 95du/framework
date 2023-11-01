@@ -436,9 +436,7 @@ async function main() {
       previewImage
     } = options;
     
-    // themeColor
-    const [themeColor, logoColor] = Device.isUsingDarkAppearance() ? ['dark', 'white'] : ['white', 'black'];
-
+    const logoColor = Device.isUsingDarkAppearance() ? 'white' : 'black';
     const appleHub = await toBase64(await getCacheImage(
       `${logoColor}.png`,
       `${rootUrl}img/picture/appleHub_${logoColor}.png`
@@ -913,7 +911,7 @@ document.getElementById('install').addEventListener('click', () => {
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
       <div class="popup-container">
-        <div class="popup-widget blur-bg">
+        <div class="popup-widget zib-widget blur-bg">
           <div id="appleHub" class="box-body sign-logo">
             <img src="${appleHub}">
           </div>
@@ -969,7 +967,7 @@ document.getElementById('install').addEventListener('click', () => {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       <style>${style}</style>
       </head>
-      <body class="${themeColor}-theme nav-fixed site-layout-1">
+      <body>
         ${avatarInfo ? await mainMenuTop() : previewImage ? await previewImgHtml() : ''}
         ${head || ''}
         <!-- 底部窗口 -->
