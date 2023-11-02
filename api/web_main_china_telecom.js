@@ -64,11 +64,11 @@ async function main() {
     angle: 90,
     updateTime: Date.now(),
     solidColor: false,
-    percentColor: '#000000',
+    textLightColor: '#000000',
+    textDarkColor: '#FFFFFF',
     balanceColor: '#FF0000',
     rangeColor: '#3F8BFF',
-    cacheTime: 5,
-    init: false
+    cacheTime: 5
   };
   
   const getSettings = (file) => {
@@ -1538,11 +1538,23 @@ async function main() {
             name: "balanceColor",
             label: "余额颜色",
             type: "color",
-            icon: `${rootUrl}img/symbol/title.png`
+            icon: {
+              name: 'dollarsign',
+              color: '#FF6500'
+            }
           },
           {
-            name: "percentColor",
-            label: "文字颜色",
+            name: "textLightColor",
+            label: "白天文字",
+            type: "color",
+            icon: {
+              name: 'textformat.superscript',
+              color: '#0FC4EA'
+            }
+          },
+          {
+            name: "textDarkColor",
+            label: "夜间文字",
             type: "color",
             icon: {
               name: 'textformat',
