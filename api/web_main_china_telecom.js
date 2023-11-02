@@ -4,8 +4,8 @@
 
 async function main() {
   const scriptName = '中国电信余量'
-  const version = '1.0.2'
-  const updateDate = '2023年10月30日'
+  const version = '1.0.3'
+  const updateDate = '2023年11月02日'
   const pathName = '95du_telecom';
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
