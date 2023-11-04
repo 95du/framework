@@ -5,7 +5,7 @@
  * 组件名称: 人民币汇率
  * 组件作者: 95度茅台
  * Version 1.0.0
- * 2023月11月04日
+ * 2023月11月05日
  */
 
 const scriptName = '95du_exchange_rate';
