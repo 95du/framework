@@ -1529,12 +1529,7 @@ async function main() {
             },
             message: `缓存国际汇率数据\n( 每${settings.cacheTime ?? '几'}小时更新一次 )`,
             desc: settings.cacheTime
-          }
-        ]
-      },
-      {
-        type: 'group',
-        items: [
+          },
           {
             name: "rightColor",
             label: "右上汇率",
