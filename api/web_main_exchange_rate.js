@@ -498,9 +498,7 @@ async function main() {
     const logoColor = Device.isUsingDarkAppearance() ? 'white' : 'black';
     const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
     
-    const lotteryType = ['i64_ssq', 'i64_dlt', 'i48_pl3', 'i48_fc3d', 'i48_qxc', 'i48_7lc', 'i48_pl5'];
-    const randomItem = lotteryType[Math.floor(Math.random() * lotteryType.length)];
-    const appImage = await getCacheImage(`${randomItem}.png`, `https://r.ttyingqiu.com/r/images/kjgg/cpdt/${randomItem}.png`);
+    const appImage = await getCacheImage('dollar.png', `${rootUrl}img/icon/dollar.png`);
     
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage('author.png', `${rootUrl}img/icon/4qiao.png`);
     
@@ -591,11 +589,9 @@ async function main() {
     }
 
     .app-icon {
-      width: 68px;
-      height: 68px;
-      border-radius: 50px;
-      border: 5px solid #fff;
-      margin-bottom: 15px;
+      width: 100px;
+      height: 100px;
+      margin-bottom: -5px;
       object-fit: cover;
     }`;
     
@@ -752,7 +748,7 @@ async function main() {
         <div class="popup-widget zib-widget blur-bg" role="dialog">
           <div class="box-body">
             <img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
-            <div class="app-desc">中国体育彩票，福利彩票</div>
+            <div class="app-desc">常用国际货币兑换人民币</div>
             <button class="but" id="shortcuts" onclick="hidePopup()">安装捷径版</button>
           </div>
         </div>
