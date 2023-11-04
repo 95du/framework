@@ -739,7 +739,10 @@ async function main() {
       };
       
       const hidePopup = () => {
-        setTimeout(() => switchDrawerMenu(), 300);
+        switchDrawerMenu();
+        setTimeout(() => {
+          popupOpen();
+        }, 300);
       }`;
       
       return `
@@ -749,7 +752,7 @@ async function main() {
           <div class="box-body">
             <img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
             <div class="app-desc">常用国际货币兑换人民币</div>
-            <button class="but" id="shortcuts" onclick="hidePopup()">安装捷径版</button>
+            <button class="but" onclick="hidePopup()">Dollar</button>
           </div>
         </div>
       </div>
@@ -1318,9 +1321,6 @@ async function main() {
           break;
         case 'telegram':
           Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
-          break;
-        case 'shortcuts':
-          Timer.schedule(650, false, () => { Safari.open('shortcuts://shortcuts/9ce040b13448407586eb794af31cec1a', false) });
           break;
         case 'changeSettings':
           Object.assign(settings, data);
