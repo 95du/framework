@@ -1728,7 +1728,7 @@ async function main() {
             type: 'select',
             multiple: false,
             icon: {
-              name: 'circle.grid.2x1.fill',
+              name: 'dollarsign.arrow.circlepath',
               color: '#00C4B6'
             },
             options: [
