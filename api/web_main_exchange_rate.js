@@ -63,6 +63,7 @@ async function main() {
     updateTime: Date.now(),
     solidColor: true,
     radius: 50,
+    iconSize: 60,
     currency: 'usd',
     rightColor: '#3F8BFF',
     leftColor: '#64C466',
@@ -1511,6 +1512,18 @@ async function main() {
             },
             message: 'iOS 16 系统以下设置值为 18\n即可显示圆形',
             desc: settings.radius
+          },
+          {
+            label: '图标尺寸',
+            name: 'iconSize',
+            type: 'cell',
+            input: true,
+            message: 'Max机型以下需修改图标尺寸',
+            desc: settings.iconSize,
+            icon: {
+              name: 'checkerboard.shield',
+              color: '#0FC4EA'
+            }
           },
           {
             label: '缓存时长',
