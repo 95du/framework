@@ -847,7 +847,7 @@ async function main() {
         select.addEventListener( 'change', (e) => {
           const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
           formData[item.name] = item.multiple ? selectedValues : selectedValues[0];
-          formData.solidColor = selectedValues.length > 0 && !item.multiple ? false : true;
+          formData.solidColor = selectedValues.length > 0 && item.multiple ? false : true;
           invoke('changeSettings', formData);
         });
         
@@ -1535,7 +1535,7 @@ async function main() {
               name: 'externaldrive.fill', 
               color: '#F9A825'
             },
-            message: `缓存国际汇率数据\n( 每${settings.cacheTime ?? '几'}小时更新一次 )`,
+            message: `缓存国际汇率数据\n( 每 ${settings.cacheTime ?? '几'} 小时更新一次 )`,
             desc: settings.cacheTime
           },
           {
