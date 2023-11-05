@@ -1526,7 +1526,7 @@ async function main() {
               name: 'externaldrive.fill', 
               color: '#F9A825'
             },
-            message: `缓存余额、流量、语音的数据\n( 每${settings.cacheTime ?? '几'}小时更新一次 )`,
+            message: `缓存余额、流量、语音的数据\n( 每 ${settings.cacheTime ?? '几'} 小时更新一次 )`,
             desc: settings.cacheTime
           },
         ]
