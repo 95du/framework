@@ -397,7 +397,7 @@ a:focus, a:hover {
 
 #scrollBox {
   width: 375px;
-  height: 177.8px;
+  height: auto; /* 177.8px */
   overflow: hidden;
   margin: 0 auto;
 }
