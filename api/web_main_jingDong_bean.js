@@ -52,9 +52,8 @@ async function main() {
   const DEFAULT = {
     version,
     refresh: 20,
-    transparency: 0.5,
-    masking: 0.3,
     gradient: [],
+    masking: 0,
     update: true,
     topStyle: true,
     music: true,
@@ -494,7 +493,7 @@ async function main() {
     const logoColor = Device.isUsingDarkAppearance() ? 'white' : 'black';
     const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
 
-    const appImage = await getCacheImage('jingDong.png', `${rootUrl}img/icon/jingDong.png`);
+    const appImage = await getCacheImage('jingDong.png', `${rootUrl}img/icon/jd_green.png`);
     
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage('author.png', `${rootUrl}img/icon/4qiao.png`);
     
@@ -718,7 +717,7 @@ async function main() {
         <div class="popup-widget zib-widget blur-bg" role="dialog">
           <div class="box-body">
             <img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
-            <div class="app-desc">京东收支账单</div>
+            <div class="app-desc">京东综合类</div>
             <button class="but" onclick="hidePopup()" id="bean">种豆得豆</button>
           </div>
         </div>
