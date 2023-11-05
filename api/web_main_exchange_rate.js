@@ -64,6 +64,7 @@ async function main() {
     solidColor: true,
     radius: 50,
     iconSize: 60,
+    padding: 18,
     currency: 'usd',
     rightColor: '#3F8BFF',
     leftColor: '#64C466',
@@ -1536,6 +1537,15 @@ async function main() {
             },
             message: `缓存国际汇率数据\n( 每${settings.cacheTime ?? '几'}小时更新一次 )`,
             desc: settings.cacheTime
+          },
+          {
+            label: '边距调整',
+            name: 'padding',
+            type: 'cell',
+            input: true,
+            icon: `${rootUrl}img/symbol/layout.png`,
+            message: '设置组件的上、下、左和右的内边距',
+            desc: settings.padding
           },
           {
             name: "rightColor",
