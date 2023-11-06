@@ -563,7 +563,7 @@ async function main() {
       position: relative;
       width: auto;
       margin: ${screenSize < 926 ? (avatarInfo ? '62px' : '50px') : (avatarInfo ? '78px' : '65px')};
-      top: ${screenSize < 926 ? (avatarInfo ? '-4.5%' : '-2%') : (avatarInfo ? '-8.5%' : '-4%')};
+      top: ${screenSize < 926 ? (avatarInfo ? '-4.5%' : '-2%') : (avatarInfo ? '-8.5%' : '-1%')};
     }
     
     ${settings.animation ? `
@@ -728,23 +728,19 @@ async function main() {
         };
     
         menuMask.style.display = "block";
-        await new Promise(requestAnimationFrame);
-        animate(performance.now());
+        requestAnimationFrame(() => animate(performance.now()));
       };
     
       function switchDrawerMenu() {
         const popup = document.querySelector(".popup-container");
-        const isOpen = !popup.style.height || popup.style.height !== '255px'
-    
-        showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
-        popup.style.height = isOpen ? '255px' : ''
+        const isOpenPopup = popup.style.height !== '255px';
+        showMask(isOpenPopup ? null : () => menuMask.style.display = "none", isOpenPopup);
+        popup.style.height = isOpenPopup ? '255px' : ''
       };
       
       const hidePopup = () => {
         switchDrawerMenu();
-        setTimeout(() => {
-          popupOpen();
-        }, 300);
+        setTimeout(popupOpen, 350);
       }`;
       
       return `
