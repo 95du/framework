@@ -493,7 +493,7 @@ async function main() {
     const logoColor = Device.isUsingDarkAppearance() ? 'white' : 'black';
     const appleHub = await getCacheImage(`${logoColor}.png`, `${rootUrl}img/picture/appleHub_${logoColor}.png`);
 
-    const appImage = await getCacheImage('jingDong.png', `${rootUrl}img/icon/jd_green.png`);
+    const appImage = await getCacheImage('jd_wangWang.png', `${rootUrl}img/icon/jd_wangWang.png`);
     
     const authorAvatar = fm.fileExists(getAvatarImg()) ? await toBase64(fm.readImage(getAvatarImg()) ) : await getCacheImage('author.png', `${rootUrl}img/icon/4qiao.png`);
     
@@ -695,21 +695,18 @@ async function main() {
         };
     
         menuMask.style.display = "block";
-        await new Promise(requestAnimationFrame);
-        animate(performance.now());
+        requestAnimationFrame(() => animate(performance.now()));
       };
     
       function switchDrawerMenu() {
         const popup = document.querySelector(".popup-container");
-        const isOpen = !popup.style.height || popup.style.height !== '255px'
-    
-        showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
-        popup.style.height = isOpen ? '255px' : ''
+        const isOpenPopup = popup.style.height !== '255px';
+        showMask(isOpenPopup ? null : () => menuMask.style.display = "none", isOpenPopup);
+        popup.style.height = isOpenPopup ? '255px' : ''
       };
       
-      const hidePopup = () => {
-        setTimeout(() => switchDrawerMenu(), 300);
-      }`;
+      const hidePopup = () => setTimeout(switchDrawerMenu, 300);
+      `;
       
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
@@ -717,8 +714,8 @@ async function main() {
         <div class="popup-widget zib-widget blur-bg" role="dialog">
           <div class="box-body">
             <img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
-            <div class="app-desc">京东综合类</div>
-            <button class="but" onclick="hidePopup()" id="bean">种豆得豆</button>
+            <div class="app-desc">${scriptName}</div>
+            <button class="but jb-green" onclick="hidePopup()" id="bean">种豆得豆</button>
           </div>
         </div>
       </div>
