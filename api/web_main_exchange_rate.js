@@ -1800,6 +1800,10 @@ async function main() {
                   { 
                     label: '新加坡元',
                     value: 'sgd'
+                  },
+                  { 
+                    label: '新里拉币',
+                    value: 'try'
                   }
                 ]
               }
