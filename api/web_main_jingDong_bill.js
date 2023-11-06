@@ -703,21 +703,17 @@ async function main() {
         };
     
         menuMask.style.display = "block";
-        await new Promise(requestAnimationFrame);
-        animate(performance.now());
+        requestAnimationFrame(() => animate(performance.now()));
       };
     
       function switchDrawerMenu() {
         const popup = document.querySelector(".popup-container");
-        const isOpen = !popup.style.height || popup.style.height !== '255px'
-    
-        showMask(isOpen ? null : () => menuMask.style.display = "none", isOpen);
-        popup.style.height = isOpen ? '255px' : ''
+        const isOpenPopup = popup.style.height !== '255px';
+        showMask(isOpenPopup ? null : () => menuMask.style.display = "none", isOpenPopup);
+        popup.style.height = isOpenPopup ? '255px' : ''
       };
       
-      const hidePopup = () => {
-        setTimeout(() => switchDrawerMenu(), 300);
-      }`;
+      const hidePopup = () => setTimeout(switchDrawerMenu, 300);`;
       
       return `
       <div class="popup-mask" onclick="switchDrawerMenu()"></div>
