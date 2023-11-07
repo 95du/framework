@@ -250,9 +250,7 @@ async function main() {
   const getCacheString = async (cssFileName, cssFileUrl) => {
     const cache = useFileManager({ cacheTime: 24 });
     const cssString = cache.readString(cssFileName);
-    if (cssString) {
-      return cssString;
-    }
+    if (cssString) return cssString;
     const response = await getString(cssFileUrl);
     cache.writeString(cssFileName, response);
     return response;
@@ -739,8 +737,7 @@ async function main() {
       };
       
       const hidePopup = () => {
-        switchDrawerMenu();
-        setTimeout(popupOpen, 350);
+        setTimeout(() => switchDrawerMenu(), 300);
       }`;
       
       return `
@@ -750,7 +747,7 @@ async function main() {
           <div class="box-body">
             <img id="app" onclick="switchDrawerMenu()" class="app-icon" src="${appImage}">
             <div class="app-desc">常用国际货币兑换人民币</div>
-            <button class="but" onclick="hidePopup()">Dollar</button>
+            <button class="but" id="getFlag" onclick="hidePopup()">世界国旗图片</button>
           </div>
         </div>
       </div>
@@ -1133,7 +1130,7 @@ async function main() {
       btn.addEventListener('click', (e) => { toggleLoading(e) });
     });
     
-    ['store', 'install', 'app', 'shortcuts'].forEach(id => {
+    ['store', 'install', 'app', 'getFlag'].forEach(id => {
       const elementById = document.getElementById(id).addEventListener('click', () => invoke(id));
     });
     
@@ -1313,6 +1310,9 @@ async function main() {
           break;
         case 'telegram':
           Safari.openInApp('https://t.me/+CpAbO_q_SGo2ZWE1', false);
+          break;
+        case 'getFlag':
+          Timer.schedule(650, false, () => { Safari.openInApp('https://pixabay.com/zh/vectors/search/%E5%9B%BD%E6%97%97', false)});
           break;
         case 'changeSettings':
           Object.assign(settings, data);
