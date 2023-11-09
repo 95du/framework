@@ -4,8 +4,8 @@
 
 async function main() {
   const scriptName = '京东 ( 综合 )'
-  const version = '1.0.0'
-  const updateDate = '2023年11月06日'
+  const version = '1.0.1'
+  const updateDate = '2023年11月09日'
   const pathName = '95du_jd_Bean';
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
@@ -243,9 +243,7 @@ async function main() {
   const getCacheString = async (cssFileName, cssFileUrl) => {
     const cache = useFileManager({ cacheTime: 24 });
     const cssString = cache.readString(cssFileName);
-    if (cssString) {
-      return cssString;
-    }
+    if (cssString) return cssString;
     const response = await getString(cssFileUrl);
     cache.writeString(cssFileName, response);
     return response;
