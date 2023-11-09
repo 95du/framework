@@ -246,9 +246,7 @@ async function main() {
   const getCacheString = async (cssFileName, cssFileUrl) => {
     const cache = useFileManager({ cacheTime: 24 });
     const cssString = cache.readString(cssFileName);
-    if (cssString) {
-      return cssString;
-    }
+    if (cssString) return cssString;
     const response = await getString(cssFileUrl);
     cache.writeString(cssFileName, response);
     return response;
@@ -1355,10 +1353,12 @@ async function main() {
           }
           break;
         case 'adjustment':
-          const web = new WebView();
-          const html = await new Request('https://gitcode.net/4qiao/framework/raw/master/scriptable/adjustmentDate.js').loadString();  
-          web.loadHTML(html);
-          await web.present();
+          Timer.schedule(350, false, async () => {
+            const web = new WebView()
+            const html = await new Request('https://gitcode.net/4qiao/framework/raw/master/scriptable/adjustmentDate.js').loadString();  
+            web.loadHTML(html);
+            await web.present();
+          });
           break;
         case 'background':
           await importModule(await webModule('background.js', 'https://gitcode.net/4qiao/scriptable/raw/master/vip/mainTableBackground.js')).main();
