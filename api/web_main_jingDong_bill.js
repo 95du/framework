@@ -4,8 +4,8 @@
 
 async function main() {
   const scriptName = '京东收支账单'
-  const version = '1.0.0'
-  const updateDate = '2023年10月18日'
+  const version = '1.0.1'
+  const updateDate = '2023年11月11日'
   const pathName = '95du_jd_Bill';
   
   const rootUrl = atob('aHR0cHM6Ly9naXRjb2RlLm5ldC80cWlhby9mcmFtZXdvcmsvcmF3L21hc3Rlci8=');
@@ -75,6 +75,7 @@ async function main() {
     progressHeight: screenSize < 926 ? 9 : 10,
     randomIndex: 0,
     statistics: 1,
+    cacheTime: 5
   };
   
   const getSettings = (file) => {
@@ -251,9 +252,7 @@ async function main() {
   const getCacheString = async (cssFileName, cssFileUrl) => {
     const cache = useFileManager({ cacheTime: 24 });
     const cssString = cache.readString(cssFileName);
-    if (cssString) {
-      return cssString;
-    }
+    if (cssString) return cssString;
     const response = await getString(cssFileUrl);
     cache.writeString(cssFileName, response);
     return response;
@@ -481,7 +480,7 @@ async function main() {
     if (version !== settings.version && !settings.update && hours >= 12) {
       settings.updateTime = Date.now();
       writeSettings(settings);
-      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，新的组件框架`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
+      notify(`${scriptName}‼️`, `新版本更新 Version ${version}，增加缓存数据，减少网络请求`, 'scriptable:///run/' + encodeURIComponent(Script.name()));
     };
     
     await previewWidget();
@@ -1525,6 +1524,18 @@ async function main() {
             icon: `${rootUrl}img/symbol/refresh.png`,  
             message: '设置桌面组件的时长\n( 单位: 分钟 )',
             desc: settings.refresh
+          },
+          {
+            label: '缓存时长',
+            name: 'cacheTime',
+            type: 'cell',
+            input: true,
+            icon: {
+              name: 'externaldrive.fill', 
+              color: '#F9A825'
+            },
+            message: `缓存所有数据，减少网络请求\n( 每 ${settings.cacheTime ?? '几'} 小时更新一次 )`,
+            desc: settings.cacheTime
           },
         ]
       },
