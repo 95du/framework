@@ -196,13 +196,15 @@ async function main() {
     const currentHour = new Date().getHours();
 
     if (settings.appleOS && currentHour >= startHour && currentHour <= endHour) {
-      const html = await new Request(atob('aHR0cHM6Ly9kZXZlbG9wZXIuYXBwbGUuY29tL25ld3MvcmVsZWFzZXMvcnNzL3JlbGVhc2VzLnJzcw==')).loadString();
-      const iOS = html.match(/<title>(iOS.*?)<\/title>/)[1];
-      if (settings.push !== iOS) {
-        notify('AppleOS 更新通知 🔥', '新版本发布: ' + iOS)
-        settings.push = iOS
-        writeSettings(settings);
-      }
+      try { 
+        const html = await new Request(atob('aHR0cHM6Ly9kZXZlbG9wZXIuYXBwbGUuY29tL25ld3MvcmVsZWFzZXMvcnNzL3JlbGVhc2VzLnJzcw==')).loadString();
+        const iOS = html.match(/<title>(iOS.*?)<\/title>/)[1];
+        if (settings.push !== iOS) {
+          notify('AppleOS 更新通知 🔥', '新版本发布: ' + iOS)
+          settings.push = iOS
+          writeSettings(settings);
+        }
+      } catch {};
     }
   };
   
@@ -249,9 +251,7 @@ async function main() {
   const getCacheString = async (cssFileName, cssFileUrl) => {
     const cache = useFileManager({ cacheTime: 24 });
     const cssString = cache.readString(cssFileName);
-    if (cssString) {
-      return cssString;
-    }
+    if (cssString) return cssString;
     const response = await getString(cssFileUrl);
     cache.writeString(cssFileName, response);
     return response;
