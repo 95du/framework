@@ -251,9 +251,7 @@ async function main() {
   const getCacheString = async (cssFileName, cssFileUrl) => {
     const cache = useFileManager({ cacheTime: 24 });
     const cssString = cache.readString(cssFileName);
-    if (cssString) {
-      return cssString;
-    }
+    if (cssString) return cssString;
     const response = await getString(cssFileUrl);
     cache.writeString(cssFileName, response);
     return response;
@@ -364,7 +362,6 @@ async function main() {
     ctx.drawImageInRect(iconImage, new Rect(x, x, iw, iw));
     return ctx.getImage();
   };
-  
   
   /**
    * drawSquare
