@@ -39,8 +39,8 @@ async function main() {
   const writeSettings = async (settings) => {
     fm.writeString(settingPath(), JSON.stringify(settings, null, 4));
     console.log(JSON.stringify(
-      settings, null, 2)
-    );
+      settings, null, 2
+    ));
   };
   
   /**
@@ -1662,7 +1662,7 @@ async function main() {
             type: 'cell',
             isAdd: true,
             icon: `${rootUrl}img/icon/jd_green.png`,
-            desc: settings.cookie ? '已登录' : '未登录'
+            desc: settings.code === 0 ? '已登录' : settings.code === 3 ? '已过期' : '未登录'
           },
           {
             label: '重置所有',
